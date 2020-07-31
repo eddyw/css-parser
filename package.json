@@ -1,0 +1,36 @@
+{
+	"name": "css-own-parser",
+	"license": "MIT",
+	"version": "1.0.0",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"files": [
+		"dist"
+	],
+	"engines": {
+		"node": ">=12.18.3"
+	},
+	"scripts": {
+		"test": "jest",
+		"test:watch": "jest --watch",
+		"prettier": "prettier --write \"./src/**.{ts,js}\"",
+		"play": "node ./playground/play.mjs",
+		"build": "rm -rf ./dist && NODE_ENV=production rollup -c config/rollup.config.js",
+		"start": "rm -rf ./dist && NODE_ENV=development rollup -c config/rollup.config.js -w"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@types/jest": "26.0.8",
+		"@wessberg/rollup-plugin-ts": "1.2.34",
+		"benchmark": "2.1.4",
+		"jest": "26.2.1",
+		"mdn-data": "2.0.11",
+		"prettier": "2.0.5",
+		"rollup": "2.23.0",
+		"rollup-plugin-filesize": "9.0.2",
+		"ts-jest": "26.1.4",
+		"tslib": "2.0.0",
+		"typescript": "3.9.7"
+	}
+}
