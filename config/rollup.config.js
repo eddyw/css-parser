@@ -9,6 +9,10 @@ const onwarn = (warning, rollupWarn) => {
 			ignoredCode: 'CIRCULAR_DEPENDENCY',
 			ignoredPath: 'src/tokenizer/algorithms/index.ts',
 		},
+		{
+			ignoredCode: 'CIRCULAR_DEPENDENCY',
+			ignoredPath: 'src/tokenizer/definitions/index.ts',
+		},
 	]
 	if (
 		!ignoredWarnings.some(
