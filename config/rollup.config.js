@@ -25,14 +25,14 @@ export default {
 	onwarn,
 	output: [
 		{
-			file: 'dist/index.cjs',
-			format: 'cjs',
+			file: 'dist/index.js',
+			format: 'esm',
 			strict: true,
 			sourcemap: true,
 		},
 		{
-			file: 'dist/index.mjs',
-			format: 'esm',
+			file: 'dist/index.cjs',
+			format: 'cjs',
 			strict: true,
 			sourcemap: true,
 		},
