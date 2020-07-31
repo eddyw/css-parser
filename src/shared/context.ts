@@ -1,14 +1,5 @@
 import { TOKEN, TYPE } from '~/constants'
 
-/**
- * @todo
- * 	- tokenLineOpen
- * 	- tokenLineShut
- * 	- tokenColumnOpen
- * 	- tokenColumnShut
- *  - currentLine
- *  - currentColumn ?
- */
 export interface TokenizerContext {
 	source: string
 	sourceSize: number
@@ -22,16 +13,12 @@ export interface TokenizerContext {
 	tokenLead: number
 	tokenTail: number
 	tokenFlag: number
+	tokenLineOpen: number
+	tokenLineShut: number
+	tokenColumnOpen: number
+	tokenColumnShut: number
 	setCodePointAtCurrent(): void
-}
-
-export interface TokenizerYield {
-	tokenType: TYPE
-	tokenOpen: number
-	tokenShut: number
-	tokenTail: number
-	tokenLead: number
-	tokenFlag: number
+	setLineAtCurrent(): void
 }
 
 export function createContext(css: string): TokenizerContext {
@@ -48,13 +35,22 @@ export function createContext(css: string): TokenizerContext {
 		tokenLead: 0,
 		tokenTail: 0,
 		tokenFlag: 0,
+		tokenColumnOpen: 1,
+		tokenColumnShut: 1,
+		tokenLineOpen: 1,
+		tokenLineShut: 1,
 		// prettier-ignore
 		setCodePointAtCurrent() {
 			context.charAt0 = context.tokenShut === context.sourceSize ? TOKEN.EOF : context.source.charCodeAt(context.tokenShut)
 			context.charAt1 = context.tokenShut + 1 === context.sourceSize ? TOKEN.EOF : context.source.charCodeAt(context.tokenShut + 1)
 			context.charAt2 = context.tokenShut + 2 === context.sourceSize ? TOKEN.EOF : context.source.charCodeAt(context.tokenShut + 2)
 			context.charAt3 = context.tokenShut + 3 === context.sourceSize ? TOKEN.EOF : context.source.charCodeAt(context.tokenShut + 3)
-		}
+		},
+		setLineAtCurrent() {
+			context.tokenLineShut += 1 // Consume « white-space »
+			context.tokenColumnShut = 1
+		},
 	}
+
 	return context
 }

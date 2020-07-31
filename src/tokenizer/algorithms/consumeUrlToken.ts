@@ -1,5 +1,5 @@
 import { TOKEN, TYPE, FLAGS_ALL } from '~/constants'
-import { areValidEscape, isNonASCII } from '~/tokenizer/definitions'
+import { areValidEscape, isNonPrintable } from '~/tokenizer/definitions'
 import { consumeWhitespace, consumeBadUrlRemnants } from '.'
 import type { TokenizerContext } from '~/shared/context'
 
@@ -44,10 +44,11 @@ export function consumeUrlToken(ctx: TokenizerContext): void {
 
 	consumeWhitespace(ctx)
 
-	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++) {
+	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === TOKEN.R_PARENTHESIS) {
 			ctx.tokenShut += 1
+			ctx.tokenColumnShut += 1
 			ctx.tokenTail = 1
 			break
 		} else if (ctx.charAt0 === TOKEN.EOF) {
@@ -55,7 +56,11 @@ export function consumeUrlToken(ctx: TokenizerContext): void {
 			ctx.tokenType = TYPE.URL_BAD
 			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 			break
-		} else if (ctx.charAt0 === TOKEN.DOUBLE_QUOTE || ctx.charAt0 === TOKEN.SINGLE_QUOTE || isNonASCII(ctx.charAt0)) {
+		} else if (
+			ctx.charAt0 === TOKEN.DOUBLE_QUOTE ||
+			ctx.charAt0 === TOKEN.SINGLE_QUOTE ||
+			isNonPrintable(ctx.charAt0)
+		) {
 			consumeBadUrlRemnants(ctx)
 			ctx.tokenType = TYPE.URL_BAD
 			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
@@ -63,6 +68,7 @@ export function consumeUrlToken(ctx: TokenizerContext): void {
 		} else if (ctx.charAt0 === TOKEN.REVERSE_SOLIDUS) {
 			if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
 				ctx.tokenShut += 2
+				ctx.tokenColumnShut += 2
 			} else {
 				consumeBadUrlRemnants(ctx)
 				ctx.tokenType = TYPE.URL_BAD

@@ -1,4 +1,5 @@
 import { TOKEN, TYPE, FLAGS_ALL } from '~/constants'
+import { isNewline, isTabOrSpace } from '~/tokenizer/definitions'
 import type { TokenizerContext } from '~/shared/context'
 
 /**
@@ -23,16 +24,21 @@ export function consumeComments(ctx: TokenizerContext): void {
 	ctx.tokenType = TYPE.COMMENT
 	ctx.tokenLead = 2
 	ctx.tokenShut += 2 // Consume «U+002F SOLIDUS (/) followed by a U+002A ASTERISK (*)»
+	ctx.tokenColumnShut += 2
 
-	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++) {
+	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === TOKEN.ASTERISK && ctx.charAt1 === TOKEN.FORWARD_SOLIDUS) {
 			ctx.tokenShut += 2 // Consume «U+002A ASTERISK (*) followed by a U+002F SOLIDUS (/)»
+			ctx.tokenColumnShut += 1
 			ctx.tokenTail = 2
 			break
 		} else if (ctx.charAt0 === TOKEN.EOF) {
 			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 			ctx.tokenShut = ctx.sourceSize
-		} else continue
+			break
+		} else if (isNewline(ctx.charAt0)) {
+			ctx.setLineAtCurrent()
+		}
 	}
 }
