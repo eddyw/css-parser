@@ -184,5 +184,5 @@ export function* tokenizer(css: string): Generator<TokenizerYield, void, boolean
 		) {
 			return /** Abort | Stop when iter.next(true) */
 		}
-  }
+	}
 }
