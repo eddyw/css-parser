@@ -17,7 +17,7 @@
 	"scripts": {
 		"test": "jest",
 		"test:watch": "jest --watch",
-		"prettier": "prettier --write \"./src/**.{ts,js}\"",
+		"prettier": "prettier --write \"src/**/**.{ts,js}\"",
 		"play": "node ./playground/play.js",
 		"build": "rm -rf ./dist && NODE_ENV=production rollup -c config/rollup.config.js",
 		"start": "rm -rf ./dist && NODE_ENV=development rollup -c config/rollup.config.js -w"
@@ -32,6 +32,7 @@
 		"prettier": "2.0.5",
 		"rollup": "2.23.0",
 		"rollup-plugin-filesize": "9.0.2",
+		"source-map": "0.7.3",
 		"ts-jest": "26.1.4",
 		"tslib": "2.0.0",
 		"typescript": "3.9.7"

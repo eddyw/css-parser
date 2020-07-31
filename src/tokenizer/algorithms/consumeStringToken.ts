@@ -35,26 +35,28 @@ export function consumeStringToken(ctx: TokenizerContext, endingCodePoint?: numb
 
 	ctx.tokenType = TYPE.STRING
 	ctx.tokenLead = 1
+	ctx.tokenShut += 1 // Consume « single quote | double quote »
+	ctx.tokenColumnShut += 1
 
-	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++) {
+	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
 		ctx.setCodePointAtCurrent()
-		if (ctx.charAt1 === charEndingCodePoint) {
-			ctx.tokenShut += 2
+		if (ctx.charAt0 === charEndingCodePoint) {
+			ctx.tokenShut += 1
 			ctx.tokenTail = 1
 			break
-		} else if (ctx.charAt1 === TOKEN.EOF) {
-			ctx.tokenShut += 1
+		} else if (ctx.charAt0 === TOKEN.EOF) {
 			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 			break
-		} else if (isNewline(ctx.charAt1)) {
+		} else if (isNewline(ctx.charAt0)) {
 			ctx.tokenType = TYPE.STRING_BAD
 			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 			break
-		} else if (ctx.charAt1 === TOKEN.REVERSE_SOLIDUS) {
-			if (ctx.charAt2 === TOKEN.EOF) break // Do nothing
-			if (isNewline(ctx.charAt2)) {
+		} else if (ctx.charAt0 === TOKEN.REVERSE_SOLIDUS) {
+			if (ctx.charAt1 === TOKEN.EOF) break // Do nothing
+			if (isNewline(ctx.charAt1)) {
 				ctx.tokenShut += 2 // Consume escaped newline (\[newline])
-			} else if (areValidEscape(ctx.charAt1, ctx.charAt2)) {
+				ctx.setLineAtCurrent()
+			} else if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
 				consumeEscapedCodePoint(ctx)
 			}
 		}

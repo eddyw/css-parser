@@ -30,24 +30,29 @@ export function consumeNumber(ctx: TokenizerContext): void {
 
 	if (ctx.charAt0 === TOKEN.PLUS || ctx.charAt0 === TOKEN.MINUS) {
 		ctx.tokenShut += 1 // Consume (+) or (-)
+		ctx.tokenColumnShut += 1
 	}
 	consumeDigits(ctx)
 
 	if (ctx.charAt0 === TOKEN.STOP && isDigit(ctx.charAt1)) {
 		ctx.tokenShut += 2 // Consume (.[digit])
+		ctx.tokenColumnShut += 2
 		ctx.tokenFlag |= FLAGS_NUMBER.IS_DOUBLE
 		consumeDigits(ctx)
 	}
 
 	if (
 		(ctx.charAt0 === UPPERCASE.E || ctx.charAt0 === LOWERCASE.E) &&
-		((isDigit(ctx.charAt1) && ctx.tokenShut++) || // Consume (E|e)
+		((isDigit(ctx.charAt1) && ctx.tokenShut++ && ctx.tokenColumnShut++) || // Consume (E|e)
 			((ctx.charAt1 === TOKEN.PLUS || ctx.charAt1 === TOKEN.MINUS) &&
 			isDigit(ctx.charAt2) &&
 			ctx.tokenShut++ && // Consume (E|e)
-				ctx.tokenShut++)) // Consume (+|-)
+			ctx.tokenColumnShut++ &&
+				ctx.tokenShut++ && // Consume (+|-)
+				ctx.tokenColumnShut++))
 	) {
 		ctx.tokenShut += 1 // Consume ([digit])
+		ctx.tokenColumnShut += 1
 		ctx.tokenFlag |= FLAGS_NUMBER.IS_DOUBLE
 		consumeDigits(ctx)
 	}

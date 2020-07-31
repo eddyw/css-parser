@@ -1,3 +1,5 @@
+// § 4.3. Tokenizer Algorithms
+// https://drafts.csswg.org/css-syntax/#tokenizer-algorithms
 export * from './consumeComments'
 export * from './consumeWhitespace'
 export * from './consumeIdentLikeToken'
