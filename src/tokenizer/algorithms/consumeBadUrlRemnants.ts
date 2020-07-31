@@ -26,7 +26,7 @@ export function consumeBadUrlRemnants(ctx: TokenizerContext): void {
 	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++) {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === TOKEN.R_PARENTHESIS) {
-			ctx.tokenShut += 1
+			ctx.tokenShut += 1 // Consume U+0029 RIGHT PARENTHESIS ())
 			break
 		}
 		if (areValidEscape(ctx.charAt0, ctx.charAt1)) {

@@ -27,13 +27,13 @@ import type { TokenizerContext } from '~/shared/context'
  */
 export function consumeEscapedCodePoint(ctx: TokenizerContext): void {
 	if (isHexDigit(ctx.charAt0)) {
-		ctx.tokenShut += 1
+		ctx.tokenShut += 1 // Consume «hex digit»
 		for (let i = 0; ctx.tokenShut < ctx.sourceSize && i < 5; ctx.tokenShut++, i++) {
 			ctx.setCodePointAtCurrent()
 			if (!isHexDigit(ctx.charAt0)) break
 		}
 
-		if (isWhitespace(ctx.charAt0)) ctx.tokenShut += 1
+		if (isWhitespace(ctx.charAt0)) ctx.tokenShut += 1 // Consume «white space»
 		return
 	} else if (ctx.charAt0 === TOKEN.EOF) {
 		ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR

@@ -27,7 +27,7 @@ export function consumeComments(ctx: TokenizerContext): void {
 	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++) {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === TOKEN.ASTERISK && ctx.charAt1 === TOKEN.FORWARD_SOLIDUS) {
-			ctx.tokenShut += 2 // Consume «U+002F SOLIDUS (/) followed by a U+002A ASTERISK (*)»
+			ctx.tokenShut += 2 // Consume «U+002A ASTERISK (*) followed by a U+002F SOLIDUS (/)»
 			ctx.tokenTail = 2
 			break
 		} else if (ctx.charAt0 === TOKEN.EOF) {
