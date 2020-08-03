@@ -25,16 +25,15 @@ import type { TokenizerContext } from '~/shared/context'
  * 		Re-consume the current input code point. Return result.
  */
 export function consumeIdentifier(ctx: TokenizerContext): void {
-	ctx.tokenShut += 1
-	ctx.tokenColumnShut += 1
-
 	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
 		ctx.setCodePointAtCurrent()
 
-		if (isIdentifierName(ctx.charAt0)) continue
-		else if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
-			ctx.tokenShut += 1 // Consume U+005C REVERSE SOLIDUS (\)
+		if (isIdentifierName(ctx.charAt0)) {
+			continue
+		} else if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
+			ctx.tokenShut += 1
 			ctx.tokenColumnShut += 1
+			ctx.setCodePointAtCurrent()
 			consumeEscapedCodePoint(ctx)
 			continue
 		} else break
