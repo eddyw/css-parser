@@ -48,7 +48,7 @@ export function consumeNumber(ctx: TokenizerContext): void {
 			isDigit(ctx.charAt2) &&
 			ctx.tokenShut++ && // Consume (E|e)
 			ctx.tokenColumnShut++ &&
-				ctx.tokenShut++ && // Consume (+|-)
+			ctx.tokenShut++ && // Consume (+|-)
 				ctx.tokenColumnShut++))
 	) {
 		ctx.tokenShut += 1 // Consume ([digit])

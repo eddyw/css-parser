@@ -30,9 +30,7 @@ import type { TokenizerContext } from '~/shared/context'
  * anything else
  * 	Append the current input code point to the <string-token>’s value.
  */
-export function consumeStringToken(ctx: TokenizerContext, endingCodePoint?: number): void {
-	const charEndingCodePoint = endingCodePoint || ctx.charAt0
-
+export function consumeStringToken(ctx: TokenizerContext, endingCodePoint: number): void {
 	ctx.tokenType = TYPE.STRING
 	ctx.tokenLead = 1
 	ctx.tokenShut += 1 // Consume « single quote | double quote »
@@ -40,7 +38,7 @@ export function consumeStringToken(ctx: TokenizerContext, endingCodePoint?: numb
 
 	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
 		ctx.setCodePointAtCurrent()
-		if (ctx.charAt0 === charEndingCodePoint) {
+		if (ctx.charAt0 === endingCodePoint) {
 			ctx.tokenShut += 1
 			ctx.tokenTail = 1
 			break
