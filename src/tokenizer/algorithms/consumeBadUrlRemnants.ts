@@ -27,10 +27,13 @@ export function consumeBadUrlRemnants(ctx: TokenizerContext): void {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === TOKEN.R_PARENTHESIS) {
 			ctx.tokenShut += 1 // Consume U+0029 RIGHT PARENTHESIS ())
+			ctx.tokenColumnShut += 1
 			break
 		}
 		if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
 			ctx.tokenShut += 1 // Consume U+005C REVERSE SOLIDUS (\)
+			ctx.tokenColumnShut += 1
+			ctx.setCodePointAtCurrent()
 			consumeEscapedCodePoint(ctx)
 		}
 	}
