@@ -8,9 +8,22 @@ describe('Tokenizer – Rebuilding the output from tokens', () => {
 		const tokens: string[] = []
 		const stream = tokenizer(createContext(input))
 
+		let lastPos = {
+			type: -2,
+			offset: -2,
+		}
+
 		do {
-			const { tokenOpen, tokenShut } = stream.consumeToken()
+			const { tokenOpen, tokenShut, tokenType } = stream.consumeToken()
 			const value = input.slice(tokenOpen, tokenShut)
+
+			if (lastPos.offset === tokenShut) {
+				console.log('Infinite loop!', lastPos)
+				console.log(input.slice(tokenShut, tokenShut + 20))
+				break
+			}
+			lastPos.type = tokenType
+			lastPos.offset = tokenShut
 
 			tokens.push(value)
 		} while (!stream.isDone())
