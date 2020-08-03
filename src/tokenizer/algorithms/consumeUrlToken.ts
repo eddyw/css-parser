@@ -1,6 +1,6 @@
 import { TOKEN, TYPE, FLAGS_ALL } from '~/constants'
 import { areValidEscape, isNonPrintable } from '~/tokenizer/definitions'
-import { consumeWhitespace, consumeBadUrlRemnants } from '.'
+import { consumeWhitespace, consumeBadUrlRemnants, consumeEscapedCodePoint } from '.'
 import type { TokenizerContext } from '~/shared/context'
 
 /**
@@ -67,8 +67,10 @@ export function consumeUrlToken(ctx: TokenizerContext): void {
 			break
 		} else if (ctx.charAt0 === TOKEN.REVERSE_SOLIDUS) {
 			if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
-				ctx.tokenShut += 2
-				ctx.tokenColumnShut += 2
+				ctx.tokenShut += 1
+				ctx.tokenColumnShut += 1
+				ctx.setCodePointAtCurrent()
+				consumeEscapedCodePoint(ctx)
 			} else {
 				consumeBadUrlRemnants(ctx)
 				ctx.tokenType = TYPE.URL_BAD
