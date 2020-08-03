@@ -4,6 +4,7 @@ import type { TokenizerContext } from '~/shared/context'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-escaped-code-point
+ * @see https://www.w3.org/International/questions/qa-escapes
  * @description § 4.3.7. Consume an escaped code point
  * This section describes how to consume an escaped code point.
  * It assumes that the U+005C REVERSE SOLIDUS (\) has already been consumed
@@ -27,27 +28,20 @@ import type { TokenizerContext } from '~/shared/context'
  */
 export function consumeEscapedCodePoint(ctx: TokenizerContext): void {
 	if (isHexDigit(ctx.charAt0)) {
-		ctx.tokenShut += 1 // Consume «hex digit»
-		ctx.tokenColumnShut += 1
-
-		for (let i = 0; ctx.tokenShut < ctx.sourceSize && i < 5; ctx.tokenShut++, i++, ctx.tokenColumnShut++) {
+		for (let i = 0; ctx.tokenShut < ctx.sourceSize && i < 6; ctx.tokenShut++, i++, ctx.tokenColumnShut++) {
 			ctx.setCodePointAtCurrent()
-			if (!isHexDigit(ctx.charAt0)) break
+			if (!isHexDigit(ctx.charAt1)) break
 		}
-
-		if (isNewline(ctx.charAt0)) {
+		if (isNewline(ctx.charAt1)) {
 			ctx.tokenShut += 1 // Consume « new line »
 			ctx.setLineAtCurrent()
-		} else if (isTabOrSpace(ctx.charAt0)) {
+			ctx.setCodePointAtCurrent()
+		} else if (isTabOrSpace(ctx.charAt1)) {
 			ctx.tokenShut += 1
 			ctx.tokenColumnShut += 1
+			ctx.setCodePointAtCurrent()
 		}
-		return
 	} else if (ctx.charAt0 === TOKEN.EOF) {
 		ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
-		return
 	}
-
-	ctx.tokenShut += 1
-	ctx.tokenColumnShut += 1
 }
