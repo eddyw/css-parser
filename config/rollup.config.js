@@ -29,7 +29,7 @@ export default {
 	onwarn,
 	output: [
 		{
-			file: 'dist/index.js',
+			file: 'dist/index.mjs',
 			format: 'esm',
 			strict: true,
 			sourcemap: true,
