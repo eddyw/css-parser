@@ -36,7 +36,7 @@ export const enum NON_PRINTABLE {
 	DELT = 0x007f, // U+007F DELETE
 }
 export const enum TOKEN {
-	EOF = 0x0000, // Use U+0000 NULL as EOF 🤷‍♀️
+	EOF = 0x10ffff + 1, // Use max allowed code point as EOF 🤷‍♀️ (charCodeAt won't return any value higher than this)
 	LESS_THAN = 0x003c, // U+003C LESS-THAN SIGN (<)
 	GREATER_THAN = 0x003e, // U+003E GREATER-THAN SIGN (>)
 	AT = 0x0040, // U+0040 COMMERCIAL AT (@)
