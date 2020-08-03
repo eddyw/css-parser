@@ -55,6 +55,8 @@ export function tokenizer(ctx: TokenizerContext) {
 		} else if (ctx.charAt0 === TOKEN.DOUBLE_QUOTE) {
 			consumeStringToken(ctx, ctx.charAt0)
 		} else if (ctx.charAt0 === TOKEN.HASH) {
+			ctx.tokenShut += 1
+			ctx.tokenColumnShut += 1
 			if (isIdentifierNameStart(ctx.charAt1) || areValidEscape(ctx.charAt1, ctx.charAt2)) {
 				ctx.tokenType = TYPE.HASH
 				ctx.tokenLead = 1
@@ -64,8 +66,6 @@ export function tokenizer(ctx: TokenizerContext) {
 				}
 				consumeIdentifier(ctx)
 			} else {
-				ctx.tokenShut += 1
-				ctx.tokenColumnShut += 1
 				ctx.tokenType = TYPE.DELIMITER
 			}
 		} else if (ctx.charAt0 === TOKEN.SINGLE_QUOTE) {
@@ -135,13 +135,13 @@ export function tokenizer(ctx: TokenizerContext) {
 				ctx.tokenColumnShut += 1
 			}
 		} else if (ctx.charAt0 === TOKEN.AT) {
+			ctx.tokenShut += 1
+			ctx.tokenColumnShut += 1
 			if (areIdentifierNameStart(ctx.charAt1, ctx.charAt2, ctx.charAt3)) {
 				ctx.tokenType = TYPE.AT_RULE
 				consumeIdentifier(ctx)
 			} else {
 				ctx.tokenType = TYPE.DELIMITER
-				ctx.tokenShut += 1
-				ctx.tokenColumnShut += 1
 			}
 		} else if (ctx.charAt0 === TOKEN.L_SQUARE_BRACKET) {
 			ctx.tokenType = TYPE.L_SQUARE_BRACKET
