@@ -1,11 +1,10 @@
 {
 	"license": "MIT",
 	"version": "1.0.0",
-	"type": "module",
 	"main": "./dist/index.cjs",
-	"module": "./dist/index.js",
+	"module": "./dist/index.mjs",
 	"exports": {
-		"import": "./dist/index.js",
+		"import": "./dist/index.mjs",
 		"require": "./dist/index.cjs"
 	},
 	"files": [
@@ -18,17 +17,22 @@
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"prettier": "prettier --write \"src/**/**.{ts,js}\"",
-		"play": "node ./playground/play.js",
+		"play": "deoptigate -- node --trace-deopt ./playground/play.js",
 		"build": "rm -rf ./dist && NODE_ENV=production rollup -c config/rollup.config.js",
-		"start": "rm -rf ./dist && NODE_ENV=development rollup -c config/rollup.config.js -w"
+		"start": "rm -rf ./dist && NODE_ENV=development rollup -c config/rollup.config.js -w",
+		"benchmark": "node ./benchmarks/tokenize.benchmark.js"
 	},
 	"dependencies": {},
 	"devDependencies": {
+		"@types/benchmark": "1.0.33",
 		"@types/jest": "26.0.8",
 		"@wessberg/rollup-plugin-ts": "1.2.34",
 		"benchmark": "2.1.4",
+		"bootstrap": "4.5.0",
+		"deoptigate": "0.5.0",
 		"jest": "26.2.1",
 		"mdn-data": "2.0.11",
+		"postcss": "7.0.32",
 		"prettier": "2.0.5",
 		"rollup": "2.23.0",
 		"rollup-plugin-filesize": "9.0.2",
