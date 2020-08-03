@@ -1,42 +1,57 @@
-import { tokenizer } from '../dist/index.js'
+const fs = require('fs')
+// const path = require('path')
+const TokenizerPostCSS = require('postcss/lib/tokenize')
+const { tokenizer, createContext } = require('../dist/index.cjs')
+const css = fs.readFileSync(require.resolve('bootstrap/dist/css/bootstrap.css'), { encoding: 'utf-8' })
 
-const input = `
-/* Some comments */
-.c0[a="something] {
-  border: 12e+1px solid red
-  background: url(/something)
-}`
+// const file = 'stylesheet.css'
+// const sheet = path.resolve(__dirname, file)
+// const inputSheet = fs.readFileSync(sheet, { encoding: 'utf-8' })
 
-console.log(`
-============ [CSS Input - Values] ============
-${input}
-==============================================
-`)
+const input = css
+const tokens = []
 
-const iter = tokenizer(input)
+function DoTheThing(input) {
+	const stream = tokenizer(createContext(input))
 
-let result = iter.next()
+	do {
+		const token = stream.consumeToken()
 
-while (!result.done) {
-	if (!result.value) continue // 🤷‍♀️ just TS typings
+		const {
+			tokenType,
+			tokenOpen,
+			tokenShut,
+			tokenFlag,
+			tokenLead,
+			tokenTail,
+			tokenColumnOpen,
+			tokenColumnShut,
+			tokenLineOpen,
+			tokenLineShut,
+		} = token
 
-	const { tokenType, tokenOpen, tokenShut, tokenFlag, tokenLead, tokenTail } = result.value
+		let value = input.slice(tokenOpen + tokenLead, tokenShut - tokenTail)
+		let rawValue = input.slice(tokenOpen, tokenShut)
+		const open = input.slice(tokenOpen, tokenOpen + tokenLead)
+		const close = input.slice(tokenShut - tokenTail, tokenShut)
 
-	let value = input.slice(tokenOpen + tokenLead, tokenShut - tokenTail)
-	const open = input.slice(tokenOpen, tokenOpen + tokenLead)
-	const close = input.slice(tokenShut - tokenTail, tokenShut)
+		if (tokenType === 15 /* number */ || tokenType === 17 /* dimension */ || tokenType === 16 /* percentage */) {
+			value = parseFloat(value)
+		}
 
-	if (tokenType === 15 /* number */ || tokenType === 17 /* dimension */ || tokenType === 16 /* percentage */) {
-		value = parseFloat(value)
-	}
-
-	console.dir({
-		type: tokenType,
-		value,
-		open,
-		close,
-		flags: tokenFlag.toString(2),
-	})
-
-	result = iter.next()
+		tokens.push(rawValue)
+	} while (!stream.isDone())
 }
+
+DoTheThing(input)
+
+const output = tokens.join('')
+
+console.log({
+	input: input.length,
+	output: output.length,
+	isEqual: input === output,
+})
+
+const tokenizerPostCSS = TokenizerPostCSS({ css: input })
+console.log(tokenizerPostCSS.nextToken())
