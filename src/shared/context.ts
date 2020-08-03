@@ -19,6 +19,7 @@ export interface TokenizerContext {
 	tokenColumnShut: number
 	setCodePointAtCurrent(): void
 	setLineAtCurrent(): void
+	consumeAtCurrent(n: number): void
 }
 
 export function createContext(css: string): TokenizerContext {
@@ -39,16 +40,24 @@ export function createContext(css: string): TokenizerContext {
 		tokenColumnShut: 1,
 		tokenLineOpen: 1,
 		tokenLineShut: 1,
-		// prettier-ignore
 		setCodePointAtCurrent() {
-			context.charAt0 = context.tokenShut === context.sourceSize ? TOKEN.EOF : context.source.charCodeAt(context.tokenShut)
-			context.charAt1 = context.tokenShut + 1 === context.sourceSize ? TOKEN.EOF : context.source.charCodeAt(context.tokenShut + 1)
-			context.charAt2 = context.tokenShut + 2 === context.sourceSize ? TOKEN.EOF : context.source.charCodeAt(context.tokenShut + 2)
-			context.charAt3 = context.tokenShut + 3 === context.sourceSize ? TOKEN.EOF : context.source.charCodeAt(context.tokenShut + 3)
+			const posAt0 = this.tokenShut
+			const posAt1 = posAt0 + 1
+			const posAt2 = posAt0 + 2
+			const posAt3 = posAt0 + 3
+
+			this.charAt0 = posAt0 >= this.sourceSize ? TOKEN.EOF : this.source.charCodeAt(posAt0)
+			this.charAt1 = posAt1 >= this.sourceSize ? TOKEN.EOF : this.source.charCodeAt(posAt1)
+			this.charAt2 = posAt2 >= this.sourceSize ? TOKEN.EOF : this.source.charCodeAt(posAt2)
+			this.charAt3 = posAt3 >= this.sourceSize ? TOKEN.EOF : this.source.charCodeAt(posAt3)
 		},
 		setLineAtCurrent() {
-			context.tokenLineShut += 1 // Consume « white-space »
-			context.tokenColumnShut = 1
+			this.tokenLineShut += 1 // Consume « white-space »
+			this.tokenColumnShut = 1
+		},
+		consumeAtCurrent(nChars: number) {
+			this.tokenShut += nChars
+			this.tokenColumnShut += nChars
 		},
 	}
 
