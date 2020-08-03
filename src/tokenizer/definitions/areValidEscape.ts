@@ -10,5 +10,7 @@ import { isNewline } from '.'
  * Otherwise, return true.
  */
 export function areValidEscape(charAt0: number, charAt1: number): boolean {
-	return !(charAt0 !== TOKEN.REVERSE_SOLIDUS || isNewline(charAt1))
+	if (charAt0 !== TOKEN.REVERSE_SOLIDUS) return false
+	if (isNewline(charAt1)) return false
+	return true
 }
