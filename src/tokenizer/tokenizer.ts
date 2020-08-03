@@ -17,7 +17,7 @@ import {
 	consumeWhitespace,
 } from './algorithms'
 
-export interface TokenizerYield {
+export interface TokenizerReturnToken {
 	tokenType: TYPE
 	tokenOpen: number
 	tokenShut: number
@@ -30,8 +30,9 @@ export interface TokenizerYield {
 	tokenColumnShut: number
 }
 
-export function* tokenizer(ctx: TokenizerContext): Generator<TokenizerYield, void, boolean> {
-	while (ctx.tokenShut <= ctx.sourceSize) {
+export function tokenizer(ctx: TokenizerContext) {
+	function consumeToken(): TokenizerReturnToken {
+		if (ctx.tokenShut > ctx.sourceSize) throw Error('Out of bounds')
 		ctx.setCodePointAtCurrent()
 		ctx.tokenType = TYPE.EOF
 		ctx.tokenOpen = ctx.tokenShut
@@ -177,21 +178,24 @@ export function* tokenizer(ctx: TokenizerContext): Generator<TokenizerYield, voi
 			ctx.tokenColumnShut += 1
 		}
 
-		if (
-			yield {
-				tokenType: ctx.tokenType,
-				tokenOpen: ctx.tokenOpen,
-				tokenShut: ctx.tokenShut,
-				tokenTail: ctx.tokenTail,
-				tokenLead: ctx.tokenLead,
-				tokenFlag: ctx.tokenFlag,
-				tokenLineOpen: ctx.tokenLineOpen,
-				tokenLineShut: ctx.tokenLineShut,
-				tokenColumnOpen: ctx.tokenColumnOpen,
-				tokenColumnShut: ctx.tokenColumnShut,
-			}
-		) {
-			return /** Abort | Stop when iter.next(true) */
+		return {
+			tokenType: ctx.tokenType,
+			tokenOpen: ctx.tokenOpen,
+			tokenShut: ctx.tokenShut,
+			tokenTail: ctx.tokenTail,
+			tokenLead: ctx.tokenLead,
+			tokenFlag: ctx.tokenFlag,
+			tokenLineOpen: ctx.tokenLineOpen,
+			tokenLineShut: ctx.tokenLineShut,
+			tokenColumnOpen: ctx.tokenColumnOpen,
+			tokenColumnShut: ctx.tokenColumnShut,
 		}
+	}
+
+	return {
+		isDone() {
+			return ctx.tokenShut > ctx.sourceSize
+		},
+		consumeToken,
 	}
 }

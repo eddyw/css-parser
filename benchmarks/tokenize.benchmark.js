@@ -1,7 +1,7 @@
 const fs = require('fs')
 const Benchmark = require('benchmark')
 const TokenizerPostCSS = require('postcss/lib/tokenize')
-const TokenizerCurrent = require('../dist/index.cjs')
+const { tokenizer, createContext } = require('../dist/index.cjs')
 
 const css = fs.readFileSync(require.resolve('bootstrap/dist/css/bootstrap.css'), { encoding: 'utf-8' })
 const suite = new Benchmark.Suite()
@@ -17,14 +17,14 @@ suite.add(`PostCSS Tokenizer`, function () {
 	}
 	tokensCount = tokens.length
 })
-suite.add(`This Parser`, function () {
+suite.add(`This Parser (NEW)`, function () {
 	const tokens = []
-	const tokenizer = TokenizerCurrent.tokenizer(TokenizerCurrent.createContext(css))
-	let result = tokenizer.next()
-	while (!result.done) {
-		tokens.push(result.value)
-		result = tokenizer.next()
-	}
+	const stream = tokenizer(createContext(css))
+
+	do {
+		tokens.push(stream.consumeToken())
+	} while(!stream.isDone())
+
 	tokensCount = tokens.length
 })
 
