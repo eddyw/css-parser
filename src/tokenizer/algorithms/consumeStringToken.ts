@@ -50,11 +50,18 @@ export function consumeStringToken(ctx: TokenizerContext, endingCodePoint: numbe
 			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 			break
 		} else if (ctx.charAt0 === TOKEN.REVERSE_SOLIDUS) {
-			if (ctx.charAt1 === TOKEN.EOF) break // Do nothing
+			if (ctx.charAt1 === TOKEN.EOF) {
+				ctx.tokenShut += 1 // Consume U+005C REVERSE SOLIDUS (\) ???
+				ctx.tokenColumnShut += 1
+				break // ... and do nothing
+			}
 			if (isNewline(ctx.charAt1)) {
-				ctx.tokenShut += 2 // Consume escaped newline (\[newline])
+				ctx.tokenShut += 1 // Consume escaped newline (\[newline])
 				ctx.setLineAtCurrent()
 			} else if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
+				ctx.tokenShut += 1
+				ctx.tokenColumnShut += 1
+				ctx.setCodePointAtCurrent()
 				consumeEscapedCodePoint(ctx)
 			}
 		}
