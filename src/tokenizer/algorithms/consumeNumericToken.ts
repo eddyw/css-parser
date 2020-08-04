@@ -31,7 +31,6 @@ export function consumeNumericToken(ctx: TokenizerContext): void {
 	} else if (ctx.charAt0 === TOKEN.PERCENTAGE) {
 		ctx.tokenType = TYPE.PERCENTAGE
 		ctx.tokenShut += 1
-		ctx.tokenColumnShut += 1
 	} else {
 		ctx.tokenType = TYPE.NUMBER
 	}
