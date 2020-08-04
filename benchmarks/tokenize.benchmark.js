@@ -9,23 +9,25 @@ const suite = new Benchmark.Suite()
 let tokensCount = 0
 
 suite.add(`PostCSS Tokenizer`, function () {
-	const tokens = []
+	let count = 0
 	const tokenizer = TokenizerPostCSS({ css })
 
 	while (!tokenizer.endOfFile()) {
-		tokens.push(tokenizer.nextToken())
+		tokenizer.nextToken()
+		count++
 	}
-	tokensCount = tokens.length
+	tokensCount = count
 })
 suite.add(`This Parser (NEW)`, function () {
-	const tokens = []
+	let count = 0
 	const stream = tokenizer(createContext(css))
 
 	do {
-		tokens.push(stream.consumeToken())
+		stream.consumeToken()
+		count++
 	} while(!stream.isDone())
 
-	tokensCount = tokens.length
+	tokensCount = count
 })
 
 suite.on('cycle', function (evt) {
