@@ -6,6 +6,7 @@ import {
 	areValidEscape,
 	isDigit,
 	isIdentifierStartCodePoint,
+	isIdentifierCodePoint,
 	isWhitespace,
 } from './definitions'
 import {
@@ -48,16 +49,17 @@ export function tokenizer(ctx: TokenizerContext) {
 		} else if (ctx.charAt0 === TOKEN.DOUBLE_QUOTE) {
 			consumeStringToken(ctx, ctx.charAt0)
 		} else if (ctx.charAt0 === TOKEN.HASH) {
-			ctx.tokenShut += 1
-			if (isIdentifierStartCodePoint(ctx.charAt1) || areValidEscape(ctx.charAt1, ctx.charAt2)) {
+			if (isIdentifierCodePoint(ctx.charAt1) || areValidEscape(ctx.charAt1, ctx.charAt2)) {
 				ctx.tokenType = TYPE.HASH
 				ctx.tokenLead = 1
 
 				if (areIdentifierNameStart(ctx.charAt1, ctx.charAt2, ctx.charAt3)) {
 					ctx.tokenFlag |= FLAGS_HASH.IS_ID
 				}
+				ctx.tokenShut += 1
 				consumeIdentifier(ctx)
 			} else {
+				ctx.tokenShut += 1
 				ctx.tokenType = TYPE.DELIMITER
 			}
 		} else if (ctx.charAt0 === TOKEN.SINGLE_QUOTE) {
