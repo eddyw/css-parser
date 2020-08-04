@@ -36,6 +36,7 @@ export function consumeNumber(ctx: TokenizerContext): void {
 	if (ctx.charAt0 === TOKEN.STOP && isDigit(ctx.charAt1)) {
 		ctx.tokenShut += 2 // Consume (.[digit])
 		ctx.tokenFlag |= FLAGS_NUMBER.IS_DOUBLE
+		ctx.tokenFlag = ~(~ctx.tokenFlag | FLAGS_NUMBER.IS_INTEGER) // Unset IS_INTEGER
 		consumeDigits(ctx)
 	}
 
