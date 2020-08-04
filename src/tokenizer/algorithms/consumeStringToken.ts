@@ -34,9 +34,8 @@ export function consumeStringToken(ctx: TokenizerContext, endingCodePoint: numbe
 	ctx.tokenType = TYPE.STRING
 	ctx.tokenLead = 1
 	ctx.tokenShut += 1 // Consume « single quote | double quote »
-	ctx.tokenColumnShut += 1
 
-	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
+	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++) {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === endingCodePoint) {
 			ctx.tokenShut += 1
@@ -52,15 +51,12 @@ export function consumeStringToken(ctx: TokenizerContext, endingCodePoint: numbe
 		} else if (ctx.charAt0 === TOKEN.REVERSE_SOLIDUS) {
 			if (ctx.charAt1 === TOKEN.EOF) {
 				ctx.tokenShut += 1 // Consume U+005C REVERSE SOLIDUS (\) ???
-				ctx.tokenColumnShut += 1
 				break // ... and do nothing
 			}
 			if (isNewline(ctx.charAt1)) {
 				ctx.tokenShut += 1 // Consume escaped newline (\[newline])
-				ctx.setLineAtCurrent()
 			} else if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
-				ctx.tokenShut += 1
-				ctx.tokenColumnShut += 1
+				ctx.tokenShut += 1 // Consume « U+005C REVERSE SOLIDUS (\) »
 				ctx.setCodePointAtCurrent()
 				consumeEscapedCodePoint(ctx)
 			}

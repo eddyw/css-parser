@@ -1,4 +1,4 @@
-import { areValidEscape, isIdentifierName } from '~/tokenizer/definitions'
+import { areValidEscape, isIdentifierCodePoint } from '~/tokenizer/definitions'
 import { consumeEscapedCodePoint } from '.'
 import type { TokenizerContext } from '~/shared/context'
 
@@ -25,14 +25,13 @@ import type { TokenizerContext } from '~/shared/context'
  * 		Re-consume the current input code point. Return result.
  */
 export function consumeIdentifier(ctx: TokenizerContext): void {
-	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
+	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++) {
 		ctx.setCodePointAtCurrent()
 
-		if (isIdentifierName(ctx.charAt0)) {
+		if (isIdentifierCodePoint(ctx.charAt0)) {
 			continue
 		} else if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
 			ctx.tokenShut += 1
-			ctx.tokenColumnShut += 1
 			ctx.setCodePointAtCurrent()
 			consumeEscapedCodePoint(ctx)
 			continue

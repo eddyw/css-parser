@@ -44,11 +44,10 @@ export function consumeUrlToken(ctx: TokenizerContext): void {
 
 	consumeWhitespace(ctx)
 
-	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
+	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++) {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === TOKEN.R_PARENTHESIS) {
 			ctx.tokenShut += 1
-			ctx.tokenColumnShut += 1
 			ctx.tokenTail = 1
 			break
 		} else if (ctx.charAt0 === TOKEN.EOF) {
@@ -68,7 +67,6 @@ export function consumeUrlToken(ctx: TokenizerContext): void {
 		} else if (ctx.charAt0 === TOKEN.REVERSE_SOLIDUS) {
 			if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
 				ctx.tokenShut += 1
-				ctx.tokenColumnShut += 1
 				ctx.setCodePointAtCurrent()
 				consumeEscapedCodePoint(ctx)
 			} else {

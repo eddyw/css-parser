@@ -1,5 +1,5 @@
 import { TOKEN, FLAGS_ALL } from '~/constants'
-import { isHexDigit, isNewline, isTabOrSpace } from '~/tokenizer/definitions'
+import { isHexDigit, isWhitespace } from '~/tokenizer/definitions'
 import type { TokenizerContext } from '~/shared/context'
 
 /**
@@ -28,17 +28,12 @@ import type { TokenizerContext } from '~/shared/context'
  */
 export function consumeEscapedCodePoint(ctx: TokenizerContext): void {
 	if (isHexDigit(ctx.charAt0)) {
-		for (let i = 0; ctx.tokenShut < ctx.sourceSize && i < 6; ctx.tokenShut++, i++, ctx.tokenColumnShut++) {
+		for (let i = 0; ctx.tokenShut < ctx.sourceSize && i < 6; ctx.tokenShut++, i++) {
 			ctx.setCodePointAtCurrent()
 			if (!isHexDigit(ctx.charAt1)) break
 		}
-		if (isNewline(ctx.charAt1)) {
-			ctx.tokenShut += 1 // Consume « new line »
-			ctx.setLineAtCurrent()
-			ctx.setCodePointAtCurrent()
-		} else if (isTabOrSpace(ctx.charAt1)) {
-			ctx.tokenShut += 1
-			ctx.tokenColumnShut += 1
+		if (isWhitespace(ctx.charAt1)) {
+			ctx.tokenShut += 1 // Consume « whitespace »
 			ctx.setCodePointAtCurrent()
 		}
 	} else if (ctx.charAt0 === TOKEN.EOF) {

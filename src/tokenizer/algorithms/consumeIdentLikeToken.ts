@@ -34,12 +34,10 @@ export function consumeIdentLikeToken(ctx: TokenizerContext): void {
 	) {
 		ctx.tokenLead = 4
 		ctx.tokenShut += 4 // Consume ( url( )
-		ctx.tokenColumnShut += 4
 		consumeWhitespace(ctx)
 		if (ctx.charAt0 === TOKEN.DOUBLE_QUOTE || ctx.charAt0 === TOKEN.SINGLE_QUOTE) {
 			ctx.tokenType = TYPE.FUNCTION
 			ctx.tokenShut += 1
-			ctx.tokenColumnShut += 1
 			return
 		}
 		consumeUrlToken(ctx)
@@ -51,7 +49,6 @@ export function consumeIdentLikeToken(ctx: TokenizerContext): void {
 	if (ctx.charAt0 === TOKEN.L_PARENTHESIS) {
 		ctx.tokenType = TYPE.FUNCTION
 		ctx.tokenShut += 1
-		ctx.tokenColumnShut += 1
 		return
 	}
 

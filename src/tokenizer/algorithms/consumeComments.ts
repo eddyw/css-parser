@@ -23,13 +23,11 @@ export function consumeComments(ctx: TokenizerContext): void {
 	ctx.tokenType = TYPE.COMMENT
 	ctx.tokenLead = 2
 	ctx.tokenShut += 2 // Consume «U+002F SOLIDUS (/) followed by a U+002A ASTERISK (*)»
-	ctx.tokenColumnShut += 2
 
-	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
+	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++) {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === TOKEN.ASTERISK && ctx.charAt1 === TOKEN.FORWARD_SOLIDUS) {
 			ctx.tokenShut += 2 // Consume «U+002A ASTERISK (*) followed by a U+002F SOLIDUS (/)»
-			ctx.tokenColumnShut += 2
 			ctx.tokenTail = 2
 			break
 		} else if (ctx.charAt0 === TOKEN.EOF) {
@@ -37,8 +35,7 @@ export function consumeComments(ctx: TokenizerContext): void {
 			ctx.tokenShut = ctx.sourceSize
 			break
 		} else if (ctx.charAt0 === NEWLINE.LF) {
-			ctx.setLineAtCurrent()
-			ctx.tokenColumnShut = 0
+			// ctx.setLineAtCurrent()
 		}
 	}
 }
