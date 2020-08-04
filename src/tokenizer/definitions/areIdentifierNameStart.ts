@@ -1,5 +1,5 @@
 import { TOKEN } from '~/constants'
-import { isIdentifierNameStart, areValidEscape } from '.'
+import { isIdentifierStartCodePoint, areValidEscape } from '.'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#would-start-an-identifier
@@ -19,9 +19,9 @@ import { isIdentifierNameStart, areValidEscape } from '.'
  */
 export function areIdentifierNameStart(charAt0: number, charAt1: number, charAt2: number): boolean {
 	if (charAt0 === TOKEN.MINUS) {
-		return isIdentifierNameStart(charAt1) || charAt1 === TOKEN.MINUS || areValidEscape(charAt1, charAt2)
+		return isIdentifierStartCodePoint(charAt1) || charAt1 === TOKEN.MINUS || areValidEscape(charAt1, charAt2)
 	}
-	if (isIdentifierNameStart(charAt0)) return true
+	if (isIdentifierStartCodePoint(charAt0)) return true
 	if (charAt0 === TOKEN.REVERSE_SOLIDUS) return areValidEscape(charAt0, charAt1)
 	return false
 }

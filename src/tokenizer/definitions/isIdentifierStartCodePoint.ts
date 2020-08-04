@@ -6,6 +6,6 @@ import { isLetter, isNonASCII } from '.'
  * @description identifier-start code point
  * A letter, a non-ASCII code point, or U+005F LOW LINE (_).
  */
-export function isIdentifierNameStart(code: number): boolean {
+export function isIdentifierStartCodePoint(code: number): boolean {
 	return isLetter(code) || isNonASCII(code) || code === TOKEN.LOW_LINE
 }

@@ -8,5 +8,5 @@ import { NEWLINE } from '~/constants'
  * as they are converted to U+000A LINE FEED during preprocessing.
  */
 export function isNewline(code: number): boolean {
-	return code === NEWLINE.LF // || code === NEWLINE.CR || code === NEWLINE.FF
+	return code === NEWLINE.LF
 }
