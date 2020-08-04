@@ -1,4 +1,4 @@
-import { TOKEN, TYPE, FLAGS_ALL, NEWLINE } from '~/constants'
+import { TOKEN, TYPE, FLAGS_ALL } from '~/constants'
 import type { TokenizerContext } from '~/shared/context'
 
 /**
@@ -34,8 +34,6 @@ export function consumeComments(ctx: TokenizerContext): void {
 			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 			ctx.tokenShut = ctx.sourceSize
 			break
-		} else if (ctx.charAt0 === NEWLINE.LF) {
-			// ctx.setLineAtCurrent()
 		}
 	}
 }
