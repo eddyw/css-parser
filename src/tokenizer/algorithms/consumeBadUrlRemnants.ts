@@ -4,8 +4,8 @@ import { consumeEscapedCodePoint } from '.'
 import type { TokenizerContext } from '~/shared/context'
 
 /**
- * @see https://drafts.csswg.org/css-syntax/#consume-number
- * @description § 4.3.12. Consume a number
+ * @see https://drafts.csswg.org/css-syntax/#consume-remnants-of-bad-url
+ * @description § 4.3.14. Consume the remnants of a bad url
  * This section describes how to consume the remnants of a bad url from a stream of code points,
  * "cleaning up" after the tokenizer realizes that it’s in the middle of a <bad-url-token> rather than a <url-token>.
  * It returns nothing; its sole use is to consume enough of the input stream to reach a recovery point where normal tokenizing can resume.
@@ -23,16 +23,14 @@ import type { TokenizerContext } from '~/shared/context'
  * 		Do nothing.
  */
 export function consumeBadUrlRemnants(ctx: TokenizerContext): void {
-	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++, ctx.tokenColumnShut++) {
+	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++) {
 		ctx.setCodePointAtCurrent()
 		if (ctx.charAt0 === TOKEN.R_PARENTHESIS) {
 			ctx.tokenShut += 1 // Consume U+0029 RIGHT PARENTHESIS ())
-			ctx.tokenColumnShut += 1
 			break
 		}
 		if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
 			ctx.tokenShut += 1 // Consume U+005C REVERSE SOLIDUS (\)
-			ctx.tokenColumnShut += 1
 			ctx.setCodePointAtCurrent()
 			consumeEscapedCodePoint(ctx)
 		}
