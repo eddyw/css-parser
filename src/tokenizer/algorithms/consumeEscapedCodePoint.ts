@@ -37,6 +37,7 @@ export function consumeEscapedCodePoint(ctx: TokenizerContext): void {
 			ctx.setCodePointAtCurrent()
 		}
 	} else if (ctx.charAt0 === TOKEN.EOF) {
+		ctx.tokenShut -= 1 // Re-consume last, so next token is EOF
 		ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 	}
 }
