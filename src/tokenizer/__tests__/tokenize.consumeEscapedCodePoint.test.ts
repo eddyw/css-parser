@@ -1,4 +1,4 @@
-import { TYPE } from '~/constants'
+import { TYPE, FLAGS_ALL } from '~/constants'
 import { getTokens, getTokenValue } from './functions'
 
 /**
@@ -7,7 +7,7 @@ import { getTokens, getTokenValue } from './functions'
 describe('Tokenize Algorithm - consumeEscapedCodePoint', () => {
 	it('should consume an escaped hex digits', () => {
 		const inputs = [
-			'.', /* 0 */
+			'.' /* 0 */,
 			'\\E' /* 1 */,
 			'.' /* 2 */,
 			'\\E9motion' /* 3 */,
@@ -23,7 +23,7 @@ describe('Tokenize Algorithm - consumeEscapedCodePoint', () => {
 			'\\13322 \\13171 \\13001' /* 13 */,
 			'.' /* 14 */,
 			'\\013322\\013171\\013001' /* 15 */,
-			'.', /* 16 */
+			'.' /* 16 */,
 			'\\013322 \\013171 \\013001' /* 17 */,
 		].join('')
 		const tokens = getTokens(inputs)
@@ -42,14 +42,25 @@ describe('Tokenize Algorithm - consumeEscapedCodePoint', () => {
 		expect(tokens[17].tokenType).toBe(TYPE.IDENTIFIER)
 		expect(tokens[18].tokenType).toBe(TYPE.EOF)
 
-		expect(getTokenValue(inputs,tokens[1])).toBe('\\E')
-		expect(getTokenValue(inputs,tokens[3])).toBe('\\E9motion')
-		expect(getTokenValue(inputs,tokens[5])).toBe('\\E9 dition')
-		expect(getTokenValue(inputs,tokens[7])).toBe('\\0000E9dition')
-		expect(getTokenValue(inputs,tokens[9])).toBe('\\31 23')
-		expect(getTokenValue(inputs,tokens[11])).toBe('\\13322\\13171\\13001')
-		expect(getTokenValue(inputs,tokens[13])).toBe('\\13322 \\13171 \\13001')
-		expect(getTokenValue(inputs,tokens[15])).toBe('\\013322\\013171\\013001')
-		expect(getTokenValue(inputs,tokens[17])).toBe('\\013322 \\013171 \\013001')
+		expect(getTokenValue(inputs, tokens[1])).toBe('\\E')
+		expect(getTokenValue(inputs, tokens[3])).toBe('\\E9motion')
+		expect(getTokenValue(inputs, tokens[5])).toBe('\\E9 dition')
+		expect(getTokenValue(inputs, tokens[7])).toBe('\\0000E9dition')
+		expect(getTokenValue(inputs, tokens[9])).toBe('\\31 23')
+		expect(getTokenValue(inputs, tokens[11])).toBe('\\13322\\13171\\13001')
+		expect(getTokenValue(inputs, tokens[13])).toBe('\\13322 \\13171 \\13001')
+		expect(getTokenValue(inputs, tokens[15])).toBe('\\013322\\013171\\013001')
+		expect(getTokenValue(inputs, tokens[17])).toBe('\\013322 \\013171 \\013001')
+	})
+	it('should have IS_PARSE_ERROR flag set if ends on EOF', () => {
+		const inputs = ['\\' /* 0 */].join('')
+		const tokens = getTokens(inputs)
+
+		expect(tokens.length).toBe(2)
+		expect(tokens[0].tokenType).toBe(TYPE.IDENTIFIER)
+		expect(tokens[1].tokenType).toBe(TYPE.EOF)
+
+		expect(getTokenValue(inputs, tokens[0])).toBe('\\')
+		expect(!!(tokens[0].tokenFlag & FLAGS_ALL.IS_PARSE_ERROR)).toBe(true)
 	})
 })
