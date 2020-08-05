@@ -1,5 +1,5 @@
 import { isDigit } from '~/tokenizer/definitions'
-import type { TokenizerContext } from '~/shared/context'
+import type { TokenizerContext } from '~/shared/types'
 
 /**
  * From https://drafts.csswg.org/css-syntax/#consume-number

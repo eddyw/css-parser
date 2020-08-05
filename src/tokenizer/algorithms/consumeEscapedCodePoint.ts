@@ -1,6 +1,6 @@
 import { TOKEN, FLAGS_ALL } from '~/constants'
 import { isHexDigit, isWhitespace } from '~/tokenizer/definitions'
-import type { TokenizerContext } from '~/shared/context'
+import type { TokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-escaped-code-point

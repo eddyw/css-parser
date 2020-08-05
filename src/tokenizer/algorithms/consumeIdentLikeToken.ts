@@ -1,6 +1,6 @@
 import { TOKEN, TYPE, LOWERCASE } from '~/constants'
 import { consumeIdentifier, consumeWhitespace, consumeUrlToken } from '.'
-import type { TokenizerContext } from '~/shared/context'
+import type { TokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-ident-like-token

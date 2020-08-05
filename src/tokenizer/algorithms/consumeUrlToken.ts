@@ -1,7 +1,7 @@
 import { TOKEN, TYPE, FLAGS_ALL } from '~/constants'
 import { areValidEscape, isNonPrintable } from '~/tokenizer/definitions'
 import { consumeWhitespace, consumeBadUrlRemnants, consumeEscapedCodePoint } from '.'
-import type { TokenizerContext } from '~/shared/context'
+import type { TokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-url-token

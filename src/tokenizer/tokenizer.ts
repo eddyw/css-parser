@@ -1,4 +1,3 @@
-import { TokenizerContext } from '~/shared/context'
 import { TOKEN, TYPE, FLAGS_ALL, FLAGS_HASH } from '~/constants'
 import {
 	areIdentifierNameStart,
@@ -17,15 +16,7 @@ import {
 	consumeStringToken,
 	consumeWhitespace,
 } from './algorithms'
-
-export interface TokenizerReturnToken {
-	tokenType: TYPE
-	tokenOpen: number
-	tokenShut: number
-	tokenTail: number
-	tokenLead: number
-	tokenFlag: number
-}
+import type { TokenizerReturnToken, TokenizerContext } from '~/shared/types'
 
 export function tokenizer(ctx: TokenizerContext) {
 	function consumeToken(): TokenizerReturnToken {

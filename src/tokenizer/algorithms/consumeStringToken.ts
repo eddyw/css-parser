@@ -1,7 +1,7 @@
 import { TOKEN, TYPE, FLAGS_ALL } from '~/constants'
 import { isNewline, areValidEscape } from '~/tokenizer/definitions'
 import { consumeEscapedCodePoint } from '.'
-import type { TokenizerContext } from '~/shared/context'
+import type { TokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-string-token
