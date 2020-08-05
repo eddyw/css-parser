@@ -1,7 +1,7 @@
 import { TOKEN, LOWERCASE, FLAGS_NUMBER, UPPERCASE } from '~/constants'
 import { isDigit } from '~/tokenizer/definitions'
 import { consumeDigits } from '.'
-import type { TokenizerContext } from '~/shared/context'
+import type { TokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-number

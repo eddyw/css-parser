@@ -1,6 +1,6 @@
 import { areValidEscape, isIdentifierCodePoint } from '~/tokenizer/definitions'
 import { consumeEscapedCodePoint } from '.'
-import type { TokenizerContext } from '~/shared/context'
+import type { TokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-name

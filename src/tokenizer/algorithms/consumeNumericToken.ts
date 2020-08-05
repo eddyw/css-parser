@@ -1,7 +1,7 @@
 import { TOKEN, TYPE } from '~/constants'
 import { areIdentifierNameStart } from '~/tokenizer/definitions'
 import { consumeNumber, consumeIdentifier } from '.'
-import type { TokenizerContext } from '~/shared/context'
+import type { TokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-numeric-token
