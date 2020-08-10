@@ -1,50 +1,12 @@
 const fs = require('fs')
 const Benchmark = require('benchmark')
-const TokenizerPostCSS = require('postcss/lib/tokenize')
-const { tokenizer, createContext } = require('../dist/index.cjs')
+const { initializeBenchmark } = require('./shared/cases')
 
-const css = fs.readFileSync(require.resolve('bootstrap/dist/css/bootstrap.css'), { encoding: 'utf-8' })
-const suite = new Benchmark.Suite()
+const cssBootstrap = fs.readFileSync(require.resolve('bootstrap/dist/css/bootstrap.css'), { encoding: 'utf-8' })
+const cssTailwind = fs.readFileSync(require.resolve('tailwindcss/dist/tailwind.css'), { encoding: 'utf-8' })
 
-let tokensCount = 0
+const suiteBootstrap = initializeBenchmark(new Benchmark.Suite('Bootstrap'), cssBootstrap)
+const suiteTailwind = initializeBenchmark(new Benchmark.Suite('Tailwind'), cssTailwind)
 
-suite.add(`PostCSS Tokenizer`, function () {
-	let count = 0
-	const tokenizer = TokenizerPostCSS({ css })
-
-	while (!tokenizer.endOfFile()) {
-		tokenizer.nextToken()
-		count++
-	}
-	tokensCount = count
-})
-suite.add(`This Parser (NEW)`, function () {
-	let count = 0
-	const stream = tokenizer(createContext(css))
-
-	do {
-		stream.consumeToken()
-		count++
-	} while(!stream.isDone())
-
-	tokensCount = count
-})
-
-suite.on('cycle', function (evt) {
-	evt.target.tokensCount = tokensCount
-})
-
-suite.on('complete', function () {
-	const result = {}
-
-	Array.from(this.filter('successful')).forEach(target => {
-		result[target.toString()] = {
-			ms: Number(((1 / target.hz) * 1000).toFixed(2)),
-			tokens: target.tokensCount,
-		}
-	})
-
-	console.table(result)
-})
-
-suite.run()
+suiteTailwind.run()
+suiteBootstrap.run()
