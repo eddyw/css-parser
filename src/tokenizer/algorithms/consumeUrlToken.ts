@@ -1,6 +1,6 @@
 import { TOKEN, TYPE, FLAGS_ALL } from '~/constants'
-import { areValidEscape, isNonPrintable } from '~/tokenizer/definitions'
-import { consumeWhitespace, consumeBadUrlRemnants, consumeEscapedCodePoint } from '.'
+import { areValidEscape, isNonPrintable, isWhitespace } from '~/tokenizer/definitions'
+import { consumeBadUrlRemnants, consumeEscapedCodePoint } from '.'
 import type { TokenizerContext } from '~/shared/types'
 
 /**
@@ -39,40 +39,61 @@ import type { TokenizerContext } from '~/shared/types'
  * 		anything else
  * 			Append the current input code point to the <url-token>’s value.
  */
-export function consumeUrlToken(ctx: TokenizerContext): void {
-	ctx.tokenType = TYPE.URL
+export function consumeUrlToken(x: TokenizerContext): void {
+	x.tokenType = TYPE.URL
 
-	consumeWhitespace(ctx)
+	while (isWhitespace(x.charAt1)) {
+		x.tokenShut += 1
+		x.setCodePointAtCurrent()
+	}
 
-	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++) {
-		ctx.setCodePointAtCurrent()
-		if (ctx.charAt0 === TOKEN.R_PARENTHESIS) {
-			ctx.tokenShut += 1
-			ctx.tokenTail = 1
+	for (; x.tokenShut < x.sourceSize; x.tokenShut++) {
+		x.setCodePointAtCurrent()
+		if (x.charAt1 === TOKEN.R_PARENTHESIS) {
+			x.tokenShut += 1
+			x.tokenTail = 1
 			break
-		} else if (ctx.charAt0 === TOKEN.EOF) {
-			ctx.tokenShut -= 1
-			ctx.tokenType = TYPE.URL_BAD
-			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
+		} else if (x.charAt1 === TOKEN.EOF) {
+			x.tokenType = TYPE.URL_BAD
+			x.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
+			break
+		} else if (isWhitespace(x.charAt1)) {
+			do {
+				x.tokenShut += 1
+				x.setCodePointAtCurrent()
+			} while (isWhitespace(x.charAt1))
+
+			if (x.charAt1 === TOKEN.R_PARENTHESIS) {
+				x.tokenShut += 1
+				x.tokenTail = 1
+				break
+			} else if (x.charAt1 === TOKEN.EOF) {
+				x.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
+				break
+			}
+
+			consumeBadUrlRemnants(x)
+			x.tokenType = TYPE.URL_BAD
 			break
 		} else if (
-			ctx.charAt0 === TOKEN.DOUBLE_QUOTE ||
-			ctx.charAt0 === TOKEN.SINGLE_QUOTE ||
-			isNonPrintable(ctx.charAt0)
+			x.charAt1 === TOKEN.DOUBLE_QUOTE ||
+			x.charAt1 === TOKEN.SINGLE_QUOTE ||
+			x.charAt1 === TOKEN.L_PARENTHESIS ||
+			isNonPrintable(x.charAt1)
 		) {
-			consumeBadUrlRemnants(ctx)
-			ctx.tokenType = TYPE.URL_BAD
-			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
+			consumeBadUrlRemnants(x)
+			x.tokenType = TYPE.URL_BAD
+			x.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 			break
-		} else if (ctx.charAt0 === TOKEN.REVERSE_SOLIDUS) {
-			if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
-				ctx.tokenShut += 1
-				ctx.setCodePointAtCurrent()
-				consumeEscapedCodePoint(ctx)
+		} else if (x.charAt1 === TOKEN.REVERSE_SOLIDUS) {
+			if (areValidEscape(x.charAt1, x.charAt2)) {
+				x.tokenShut += 2 // Consume current & next input code point « U+005C REVERSE SOLIDUS (\) »
+				x.setCodePointAtCurrent()
+				consumeEscapedCodePoint(x)
 			} else {
-				consumeBadUrlRemnants(ctx)
-				ctx.tokenType = TYPE.URL_BAD
-				ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
+				consumeBadUrlRemnants(x)
+				x.tokenType = TYPE.URL_BAD
+				x.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
 				break
 			}
 		}
