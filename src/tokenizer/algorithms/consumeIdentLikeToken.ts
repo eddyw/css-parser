@@ -1,6 +1,7 @@
-import { TOKEN, TYPE, LOWERCASE } from '~/constants'
-import { consumeIdentifier, consumeWhitespace, consumeUrlToken } from '.'
+import { TOKEN, TYPE, LOWERCASE, UPPERCASE } from '~/constants'
+import { consumeIdentifier, consumeUrlToken } from '.'
 import type { TokenizerContext } from '~/shared/types'
+import { isWhitespace } from '../definitions'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-ident-like-token
@@ -13,10 +14,12 @@ import type { TokenizerContext } from '~/shared/types'
  * If string’s value is an ASCII case-insensitive match for "url",
  * and the next input code point is U+0028 LEFT PARENTHESIS ((),
  * consume it.
+ *
  * While the next two input code points are whitespace, consume the next input code point.
+ *
  * If the next one or two input code points are
- * 	U+0022 QUOTATION MARK ("), U+0027 APOSTROPHE ('),
- * 	or whitespace followed by U+0022 QUOTATION MARK (") or U+0027 APOSTROPHE ('),
+ * 		U+0022 QUOTATION MARK ("), U+0027 APOSTROPHE ('),
+ * 		or whitespace followed by U+0022 QUOTATION MARK (") or U+0027 APOSTROPHE ('),
  * then create a <function-token> with its value set to string and return it.
  * Otherwise, consume a url token, and return it.
  *
@@ -25,32 +28,46 @@ import type { TokenizerContext } from '~/shared/types'
  *
  * Otherwise, create an <ident-token> with its value set to string and return it.
  */
-export function consumeIdentLikeToken(ctx: TokenizerContext): void {
+export function consumeIdentLikeToken(x: TokenizerContext): void {
 	if (
-		ctx.charAt0 === (LOWERCASE.U as number) &&
-		ctx.charAt1 === (LOWERCASE.R as number) &&
-		ctx.charAt2 === (LOWERCASE.L as number) &&
-		ctx.charAt3 === (TOKEN.L_PARENTHESIS as number)
+		(x.charAt0 === (LOWERCASE.U as number) || x.charAt0 === (UPPERCASE.U as number)) &&
+		(x.charAt1 === (LOWERCASE.R as number) || x.charAt1 === (UPPERCASE.R as number)) &&
+		(x.charAt2 === (LOWERCASE.L as number) || x.charAt2 === (UPPERCASE.L as number)) &&
+		x.charAt3 === (TOKEN.L_PARENTHESIS as number)
 	) {
-		ctx.tokenLead = 4
-		ctx.tokenShut += 4 // Consume ( url( )
-		consumeWhitespace(ctx)
-		if (ctx.charAt0 === TOKEN.DOUBLE_QUOTE || ctx.charAt0 === TOKEN.SINGLE_QUOTE) {
-			ctx.tokenType = TYPE.FUNCTION
-			ctx.tokenShut += 1
+		x.tokenShut += 4 // Consume « url( » (case-sensitive)
+		x.setCodePointAtCurrent()
+
+		let restoreTokenPosition = x.tokenShut
+
+		while (isWhitespace(x.charAt1) && isWhitespace(x.charAt2)) {
+			x.tokenShut += 1
+			x.setCodePointAtCurrent()
+		}
+
+		if (
+			x.charAt1 === TOKEN.SINGLE_QUOTE ||
+			x.charAt1 === TOKEN.DOUBLE_QUOTE ||
+			(isWhitespace(x.charAt1) && (x.charAt2 === TOKEN.SINGLE_QUOTE || x.charAt2 === TOKEN.DOUBLE_QUOTE))
+		) {
+			x.tokenType = TYPE.FUNCTION
+			x.tokenTail = 2
+			x.tokenShut = restoreTokenPosition
+			x.setCodePointAtCurrent()
 			return
 		}
-		consumeUrlToken(ctx)
+
+		consumeUrlToken(x)
 		return
 	}
 
-	consumeIdentifier(ctx)
+	consumeIdentifier(x)
 
-	if (ctx.charAt0 === TOKEN.L_PARENTHESIS) {
-		ctx.tokenType = TYPE.FUNCTION
-		ctx.tokenShut += 1
+	if (x.charAt1 === TOKEN.L_PARENTHESIS) {
+		x.tokenType = TYPE.FUNCTION
+		x.tokenShut += 1
 		return
 	}
 
-	ctx.tokenType = TYPE.IDENTIFIER
+	x.tokenType = TYPE.IDENTIFIER
 }
