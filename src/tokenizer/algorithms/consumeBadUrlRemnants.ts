@@ -22,17 +22,18 @@ import type { TokenizerContext } from '~/shared/types'
  * 	anything else
  * 		Do nothing.
  */
-export function consumeBadUrlRemnants(ctx: TokenizerContext): void {
-	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++) {
-		ctx.setCodePointAtCurrent()
-		if (ctx.charAt0 === TOKEN.R_PARENTHESIS) {
-			ctx.tokenShut += 1 // Consume U+0029 RIGHT PARENTHESIS ())
+export function consumeBadUrlRemnants(x: TokenizerContext): void {
+	for (; x.shut < x.size; x.shut++) {
+		x.setCodeAtCurrent()
+		if (x.codeAt0 === TOKEN.R_PARENTHESIS) {
+			x.shut += 1 // Consume U+0029 RIGHT PARENTHESIS ())
+			x.tail = 1
 			break
 		}
-		if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
-			ctx.tokenShut += 1 // Consume U+005C REVERSE SOLIDUS (\)
-			ctx.setCodePointAtCurrent()
-			consumeEscapedCodePoint(ctx)
+		if (areValidEscape(x.codeAt0, x.codeAt1)) {
+			x.shut += 1 // Consume U+005C REVERSE SOLIDUS (\)
+			x.setCodeAtCurrent()
+			consumeEscapedCodePoint(x)
 		}
 	}
 }
