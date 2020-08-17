@@ -1,4 +1,4 @@
-import { TOKEN, LOWERCASE, FLAGS_NUMBER, UPPERCASE } from '~/constants'
+import { TOKEN, LOWERCASE, FLAG_NUMBER, UPPERCASE } from '~/constants'
 import { isDigit } from '~/tokenizer/definitions'
 import { consumeDigits } from '.'
 import type { TokenizerContext } from '~/shared/types'
@@ -25,31 +25,34 @@ import type { TokenizerContext } from '~/shared/types'
  * 6. Convert repr to a number, and set the value to the returned value.
  * 7. Return value and type.
  */
-export function consumeNumber(ctx: TokenizerContext): void {
-	ctx.tokenFlag |= FLAGS_NUMBER.IS_INTEGER
+export function consumeNumber(x: TokenizerContext): void {
+	x.flag |= FLAG_NUMBER.INTEGER
 
-	if (ctx.charAt0 === TOKEN.PLUS || ctx.charAt0 === TOKEN.MINUS) {
-		ctx.tokenShut += 1 // Consume (+) or (-)
+	if (x.codeAt0 === TOKEN.PLUS || x.codeAt0 === TOKEN.MINUS) {
+		x.shut += 1 // Consume « (+) or (-) »
 	}
-	consumeDigits(ctx)
+	consumeDigits(x)
 
-	if (ctx.charAt0 === TOKEN.STOP && isDigit(ctx.charAt1)) {
-		ctx.tokenShut += 2 // Consume (.[digit])
-		ctx.tokenFlag |= FLAGS_NUMBER.IS_DOUBLE
-		ctx.tokenFlag = ~(~ctx.tokenFlag | FLAGS_NUMBER.IS_INTEGER) // Unset IS_INTEGER
-		consumeDigits(ctx)
+	if (x.codeAt0 === TOKEN.STOP && isDigit(x.codeAt1)) {
+		x.shut += 2 // Consume « U+002E FULL STOP (.) AND [digit] »
+		x.flag |= FLAG_NUMBER.DOUBLE
+		x.flag = ~(~x.flag | FLAG_NUMBER.INTEGER) // Unset INTEGER
+		consumeDigits(x)
 	}
 
-	if (
-		(ctx.charAt0 === UPPERCASE.E || ctx.charAt0 === LOWERCASE.E) &&
-		((isDigit(ctx.charAt1) && ctx.tokenShut++) || // Consume (E|e)
-			((ctx.charAt1 === TOKEN.PLUS || ctx.charAt1 === TOKEN.MINUS) &&
-			isDigit(ctx.charAt2) &&
-			ctx.tokenShut++ && // Consume (E|e)
-				ctx.tokenShut++)) // Consume (+|-)
-	) {
-		ctx.tokenShut += 1 // Consume ([digit])
-		ctx.tokenFlag |= FLAGS_NUMBER.IS_DOUBLE
-		consumeDigits(ctx)
+	if (x.codeAt0 === UPPERCASE.E || x.codeAt0 === LOWERCASE.E) {
+		if ((x.codeAt1 === TOKEN.PLUS || x.codeAt1 === TOKEN.MINUS) && isDigit(x.codeAt2)) {
+			x.shut += 3 // Consume « E|e » & « +|- » & « [digit] »
+			x.flag |= FLAG_NUMBER.DOUBLE
+			x.flag = ~(~x.flag | FLAG_NUMBER.INTEGER) // Unset INTEGER
+			consumeDigits(x)
+		} else if (isDigit(x.codeAt1)) {
+			x.shut += 2 // Consume « E|e » & « [digit] »
+			x.flag |= FLAG_NUMBER.DOUBLE
+			x.flag = ~(~x.flag | FLAG_NUMBER.INTEGER) // Unset INTEGER
+			consumeDigits(x)
+		}
 	}
+
+	x.setCodeAtCurrent()
 }
