@@ -47,7 +47,7 @@ function initializeBenchmark(suite, css) {
       result[target.toString()] = {
         ms: Number(((1 / target.hz) * 1000).toFixed(2)),
         tokens: target.tokensCount,
-        'ms/50k': Number(((50e3 * ((1 / target.hz) * 1000)) / target.tokensCount).toFixed(2)),
+        // 'ms/50k': Number(((50e3 * ((1 / target.hz) * 1000)) / target.tokensCount).toFixed(2)),
       }
     })
 
