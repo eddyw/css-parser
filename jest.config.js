@@ -15,9 +15,11 @@ const JSON_SOURCE = ts.readJsonConfigFile(TS_CONFIG_PATH, ts.sys.readFile)
 const theThing = ts.parseJsonSourceFileConfigFileContent(JSON_SOURCE, ts.sys, __dirname)
 
 module.exports = {
+	displayName: 'Typed CSS',
+	verbose: true,
 	roots: ['<rootDir>'],
+	testEnvironment: 'node',
 	testMatch: [
-		// '**/__tests__/**/*.+(ts|tsx|js)',
 		'**/?(*.)+(spec|test).+(ts|tsx|js)',
 	],
 	transform: {
