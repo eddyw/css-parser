@@ -1,7 +1,7 @@
-import { TOKEN, TYPE } from '~/constants'
+import { TOKEN, NODE_SYMB, NODE_TYPE } from '~/constants'
 import { areIdentifierNameStart } from '~/tokenizer/definitions'
 import { consumeNumber, consumeIdentifier } from '.'
-import type { TokenizerContext } from '~/shared/types'
+import type { TokenizerContext, CSSNumber, CSSDimension, CSSPercentage } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-numeric-token
@@ -21,17 +21,53 @@ import type { TokenizerContext } from '~/shared/types'
  *
  * Otherwise, create a <number-token> with the same value and type flag as number, and return it.
  */
-export function consumeNumericToken(ctx: TokenizerContext): void {
-	consumeNumber(ctx)
-	if (areIdentifierNameStart(ctx.charAt0, ctx.charAt1, ctx.charAt2)) {
-		ctx.tokenType = TYPE.DIMENSION
-		const identStart = ctx.tokenShut
-		consumeIdentifier(ctx)
-		ctx.tokenTail = ctx.tokenShut - identStart
-	} else if (ctx.charAt0 === TOKEN.PERCENTAGE) {
-		ctx.tokenType = TYPE.PERCENTAGE
-		ctx.tokenShut += 1
-	} else {
-		ctx.tokenType = TYPE.NUMBER
+export function consumeNumericToken(
+	x: TokenizerContext,
+): Readonly<CSSNumber> | Readonly<CSSDimension> | Readonly<CSSPercentage> {
+	consumeNumber(x)
+
+	if (areIdentifierNameStart(x.codeAt0, x.codeAt1, x.codeAt2)) {
+		const identStart = x.shut
+		consumeIdentifier(x)
+		x.tail = x.shut - identStart
+
+		return {
+			type: NODE_TYPE.DIMENSION_TOKEN,
+			symb: NODE_SYMB.DIMENSION_TOKEN,
+			flag: x.flag,
+			node: x.code.slice(x.open, x.shut - x.tail),
+			unit: x.code.slice(x.shut - x.tail, x.shut),
+			spot: {
+				offsetIni: x.open,
+				offsetEnd: x.shut,
+			},
+		}
+	} else if (x.codeAt0 === TOKEN.PERCENTAGE) {
+		x.shut += 1
+		x.tail = 1
+
+		return {
+			type: NODE_TYPE.PERCENTAGE_TOKEN,
+			symb: NODE_SYMB.PERCENTAGE_TOKEN,
+			flag: x.flag,
+			node: x.code.slice(x.open, x.shut - x.tail),
+			unit: '%',
+			spot: {
+				offsetIni: x.open,
+				offsetEnd: x.shut,
+			},
+		}
+	}
+
+	return {
+		type: NODE_TYPE.NUMBER_TOKEN,
+		symb: NODE_SYMB.NUMBER_TOKEN,
+		flag: x.flag,
+		node: x.code.slice(x.open, x.shut - x.tail),
+		unit: '',
+		spot: {
+			offsetIni: x.open,
+			offsetEnd: x.shut,
+		},
 	}
 }
