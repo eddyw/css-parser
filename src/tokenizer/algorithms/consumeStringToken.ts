@@ -1,7 +1,7 @@
-import { TOKEN, TYPE, FLAGS_ALL } from '~/constants'
+import { TOKEN, NODE_SYMB, FLAG_STRING, NODE_TYPE } from '~/constants'
 import { isNewline, areValidEscape } from '~/tokenizer/definitions'
 import { consumeEscapedCodePoint } from '.'
-import type { TokenizerContext } from '~/shared/types'
+import type { TokenizerContext, CSSString } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-string-token
@@ -30,36 +30,53 @@ import type { TokenizerContext } from '~/shared/types'
  * anything else
  * 	Append the current input code point to the <string-token>’s value.
  */
-export function consumeStringToken(ctx: TokenizerContext, endingCodePoint: number): void {
-	ctx.tokenType = TYPE.STRING
-	ctx.tokenLead = 1
-	ctx.tokenShut += 1 // Consume « single quote | double quote »
+export function consumeStringToken(x: TokenizerContext, endingCodePoint: number): Readonly<CSSString> {
+	x.lead = 1 // node open « U+0022 QUOTATION MARK (") | U+0027 APOSTROPHE (') »
 
-	for (; ctx.tokenShut <= ctx.sourceSize; ctx.tokenShut++) {
-		ctx.setCodePointAtCurrent()
-		if (ctx.charAt0 === endingCodePoint) {
-			ctx.tokenShut += 1
-			ctx.tokenTail = 1
+	do {
+		if (x.codeAt1 === endingCodePoint) {
+			x.shut += 2 // Consume current + « U+0022 QUOTATION MARK (") | U+0027 APOSTROPHE (') »
+			x.tail = 1 // node shut « U+0022 QUOTATION MARK (") | U+0027 APOSTROPHE (') »
 			break
-		} else if (ctx.charAt0 === TOKEN.EOF) {
-			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
+		} else if (x.codeAt1 === TOKEN.EOF) {
+			x.shut += 1 // Consume current | x.codeAt1 will be re-consumed as EOF
+			x.flag |= FLAG_STRING.PARSE_ERROR | FLAG_STRING.END_IS_EOF
 			break
-		} else if (isNewline(ctx.charAt0)) {
-			ctx.tokenType = TYPE.STRING_BAD
-			ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
+		} else if (isNewline(x.codeAt1)) {
+			x.shut += 1 // Consume current | x.codeAt1 will be re-consumed as « whitespace »
+			x.flag |= FLAG_STRING.PARSE_ERROR | FLAG_STRING.BAD_STRING | FLAG_STRING.END_IS_NEWLINE
 			break
-		} else if (ctx.charAt0 === TOKEN.REVERSE_SOLIDUS) {
-			if (ctx.charAt1 === TOKEN.EOF) {
-				ctx.tokenShut += 1 // Consume U+005C REVERSE SOLIDUS (\) ???
-				break // ... and do nothing
+		} else if (x.codeAt1 === TOKEN.REVERSE_SOLIDUS) {
+			if (x.codeAt2 === TOKEN.EOF) {
+				x.shut += 2 // Consume current + U+005C REVERSE SOLIDUS (\) ???
+				x.flag |= FLAG_STRING.PARSE_ERROR | FLAG_STRING.END_IS_ESCAPED_EOF
+				break // ... and do nothing?
 			}
-			if (isNewline(ctx.charAt1)) {
-				ctx.tokenShut += 1 // Consume escaped newline (\[newline])
-			} else if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
-				ctx.tokenShut += 1 // Consume « U+005C REVERSE SOLIDUS (\) »
-				ctx.setCodePointAtCurrent()
-				consumeEscapedCodePoint(ctx)
+			if (isNewline(x.codeAt2)) {
+				x.shut += 3 // Consume escaped newline (\[newline])
+				x.setCodeAtCurrent()
+				continue
+			} else if (areValidEscape(x.codeAt1, x.codeAt2)) {
+				x.shut += 1 // Consume « U+005C REVERSE SOLIDUS (\) »
+				x.setCodeAtCurrent()
+				consumeEscapedCodePoint(x)
+				continue
 			}
 		}
+		x.shut++
+		x.setCodeAtCurrent()
+	} while (true)
+
+	return {
+		type: NODE_TYPE.STRING_TOKEN,
+		symb: NODE_SYMB.STRING_TOKEN,
+		flag: x.flag,
+		node: x.code.slice(x.open + x.lead, x.shut - x.tail),
+		open: x.code.slice(x.open, x.open + x.lead) as '"',
+		shut: x.code.slice(x.shut - x.tail, x.shut) as '"',
+		spot: {
+			offsetIni: x.open,
+			offsetEnd: x.shut,
+		},
 	}
 }
