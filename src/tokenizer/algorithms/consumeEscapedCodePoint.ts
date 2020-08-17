@@ -1,4 +1,4 @@
-import { TOKEN, FLAGS_ALL } from '~/constants'
+import { TOKEN, FLAG_IDENTIFIER } from '~/constants'
 import { isHexDigit, isWhitespace } from '~/tokenizer/definitions'
 import type { TokenizerContext } from '~/shared/types'
 
@@ -26,18 +26,22 @@ import type { TokenizerContext } from '~/shared/types'
  * 	anything else
  * 		Return the current input code point.
  */
-export function consumeEscapedCodePoint(ctx: TokenizerContext): void {
-	if (isHexDigit(ctx.charAt0)) {
-		for (let i = 0; ctx.tokenShut < ctx.sourceSize && i < 6; ctx.tokenShut++, i++) {
-			ctx.setCodePointAtCurrent()
-			if (!isHexDigit(ctx.charAt1)) break
+export function consumeEscapedCodePoint(x: TokenizerContext): void {
+	if (isHexDigit(x.codeAt0)) {
+		for (let i = 1; i <= 5; i++) {
+			if (isHexDigit(x.codeAt1)) {
+				x.shut += 1
+				x.setCodeAtCurrent()
+			} else break
 		}
-		if (isWhitespace(ctx.charAt1)) {
-			ctx.tokenShut += 1 // Consume « whitespace »
-			ctx.setCodePointAtCurrent()
+		if (isWhitespace(x.codeAt1) && !isWhitespace(x.codeAt2)) {
+			x.shut += 1
 		}
-	} else if (ctx.charAt0 === TOKEN.EOF) {
-		ctx.tokenShut -= 1 // Re-consume last, so next token is EOF
-		ctx.tokenFlag |= FLAGS_ALL.IS_PARSE_ERROR
+		x.shut += 1
+	} else if (x.codeAt0 === TOKEN.EOF) {
+		x.flag |= FLAG_IDENTIFIER.PARSE_ERROR
+	} else {
+		x.shut += 1
 	}
+	x.setCodeAtCurrent()
 }
