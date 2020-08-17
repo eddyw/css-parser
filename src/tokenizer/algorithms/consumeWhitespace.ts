@@ -1,12 +1,24 @@
+import { NODE_SYMB, NODE_TYPE } from '~/constants'
 import { isWhitespace } from '~/tokenizer/definitions'
-import type { TokenizerContext } from '~/shared/types'
+import type { TokenizerContext, CSSWhitespace } from '~/shared/types'
 
 /**
  * Consume as much whitespace as possible
  */
-export function consumeWhitespace(ctx: TokenizerContext): void {
-	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++) {
-		ctx.setCodePointAtCurrent()
-		if (!isWhitespace(ctx.charAt0)) break
+export function consumeWhitespace(x: TokenizerContext): Readonly<CSSWhitespace> {
+	do {
+		x.shut += 1
+		x.setCodeAtCurrent()
+	} while (isWhitespace(x.codeAt0))
+
+	return {
+		type: NODE_TYPE.WHITESPACE_TOKEN,
+		symb: NODE_SYMB.WHITESPACE_TOKEN,
+		flag: 0,
+		node: x.code.slice(x.open, x.shut),
+		spot: {
+			offsetIni: x.open,
+			offsetEnd: x.shut,
+		},
 	}
 }
