@@ -24,17 +24,15 @@ import type { TokenizerContext } from '~/shared/types'
  * 	anything else
  * 		Re-consume the current input code point. Return result.
  */
-export function consumeIdentifier(ctx: TokenizerContext): void {
-	for (; ctx.tokenShut < ctx.sourceSize; ctx.tokenShut++) {
-		ctx.setCodePointAtCurrent()
-
-		if (isIdentifierCodePoint(ctx.charAt0)) {
-			continue
-		} else if (areValidEscape(ctx.charAt0, ctx.charAt1)) {
-			ctx.tokenShut += 1
-			ctx.setCodePointAtCurrent()
-			consumeEscapedCodePoint(ctx)
-			continue
+export function consumeIdentifier(x: TokenizerContext): void {
+	while (x.shut <= x.size) {
+		x.setCodeAtCurrent()
+		if (isIdentifierCodePoint(x.codeAt0)) {
+			x.shut += 1
+		} else if (areValidEscape(x.codeAt0, x.codeAt1)) {
+			x.shut += 1
+			x.setCodeAtCurrent()
+			consumeEscapedCodePoint(x)
 		} else break
 	}
 }
