@@ -26,15 +26,6 @@ export interface TokenizerContext {
 	setCodeAtCurrent(): void
 }
 
-export interface TokenizerReturnToken {
-	tokenType: NODE_SYMB
-	tokenOpen: number
-	tokenShut: number
-	tokenTail: number
-	tokenLead: number
-	tokenFlag: number
-}
-
 /**
  * Tokenizer interface
  */

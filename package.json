@@ -21,6 +21,7 @@
 		"play": "node ./playground/playground-tokens-deopt.js",
 		"play:trace": "deoptigate -- node --trace-deopt ./playground/playground-tokens-deopt.js",
 		"play:generic": "node ./playground/playground-tokens-generic.js",
+		"play:parser": "node ./playground/playground-parser.js",
 		"build": "rm -rf ./dist && NODE_ENV=production rollup -c config/rollup.config.js",
 		"start": "rm -rf ./dist && NODE_ENV=development rollup -c config/rollup.config.js -w",
 		"benchmark": "node ./benchmarks/tokenizer.benchmark.js"
