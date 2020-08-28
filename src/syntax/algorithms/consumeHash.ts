@@ -1,5 +1,5 @@
 import { TOKEN, NODE_SYMB, NODE_TYPE, FLAG_IDENTIFIER } from '~/constants'
-import { areValidEscape, isIdentifierCodePoint, areIdentifierNameStart } from '~/tokenizer/definitions'
+import { areValidEscape, isIdentifierCodePoint, areIdentifierNameStart } from '~/syntax/definitions'
 import { consumeIdentifier } from '.'
 import type { TokenizerContext, CSSHash, CSSDelimiter } from '~/shared/types'
 

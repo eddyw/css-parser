@@ -1,4 +1,4 @@
-import { areValidEscape, isIdentifierCodePoint } from '~/tokenizer/definitions'
+import { areValidEscape, isIdentifierCodePoint } from '~/syntax/definitions'
 import { consumeEscapedCodePoint } from '.'
 import type { TokenizerContext } from '~/shared/types'
 

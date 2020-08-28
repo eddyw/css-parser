@@ -1,5 +1,5 @@
 import { TOKEN, LOWERCASE, FLAG_NUMBER, UPPERCASE } from '~/constants'
-import { isDigit } from '~/tokenizer/definitions'
+import { isDigit } from '~/syntax/definitions'
 import { consumeDigits } from '.'
 import type { TokenizerContext } from '~/shared/types'
 

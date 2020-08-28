@@ -1,5 +1,5 @@
 import { TOKEN, NODE_SYMB, NODE_TYPE } from '~/constants'
-import { areIdentifierNameStart } from '~/tokenizer/definitions'
+import { areIdentifierNameStart } from '~/syntax/definitions'
 import { consumeNumber, consumeIdentifier } from '.'
 import type { TokenizerContext, CSSNumber, CSSDimension, CSSPercentage } from '~/shared/types'
 

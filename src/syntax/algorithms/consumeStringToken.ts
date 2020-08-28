@@ -1,5 +1,5 @@
 import { TOKEN, NODE_SYMB, FLAG_STRING, NODE_TYPE } from '~/constants'
-import { isNewline, areValidEscape } from '~/tokenizer/definitions'
+import { isNewline, areValidEscape } from '~/syntax/definitions'
 import { consumeEscapedCodePoint } from '.'
 import type { TokenizerContext, CSSString } from '~/shared/types'
 
