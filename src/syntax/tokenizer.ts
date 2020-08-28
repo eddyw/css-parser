@@ -29,7 +29,7 @@ import {
 	consumeShutCurlyBrace,
 	consumeAtKeywordToken,
 } from './algorithms'
-import type { TokenizerContext, Tokenizer, CSSToken } from '~/shared/types'
+import type { SyntaxTokenizerContext, SyntaxTokenizer, CSSToken } from '~/shared/types'
 
 const up = Error('Out of bounds')
 
@@ -37,7 +37,7 @@ const up = Error('Out of bounds')
  * @see https://drafts.csswg.org/css-syntax/#consume-token
  * @description § 4.3.1. Consume a token
  */
-export function tokenizer(x: TokenizerContext): Tokenizer {
+export function tokenizer(x: SyntaxTokenizerContext): SyntaxTokenizer {
 	function consumeToken(): CSSToken {
 		if (x.shut > x.size) throw up
 

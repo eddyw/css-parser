@@ -1,9 +1,9 @@
 import { TOKEN, SYNTAX_SYMB, SYNTAX_TYPE, FLAG_IDENTIFIER } from '~/constants'
 import { areValidEscape, isIdentifierCodePoint, areIdentifierNameStart } from '~/syntax/definitions'
 import { consumeIdentifier } from '.'
-import type { TokenizerContext, CSSHash, CSSDelimiter } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSHash, CSSDelimiter } from '~/shared/types'
 
-export function consumeHash(x: TokenizerContext): Readonly<CSSHash> | Readonly<CSSDelimiter> {
+export function consumeHash(x: SyntaxTokenizerContext): Readonly<CSSHash> | Readonly<CSSDelimiter> {
 	if (isIdentifierCodePoint(x.codeAt1) || areValidEscape(x.codeAt1, x.codeAt2)) {
 		x.lead = 1
 

@@ -1,7 +1,7 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
-import type { TokenizerContext, CSSEndOfFile } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSEndOfFile } from '~/shared/types'
 
-export function consumeEndOfFile(x: TokenizerContext): Readonly<CSSEndOfFile> {
+export function consumeEndOfFile(x: SyntaxTokenizerContext): Readonly<CSSEndOfFile> {
 	x.shut += 1
 
 	return {

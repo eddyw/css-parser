@@ -1,7 +1,7 @@
 import { TOKEN, SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
 import { areIdentifierNameStart } from '~/syntax/definitions'
 import { consumeNumber, consumeIdentifier } from '.'
-import type { TokenizerContext, CSSNumber, CSSDimension, CSSPercentage } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSNumber, CSSDimension, CSSPercentage } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-numeric-token
@@ -22,7 +22,7 @@ import type { TokenizerContext, CSSNumber, CSSDimension, CSSPercentage } from '~
  * Otherwise, create a <number-token> with the same value and type flag as number, and return it.
  */
 export function consumeNumericToken(
-	x: TokenizerContext,
+	x: SyntaxTokenizerContext,
 ): Readonly<CSSNumber> | Readonly<CSSDimension> | Readonly<CSSPercentage> {
 	consumeNumber(x)
 

@@ -1,7 +1,7 @@
 import { TOKEN, SYNTAX_SYMB, SYNTAX_TYPE, LOWERCASE, UPPERCASE } from '~/constants'
 import { consumeIdentifier, consumeUrlToken } from '.'
 import { isWhitespace } from '~/syntax/definitions'
-import type { TokenizerContext, CSSIdentifier, CSSFunctionToken, CSSUrl } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSIdentifier, CSSFunctionToken, CSSUrl } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-ident-like-token
@@ -29,7 +29,7 @@ import type { TokenizerContext, CSSIdentifier, CSSFunctionToken, CSSUrl } from '
  * Otherwise, create an <ident-token> with its value set to string and return it.
  */
 export function consumeIdentLikeToken(
-	x: TokenizerContext,
+	x: SyntaxTokenizerContext,
 ): Readonly<CSSIdentifier> | Readonly<CSSFunctionToken> | Readonly<CSSUrl> {
 	if (
 		(x.codeAt0 === (LOWERCASE.U as number) || x.codeAt0 === (UPPERCASE.U as number)) &&

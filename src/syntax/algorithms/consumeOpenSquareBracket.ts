@@ -1,7 +1,7 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
-import type { TokenizerContext, CSSOpenSquareBracket } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSOpenSquareBracket } from '~/shared/types'
 
-export function consumeOpenSquareBracket(x: TokenizerContext): Readonly<CSSOpenSquareBracket> {
+export function consumeOpenSquareBracket(x: SyntaxTokenizerContext): Readonly<CSSOpenSquareBracket> {
 	return {
 		type: SYNTAX_TYPE.OPEN_SQUARE_BRACKET_TOKEN,
 		symb: SYNTAX_SYMB.OPEN_SQUARE_BRACKET_TOKEN,

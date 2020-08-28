@@ -1,5 +1,5 @@
 import { TOKEN, SYNTAX_SYMB, SYNTAX_TYPE, FLAG_ANY } from '~/constants'
-import type { TokenizerContext, CSSComment } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSComment } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-comment
@@ -20,7 +20,7 @@ import type { TokenizerContext, CSSComment } from '~/shared/types'
  * were already verified to be comment start
  * - It returns something instead of nothing (CSSComment token)
  */
-export function consumeComments(x: TokenizerContext): Readonly<CSSComment> {
+export function consumeComments(x: SyntaxTokenizerContext): Readonly<CSSComment> {
 	x.lead = 2
 	x.shut += 2 // Consume «U+002F SOLIDUS (/) followed by a U+002A ASTERISK (*)»
 

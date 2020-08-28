@@ -1,6 +1,6 @@
 import { areValidEscape, isIdentifierCodePoint } from '~/syntax/definitions'
 import { consumeEscapedCodePoint } from '.'
-import type { TokenizerContext } from '~/shared/types'
+import type { SyntaxTokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-name
@@ -24,7 +24,7 @@ import type { TokenizerContext } from '~/shared/types'
  * 	anything else
  * 		Re-consume the current input code point. Return result.
  */
-export function consumeIdentifier(x: TokenizerContext): void {
+export function consumeIdentifier(x: SyntaxTokenizerContext): void {
 	while (x.shut <= x.size) {
 		x.setCodeAtCurrent()
 		if (isIdentifierCodePoint(x.codeAt0)) {

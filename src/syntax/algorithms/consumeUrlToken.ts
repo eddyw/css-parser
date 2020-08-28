@@ -1,7 +1,7 @@
 import { TOKEN, SYNTAX_SYMB, FLAG_URL } from '~/constants'
 import { areValidEscape, isNonPrintable, isWhitespace } from '~/syntax/definitions'
 import { consumeBadUrlRemnants, consumeEscapedCodePoint } from '.'
-import type { TokenizerContext } from '~/shared/types'
+import type { SyntaxTokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-url-token
@@ -39,7 +39,7 @@ import type { TokenizerContext } from '~/shared/types'
  * 		anything else
  * 			Append the current input code point to the <url-token>’s value.
  */
-export function consumeUrlToken(x: TokenizerContext): void {
+export function consumeUrlToken(x: SyntaxTokenizerContext): void {
 	x.type = SYNTAX_SYMB.URL_TOKEN
 
 	while (isWhitespace(x.codeAt0)) {

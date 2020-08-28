@@ -1,7 +1,7 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
-import type { TokenizerContext, CSSOpenCurlyBrace } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSOpenCurlyBrace } from '~/shared/types'
 
-export function consumeOpenCurlyBrace(x: TokenizerContext): Readonly<CSSOpenCurlyBrace> {
+export function consumeOpenCurlyBrace(x: SyntaxTokenizerContext): Readonly<CSSOpenCurlyBrace> {
 	return {
 		type: SYNTAX_TYPE.OPEN_CURLY_BRACE_TOKEN,
 		symb: SYNTAX_SYMB.OPEN_CURLY_BRACE_TOKEN,
