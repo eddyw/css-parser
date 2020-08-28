@@ -1,4 +1,4 @@
-import { NODE_TYPE, NODE_SYMB, FLAG_ANY } from '~/constants'
+import { SYNTAX_TYPE, SYNTAX_SYMB, FLAG_ANY } from '~/constants'
 import { getTokens } from './functions'
 import { arrEscaped } from './include'
 import type { CSSIdentifier, CSSDelimiter, CSSWhitespace } from '~/shared/types'
@@ -7,15 +7,15 @@ describe('Algorithms: consume escaped <ident-token>', () => {
 	it('should consume an escaped <ident-token>', () => {
 		const styles = arrEscaped.join('\t\t')
 		const tokens = getTokens(styles)
-		const escape = tokens.filter(t => t.type === NODE_TYPE.IDENT_TOKEN)
+		const escape = tokens.filter(t => t.type === SYNTAX_TYPE.IDENT_TOKEN)
 
 		expect(escape).toHaveLength(arrEscaped.length)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		escape.forEach((token, i) => {
 			expect(token).toMatchObject<Partial<CSSIdentifier>>({
-				type: NODE_TYPE.IDENT_TOKEN,
-				symb: NODE_SYMB.IDENT_TOKEN,
+				type: SYNTAX_TYPE.IDENT_TOKEN,
+				symb: SYNTAX_SYMB.IDENT_TOKEN,
 				flag: 0, // No parse error
 				node: arrEscaped[i],
 			})
@@ -26,13 +26,13 @@ describe('Algorithms: consume escaped <ident-token>', () => {
 		const tokens = getTokens(styles)
 
 		expect(tokens).toHaveLength(2)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const bitErr = 0 | FLAG_ANY.PARSE_ERROR
 
 		expect(tokens[0]).toMatchObject<Partial<CSSDelimiter>>({
-			type: NODE_TYPE.DELIMITER_TOKEN,
-			symb: NODE_SYMB.DELIMITER_TOKEN,
+			type: SYNTAX_TYPE.DELIMITER_TOKEN,
+			symb: SYNTAX_SYMB.DELIMITER_TOKEN,
 			flag: bitErr,
 			node: '\\',
 		})
@@ -42,19 +42,19 @@ describe('Algorithms: consume escaped <ident-token>', () => {
 		const tokens = getTokens(styles)
 
 		expect(tokens).toHaveLength(3)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const bitErr = 0 | FLAG_ANY.PARSE_ERROR
 
 		expect(tokens[0]).toMatchObject<Partial<CSSDelimiter>>({
-			type: NODE_TYPE.DELIMITER_TOKEN,
-			symb: NODE_SYMB.DELIMITER_TOKEN,
+			type: SYNTAX_TYPE.DELIMITER_TOKEN,
+			symb: SYNTAX_SYMB.DELIMITER_TOKEN,
 			flag: bitErr,
 			node: '\\',
 		})
 		expect(tokens[1]).toMatchObject<Partial<CSSWhitespace>>({
-			type: NODE_TYPE.WHITESPACE_TOKEN,
-			symb: NODE_SYMB.WHITESPACE_TOKEN,
+			type: SYNTAX_TYPE.WHITESPACE_TOKEN,
+			symb: SYNTAX_SYMB.WHITESPACE_TOKEN,
 			flag: 0, // No parse error
 			node: '\n',
 		})
@@ -64,13 +64,13 @@ describe('Algorithms: consume escaped <ident-token>', () => {
 		const tokens = getTokens(styles)
 
 		expect(tokens).toHaveLength(2)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const bitErr = 0 | FLAG_ANY.PARSE_ERROR
 
 		expect(tokens[0]).toMatchObject<Partial<CSSIdentifier>>({
-			type: NODE_TYPE.IDENT_TOKEN,
-			symb: NODE_SYMB.IDENT_TOKEN,
+			type: SYNTAX_TYPE.IDENT_TOKEN,
+			symb: SYNTAX_SYMB.IDENT_TOKEN,
 			flag: bitErr,
 			node: 'ident\\',
 		})
@@ -80,13 +80,13 @@ describe('Algorithms: consume escaped <ident-token>', () => {
 		const tokens = getTokens(styles)
 
 		expect(tokens).toHaveLength(2)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const bitErr = 0 | FLAG_ANY.PARSE_ERROR
 
 		expect(tokens[0]).toMatchObject<Partial<CSSIdentifier>>({
-			type: NODE_TYPE.IDENT_TOKEN,
-			symb: NODE_SYMB.IDENT_TOKEN,
+			type: SYNTAX_TYPE.IDENT_TOKEN,
+			symb: SYNTAX_SYMB.IDENT_TOKEN,
 			flag: bitErr,
 			node: 'ident\\',
 		})

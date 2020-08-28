@@ -1,4 +1,4 @@
-import { FLAG_NUMBER, NODE_TYPE, NODE_SYMB } from '~/constants'
+import { FLAG_NUMBER, SYNTAX_TYPE, SYNTAX_SYMB } from '~/constants'
 import { arrInt, arrDbl } from './include'
 import { getTokens } from './functions'
 import type { CSSNumber, CSSPercentage, CSSDimension } from '~/shared/types'
@@ -7,17 +7,17 @@ describe('Algorithms: Consume number', () => {
 	it('should consume Int <number-token>', () => {
 		const string = arrInt.join('\t')
 		const tokens = getTokens(string)
-		const digits = tokens.filter(t => t.type === NODE_TYPE.NUMBER_TOKEN)
+		const digits = tokens.filter(t => t.type === SYNTAX_TYPE.NUMBER_TOKEN)
 
 		expect(digits).toHaveLength(arrInt.length)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const bitInt = 0 | FLAG_NUMBER.INTEGER
 
 		digits.forEach((token, i) => {
 			expect(token).toMatchObject<Partial<CSSNumber>>({
-				type: NODE_TYPE.NUMBER_TOKEN,
-				symb: NODE_SYMB.NUMBER_TOKEN,
+				type: SYNTAX_TYPE.NUMBER_TOKEN,
+				symb: SYNTAX_SYMB.NUMBER_TOKEN,
 				node: arrInt[i],
 			})
 			expect(token.flag).toStrictEqual(bitInt)
@@ -26,17 +26,17 @@ describe('Algorithms: Consume number', () => {
 	it('should consume Int <percentage-token>', () => {
 		const string = arrInt.map(i => `${i}%`).join('\t')
 		const tokens = getTokens(string)
-		const digits = tokens.filter(t => t.type === NODE_TYPE.PERCENTAGE_TOKEN)
+		const digits = tokens.filter(t => t.type === SYNTAX_TYPE.PERCENTAGE_TOKEN)
 
 		expect(digits).toHaveLength(arrInt.length)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const bitInt = 0 | FLAG_NUMBER.INTEGER
 
 		digits.forEach((token, i) => {
 			expect(token).toMatchObject<Partial<CSSPercentage>>({
-				type: NODE_TYPE.PERCENTAGE_TOKEN,
-				symb: NODE_SYMB.PERCENTAGE_TOKEN,
+				type: SYNTAX_TYPE.PERCENTAGE_TOKEN,
+				symb: SYNTAX_SYMB.PERCENTAGE_TOKEN,
 				node: arrInt[i],
 			})
 			expect(token.flag).toStrictEqual(bitInt)
@@ -45,17 +45,17 @@ describe('Algorithms: Consume number', () => {
 	it('should consume Int <dimension-token>', () => {
 		const string = arrInt.map(i => `${i}em`).join('\t')
 		const tokens = getTokens(string)
-		const digits = tokens.filter(t => t.type === NODE_TYPE.DIMENSION_TOKEN)
+		const digits = tokens.filter(t => t.type === SYNTAX_TYPE.DIMENSION_TOKEN)
 
 		expect(digits).toHaveLength(arrInt.length)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const maskInt = 0 | FLAG_NUMBER.INTEGER
 
 		digits.forEach((token, i) => {
 			expect(token).toMatchObject<Partial<CSSDimension>>({
-				type: NODE_TYPE.DIMENSION_TOKEN,
-				symb: NODE_SYMB.DIMENSION_TOKEN,
+				type: SYNTAX_TYPE.DIMENSION_TOKEN,
+				symb: SYNTAX_SYMB.DIMENSION_TOKEN,
 				node: arrInt[i],
 			})
 			expect(token.flag).toStrictEqual(maskInt)
@@ -64,17 +64,17 @@ describe('Algorithms: Consume number', () => {
 	it('should consume Double <number-token>', () => {
 		const values = arrDbl.join('\t')
 		const tokens = getTokens(values)
-		const digits = tokens.filter(t => t.type === NODE_TYPE.NUMBER_TOKEN)
+		const digits = tokens.filter(t => t.type === SYNTAX_TYPE.NUMBER_TOKEN)
 
 		expect(digits).toHaveLength(arrDbl.length)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const bitDbl = 0 | FLAG_NUMBER.DOUBLE
 
 		digits.forEach((token, i) => {
 			expect(token).toMatchObject<Partial<CSSNumber>>({
-				type: NODE_TYPE.NUMBER_TOKEN,
-				symb: NODE_SYMB.NUMBER_TOKEN,
+				type: SYNTAX_TYPE.NUMBER_TOKEN,
+				symb: SYNTAX_SYMB.NUMBER_TOKEN,
 				node: arrDbl[i],
 			})
 			expect(token.flag).toStrictEqual(bitDbl)
@@ -83,17 +83,17 @@ describe('Algorithms: Consume number', () => {
 	it('should consume Double <percentage-token>', () => {
 		const values = arrDbl.map(i => `${i}%`).join('\t')
 		const tokens = getTokens(values)
-		const digits = tokens.filter(t => t.type === NODE_TYPE.PERCENTAGE_TOKEN)
+		const digits = tokens.filter(t => t.type === SYNTAX_TYPE.PERCENTAGE_TOKEN)
 
 		expect(digits).toHaveLength(arrDbl.length)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const maskDbl = 0 | FLAG_NUMBER.DOUBLE
 
 		digits.forEach((token, i) => {
 			expect(token).toMatchObject<Partial<CSSPercentage>>({
-				type: NODE_TYPE.PERCENTAGE_TOKEN,
-				symb: NODE_SYMB.PERCENTAGE_TOKEN,
+				type: SYNTAX_TYPE.PERCENTAGE_TOKEN,
+				symb: SYNTAX_SYMB.PERCENTAGE_TOKEN,
 				node: arrDbl[i],
 			})
 			expect(token.flag).toStrictEqual(maskDbl)
@@ -102,17 +102,17 @@ describe('Algorithms: Consume number', () => {
 	it('should consume Double <dimension-token>', () => {
 		const values = arrDbl.map(i => `${i}em`).join('\t')
 		const tokens = getTokens(values)
-		const digits = tokens.filter(t => t.type === NODE_TYPE.DIMENSION_TOKEN)
+		const digits = tokens.filter(t => t.type === SYNTAX_TYPE.DIMENSION_TOKEN)
 
 		expect(digits).toHaveLength(arrDbl.length)
-		expect(tokens[tokens.length - 1].type).toStrictEqual(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toStrictEqual(SYNTAX_TYPE.END_OF_FILE)
 
 		const maskDbl = 0 | FLAG_NUMBER.DOUBLE
 
 		digits.forEach((token, i) => {
 			expect(token).toMatchObject<Partial<CSSDimension>>({
-				type: NODE_TYPE.DIMENSION_TOKEN,
-				symb: NODE_SYMB.DIMENSION_TOKEN,
+				type: SYNTAX_TYPE.DIMENSION_TOKEN,
+				symb: SYNTAX_SYMB.DIMENSION_TOKEN,
 				node: arrDbl[i],
 			})
 			expect(token.flag).toStrictEqual(maskDbl)
