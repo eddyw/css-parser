@@ -1,4 +1,4 @@
-import { TOKEN, NODE_SYMB } from '~/constants'
+import { TOKEN, SYNTAX_SYMB } from '~/constants'
 import type { TokenizerContext } from './types'
 
 export function createContext(css: string): TokenizerContext {
@@ -9,7 +9,7 @@ export function createContext(css: string): TokenizerContext {
 		codeAt1: TOKEN.EOF,
 		codeAt2: TOKEN.EOF,
 		codeAt3: TOKEN.EOF,
-		type: NODE_SYMB.END_OF_FILE,
+		type: SYNTAX_SYMB.END_OF_FILE,
 		open: 0,
 		shut: 0,
 		lead: 0,

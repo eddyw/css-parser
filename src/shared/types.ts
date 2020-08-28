@@ -1,4 +1,4 @@
-import type { NODE_SYMB, NODE_TYPE } from '~/constants'
+import type { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
 
 /**
  * Tokenizer context
@@ -17,7 +17,7 @@ export interface TokenizerContext {
 	codeAt1: number
 	codeAt2: number
 	codeAt3: number
-	type: NODE_SYMB
+	type: SYNTAX_SYMB
 	open: number
 	shut: number
 	lead: number
@@ -52,51 +52,51 @@ export interface CSSAtomPosition {
  */
 
 export interface CSSEndOfFile {
-	type: NODE_TYPE.END_OF_FILE
-	symb: NODE_SYMB.END_OF_FILE
+	type: SYNTAX_TYPE.END_OF_FILE
+	symb: SYNTAX_SYMB.END_OF_FILE
 	flag: number
 	node: string
 	spot: CSSAtomPosition
 }
 export interface CSSAtKeyword {
-	type: NODE_TYPE.AT_KEYWORD_TOKEN
-	symb: NODE_SYMB.AT_KEYWORD_TOKEN
+	type: SYNTAX_TYPE.AT_KEYWORD_TOKEN
+	symb: SYNTAX_SYMB.AT_KEYWORD_TOKEN
 	flag: number
 	node: string
 	open: '@'
 	spot: CSSAtomPosition
 }
 export interface CSSCDC {
-	type: NODE_TYPE.CDC_TOKEN
-	symb: NODE_SYMB.CDC_TOKEN
+	type: SYNTAX_TYPE.CDC_TOKEN
+	symb: SYNTAX_SYMB.CDC_TOKEN
 	flag: number
 	node: '-->'
 	spot: CSSAtomPosition
 }
 export interface CSSCDO {
-	type: NODE_TYPE.CDO_TOKEN
-	symb: NODE_SYMB.CDO_TOKEN
+	type: SYNTAX_TYPE.CDO_TOKEN
+	symb: SYNTAX_SYMB.CDO_TOKEN
 	flag: number
 	node: '<!--'
 	spot: CSSAtomPosition
 }
 export interface CSSColon {
-	type: NODE_TYPE.COLON_TOKEN
-	symb: NODE_SYMB.COLON_TOKEN
+	type: SYNTAX_TYPE.COLON_TOKEN
+	symb: SYNTAX_SYMB.COLON_TOKEN
 	flag: number
 	node: ':'
 	spot: CSSAtomPosition
 }
 export interface CSSComma {
-	type: NODE_TYPE.COMMA_TOKEN
-	symb: NODE_SYMB.COMMA_TOKEN
+	type: SYNTAX_TYPE.COMMA_TOKEN
+	symb: SYNTAX_SYMB.COMMA_TOKEN
 	flag: number
 	node: ','
 	spot: CSSAtomPosition
 }
 export interface CSSComment {
-	type: NODE_TYPE.COMMENT_TOKEN
-	symb: NODE_SYMB.COMMENT_TOKEN
+	type: SYNTAX_TYPE.COMMENT_TOKEN
+	symb: SYNTAX_SYMB.COMMENT_TOKEN
 	flag: number
 	node: string
 	open: '/*'
@@ -104,111 +104,111 @@ export interface CSSComment {
 	spot: CSSAtomPosition
 }
 export interface CSSDelimiter {
-	type: NODE_TYPE.DELIMITER_TOKEN
-	symb: NODE_SYMB.DELIMITER_TOKEN
+	type: SYNTAX_TYPE.DELIMITER_TOKEN
+	symb: SYNTAX_SYMB.DELIMITER_TOKEN
 	flag: number
 	node: string
 	code: number
 	spot: CSSAtomPosition
 }
 export interface CSSDimension {
-	type: NODE_TYPE.DIMENSION_TOKEN
-	symb: NODE_SYMB.DIMENSION_TOKEN
+	type: SYNTAX_TYPE.DIMENSION_TOKEN
+	symb: SYNTAX_SYMB.DIMENSION_TOKEN
 	flag: number
 	node: string
 	unit: string
 	spot: CSSAtomPosition
 }
 export interface CSSFunctionToken {
-	type: NODE_TYPE.FUNCTION_TOKEN
-	symb: NODE_SYMB.FUNCTION_TOKEN
+	type: SYNTAX_TYPE.FUNCTION_TOKEN
+	symb: SYNTAX_SYMB.FUNCTION_TOKEN
 	flag: number
 	node: string
 	shut: '('
 	spot: CSSAtomPosition
 }
 export interface CSSHash {
-	type: NODE_TYPE.HASH_TOKEN
-	symb: NODE_SYMB.HASH_TOKEN
+	type: SYNTAX_TYPE.HASH_TOKEN
+	symb: SYNTAX_SYMB.HASH_TOKEN
 	flag: number
 	node: string
 	open: '#'
 	spot: CSSAtomPosition
 }
 export interface CSSIdentifier {
-	type: NODE_TYPE.IDENT_TOKEN
-	symb: NODE_SYMB.IDENT_TOKEN
+	type: SYNTAX_TYPE.IDENT_TOKEN
+	symb: SYNTAX_SYMB.IDENT_TOKEN
 	flag: number
 	node: string
 	spot: CSSAtomPosition
 }
 export interface CSSNumber {
-	type: NODE_TYPE.NUMBER_TOKEN
-	symb: NODE_SYMB.NUMBER_TOKEN
+	type: SYNTAX_TYPE.NUMBER_TOKEN
+	symb: SYNTAX_SYMB.NUMBER_TOKEN
 	flag: number
 	node: string /** @todo - store node as numeric value (parseFloat?) */
 	spot: CSSAtomPosition
 }
 export interface CSSOpenCurlyBrace {
-	type: NODE_TYPE.OPEN_CURLY_BRACE_TOKEN
-	symb: NODE_SYMB.OPEN_CURLY_BRACE_TOKEN
+	type: SYNTAX_TYPE.OPEN_CURLY_BRACE_TOKEN
+	symb: SYNTAX_SYMB.OPEN_CURLY_BRACE_TOKEN
 	flag: number
 	node: '{'
 	spot: CSSAtomPosition
 }
 export interface CSSOpenParenthesis {
-	type: NODE_TYPE.OPEN_PARENTHESIS_TOKEN
-	symb: NODE_SYMB.OPEN_PARENTHESIS_TOKEN
+	type: SYNTAX_TYPE.OPEN_PARENTHESIS_TOKEN
+	symb: SYNTAX_SYMB.OPEN_PARENTHESIS_TOKEN
 	flag: number
 	node: '('
 	spot: CSSAtomPosition
 }
 export interface CSSOpenSquareBracket {
-	type: NODE_TYPE.OPEN_SQUARE_BRACKET_TOKEN
-	symb: NODE_SYMB.OPEN_SQUARE_BRACKET_TOKEN
+	type: SYNTAX_TYPE.OPEN_SQUARE_BRACKET_TOKEN
+	symb: SYNTAX_SYMB.OPEN_SQUARE_BRACKET_TOKEN
 	flag: number
 	node: '['
 	spot: CSSAtomPosition
 }
 export interface CSSPercentage {
-	type: NODE_TYPE.PERCENTAGE_TOKEN
-	symb: NODE_SYMB.PERCENTAGE_TOKEN
+	type: SYNTAX_TYPE.PERCENTAGE_TOKEN
+	symb: SYNTAX_SYMB.PERCENTAGE_TOKEN
 	flag: number
 	node: string
 	unit: '%'
 	spot: CSSAtomPosition
 }
 export interface CSSSemicolon {
-	type: NODE_TYPE.SEMICOLON_TOKEN
-	symb: NODE_SYMB.SEMICOLON_TOKEN
+	type: SYNTAX_TYPE.SEMICOLON_TOKEN
+	symb: SYNTAX_SYMB.SEMICOLON_TOKEN
 	flag: number
 	node: ';'
 	spot: CSSAtomPosition
 }
 export interface CSSShutCurlyBrace {
-	type: NODE_TYPE.SHUT_CURLY_BRACE_TOKEN
-	symb: NODE_SYMB.SHUT_CURLY_BRACE_TOKEN
+	type: SYNTAX_TYPE.SHUT_CURLY_BRACE_TOKEN
+	symb: SYNTAX_SYMB.SHUT_CURLY_BRACE_TOKEN
 	flag: number
 	node: '}'
 	spot: CSSAtomPosition
 }
 export interface CSSShutParenthesis {
-	type: NODE_TYPE.SHUT_PARENTHESIS_TOKEN
-	symb: NODE_SYMB.SHUT_PARENTHESIS_TOKEN
+	type: SYNTAX_TYPE.SHUT_PARENTHESIS_TOKEN
+	symb: SYNTAX_SYMB.SHUT_PARENTHESIS_TOKEN
 	flag: number
 	node: ')'
 	spot: CSSAtomPosition
 }
 export interface CSSShutSquareBracket {
-	type: NODE_TYPE.SHUT_SQUARE_BRACKET_TOKEN
-	symb: NODE_SYMB.SHUT_SQUARE_BRACKET_TOKEN
+	type: SYNTAX_TYPE.SHUT_SQUARE_BRACKET_TOKEN
+	symb: SYNTAX_SYMB.SHUT_SQUARE_BRACKET_TOKEN
 	flag: number
 	node: ']'
 	spot: CSSAtomPosition
 }
 export interface CSSString {
-	type: NODE_TYPE.STRING_TOKEN
-	symb: NODE_SYMB.STRING_TOKEN
+	type: SYNTAX_TYPE.STRING_TOKEN
+	symb: SYNTAX_SYMB.STRING_TOKEN
 	flag: number
 	node: string
 	open: `"` | `'`
@@ -216,8 +216,8 @@ export interface CSSString {
 	spot: CSSAtomPosition
 }
 export interface CSSUrl {
-	type: NODE_TYPE.URL_TOKEN
-	symb: NODE_SYMB.URL_TOKEN
+	type: SYNTAX_TYPE.URL_TOKEN
+	symb: SYNTAX_SYMB.URL_TOKEN
 	flag: number
 	node: string
 	open: string
@@ -225,8 +225,8 @@ export interface CSSUrl {
 	spot: CSSAtomPosition
 }
 export interface CSSWhitespace {
-	type: NODE_TYPE.WHITESPACE_TOKEN
-	symb: NODE_SYMB.WHITESPACE_TOKEN
+	type: SYNTAX_TYPE.WHITESPACE_TOKEN
+	symb: SYNTAX_SYMB.WHITESPACE_TOKEN
 	flag: number
 	node: string
 	spot: CSSAtomPosition
