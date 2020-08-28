@@ -7,11 +7,11 @@ const onwarn = (warning, rollupWarn) => {
 	const ignoredWarnings = [
 		{
 			ignoredCode: 'CIRCULAR_DEPENDENCY',
-			ignoredPath: 'src/tokenizer/algorithms/index.ts',
+			ignoredPath: 'src/syntax/algorithms/index.ts',
 		},
 		{
 			ignoredCode: 'CIRCULAR_DEPENDENCY',
-			ignoredPath: 'src/tokenizer/definitions/index.ts',
+			ignoredPath: 'src/syntax/definitions/index.ts',
 		},
 	]
 	if (
@@ -41,5 +41,5 @@ export default {
 			sourcemap: true,
 		},
 	],
-	plugins: [typescript(), filesize({ showBrotliSize: true, theme: 'light' })],
+	plugins: [typescript(), filesize({ theme: 'light' })],
 }
