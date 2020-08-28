@@ -1,5 +1,5 @@
 import { TOKEN, FLAG_IDENTIFIER } from '~/constants'
-import { isHexDigit, isWhitespace } from '~/tokenizer/definitions'
+import { isHexDigit, isWhitespace } from '~/syntax/definitions'
 import type { TokenizerContext } from '~/shared/types'
 
 /**

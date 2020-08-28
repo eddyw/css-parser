@@ -1,5 +1,5 @@
 import { TOKEN } from '~/constants'
-import { areValidEscape } from '~/tokenizer/definitions'
+import { areValidEscape } from '~/syntax/definitions'
 import { consumeEscapedCodePoint } from '.'
 import type { TokenizerContext } from '~/shared/types'
 

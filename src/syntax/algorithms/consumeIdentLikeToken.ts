@@ -1,6 +1,6 @@
 import { TOKEN, NODE_SYMB, NODE_TYPE, LOWERCASE, UPPERCASE } from '~/constants'
 import { consumeIdentifier, consumeUrlToken } from '.'
-import { isWhitespace } from '~/tokenizer/definitions'
+import { isWhitespace } from '~/syntax/definitions'
 import type { TokenizerContext, CSSIdentifier, CSSFunctionToken, CSSUrl } from '~/shared/types'
 
 /**

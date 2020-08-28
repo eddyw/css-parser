@@ -1,5 +1,5 @@
 import { NODE_SYMB, NODE_TYPE } from '~/constants'
-import { isWhitespace } from '~/tokenizer/definitions'
+import { isWhitespace } from '~/syntax/definitions'
 import type { TokenizerContext, CSSWhitespace } from '~/shared/types'
 
 /**

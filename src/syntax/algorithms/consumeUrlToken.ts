@@ -1,5 +1,5 @@
 import { TOKEN, NODE_SYMB, FLAG_URL } from '~/constants'
-import { areValidEscape, isNonPrintable, isWhitespace } from '~/tokenizer/definitions'
+import { areValidEscape, isNonPrintable, isWhitespace } from '~/syntax/definitions'
 import { consumeBadUrlRemnants, consumeEscapedCodePoint } from '.'
 import type { TokenizerContext } from '~/shared/types'
 

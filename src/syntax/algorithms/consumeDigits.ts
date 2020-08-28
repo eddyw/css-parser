@@ -1,4 +1,4 @@
-import { isDigit } from '~/tokenizer/definitions'
+import { isDigit } from '~/syntax/definitions'
 import type { TokenizerContext } from '~/shared/types'
 
 /**
