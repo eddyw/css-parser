@@ -1,11 +1,11 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
 import { isWhitespace } from '~/syntax/definitions'
-import type { TokenizerContext, CSSWhitespace } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSWhitespace } from '~/shared/types'
 
 /**
  * Consume as much whitespace as possible
  */
-export function consumeWhitespace(x: TokenizerContext): Readonly<CSSWhitespace> {
+export function consumeWhitespace(x: SyntaxTokenizerContext): Readonly<CSSWhitespace> {
 	do {
 		x.shut += 1
 		x.setCodeAtCurrent()

@@ -1,7 +1,7 @@
 import { TOKEN, LOWERCASE, FLAG_NUMBER, UPPERCASE } from '~/constants'
 import { isDigit } from '~/syntax/definitions'
 import { consumeDigits } from '.'
-import type { TokenizerContext } from '~/shared/types'
+import type { SyntaxTokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-number
@@ -25,7 +25,7 @@ import type { TokenizerContext } from '~/shared/types'
  * 6. Convert repr to a number, and set the value to the returned value.
  * 7. Return value and type.
  */
-export function consumeNumber(x: TokenizerContext): void {
+export function consumeNumber(x: SyntaxTokenizerContext): void {
 	x.flag |= FLAG_NUMBER.INTEGER
 
 	if (x.codeAt0 === TOKEN.PLUS || x.codeAt0 === TOKEN.MINUS) {

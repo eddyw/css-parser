@@ -1,7 +1,7 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
-import type { TokenizerContext, CSSCDC } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSCDC } from '~/shared/types'
 
-export function consumeCDCToken(x: TokenizerContext): Readonly<CSSCDC> {
+export function consumeCDCToken(x: SyntaxTokenizerContext): Readonly<CSSCDC> {
 	x.shut += 3 // Consume « --> »
 
 	return {

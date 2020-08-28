@@ -1,8 +1,8 @@
 import { TOKEN, SYNTAX_SYMB } from '~/constants'
-import type { TokenizerContext } from './types'
+import type { SyntaxTokenizerContext } from './types'
 
-export function createContext(css: string): TokenizerContext {
-	const context: TokenizerContext = {
+export function createContext(css: string): SyntaxTokenizerContext {
+	const context: SyntaxTokenizerContext = {
 		code: css,
 		size: css.length,
 		codeAt0: TOKEN.EOF,

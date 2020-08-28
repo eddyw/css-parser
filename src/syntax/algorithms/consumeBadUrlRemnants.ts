@@ -1,7 +1,7 @@
 import { TOKEN } from '~/constants'
 import { areValidEscape } from '~/syntax/definitions'
 import { consumeEscapedCodePoint } from '.'
-import type { TokenizerContext } from '~/shared/types'
+import type { SyntaxTokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-remnants-of-bad-url
@@ -22,7 +22,7 @@ import type { TokenizerContext } from '~/shared/types'
  * 	anything else
  * 		Do nothing.
  */
-export function consumeBadUrlRemnants(x: TokenizerContext): void {
+export function consumeBadUrlRemnants(x: SyntaxTokenizerContext): void {
 	for (; x.shut < x.size; x.shut++) {
 		x.setCodeAtCurrent()
 		if (x.codeAt0 === TOKEN.R_PARENTHESIS) {

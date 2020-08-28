@@ -1,6 +1,6 @@
 import { TOKEN, FLAG_IDENTIFIER } from '~/constants'
 import { isHexDigit, isWhitespace } from '~/syntax/definitions'
-import type { TokenizerContext } from '~/shared/types'
+import type { SyntaxTokenizerContext } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-escaped-code-point
@@ -26,7 +26,7 @@ import type { TokenizerContext } from '~/shared/types'
  * 	anything else
  * 		Return the current input code point.
  */
-export function consumeEscapedCodePoint(x: TokenizerContext): void {
+export function consumeEscapedCodePoint(x: SyntaxTokenizerContext): void {
 	if (isHexDigit(x.codeAt0)) {
 		for (let i = 1; i <= 5; i++) {
 			if (isHexDigit(x.codeAt1)) {

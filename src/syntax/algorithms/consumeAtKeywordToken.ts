@@ -1,8 +1,8 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
 import { consumeIdentifier } from '.'
-import type { TokenizerContext, CSSAtKeyword } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSAtKeyword } from '~/shared/types'
 
-export function consumeAtKeywordToken(x: TokenizerContext): Readonly<CSSAtKeyword> {
+export function consumeAtKeywordToken(x: SyntaxTokenizerContext): Readonly<CSSAtKeyword> {
 	x.shut += 1 // Consume « U+0040 COMMERCIAL AT (@) »
 	x.lead = 1
 	consumeIdentifier(x)

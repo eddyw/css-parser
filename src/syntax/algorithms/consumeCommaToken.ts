@@ -1,7 +1,7 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
-import type { TokenizerContext, CSSComma } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSComma } from '~/shared/types'
 
-export function consumeCommaToken(x: TokenizerContext): Readonly<CSSComma> {
+export function consumeCommaToken(x: SyntaxTokenizerContext): Readonly<CSSComma> {
 	return {
 		type: SYNTAX_TYPE.COMMA_TOKEN,
 		symb: SYNTAX_SYMB.COMMA_TOKEN,

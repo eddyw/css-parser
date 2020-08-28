@@ -1,7 +1,7 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
-import type { TokenizerContext, CSSSemicolon } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSSemicolon } from '~/shared/types'
 
-export function consumeSemiToken(x: TokenizerContext): Readonly<CSSSemicolon> {
+export function consumeSemiToken(x: SyntaxTokenizerContext): Readonly<CSSSemicolon> {
 	return {
 		type: SYNTAX_TYPE.SEMICOLON_TOKEN,
 		symb: SYNTAX_SYMB.SEMICOLON_TOKEN,

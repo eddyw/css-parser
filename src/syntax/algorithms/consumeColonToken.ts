@@ -1,7 +1,7 @@
 import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
-import type { TokenizerContext, CSSColon } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSColon } from '~/shared/types'
 
-export function consumeColonToken(x: TokenizerContext): Readonly<CSSColon> {
+export function consumeColonToken(x: SyntaxTokenizerContext): Readonly<CSSColon> {
 	return {
 		type: SYNTAX_TYPE.COLON_TOKEN,
 		symb: SYNTAX_SYMB.COLON_TOKEN,

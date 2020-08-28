@@ -1,7 +1,7 @@
 import { TOKEN, SYNTAX_SYMB, FLAG_STRING, SYNTAX_TYPE } from '~/constants'
 import { isNewline, areValidEscape } from '~/syntax/definitions'
 import { consumeEscapedCodePoint } from '.'
-import type { TokenizerContext, CSSString } from '~/shared/types'
+import type { SyntaxTokenizerContext, CSSString } from '~/shared/types'
 
 /**
  * @see https://drafts.csswg.org/css-syntax/#consume-string-token
@@ -30,7 +30,7 @@ import type { TokenizerContext, CSSString } from '~/shared/types'
  * anything else
  * 	Append the current input code point to the <string-token>’s value.
  */
-export function consumeStringToken(x: TokenizerContext, endingCodePoint: number): Readonly<CSSString> {
+export function consumeStringToken(x: SyntaxTokenizerContext, endingCodePoint: number): Readonly<CSSString> {
 	x.lead = 1 // node open « U+0022 QUOTATION MARK (") | U+0027 APOSTROPHE (') »
 
 	do {
