@@ -1,4 +1,4 @@
-import { TOKEN, NODE_SYMB, NODE_TYPE, FLAG_ANY } from '~/constants'
+import { TOKEN, SYNTAX_SYMB, SYNTAX_TYPE, FLAG_ANY } from '~/constants'
 import type { TokenizerContext, CSSComment } from '~/shared/types'
 
 /**
@@ -38,8 +38,8 @@ export function consumeComments(x: TokenizerContext): Readonly<CSSComment> {
 	}
 
 	return {
-		type: NODE_TYPE.COMMENT_TOKEN,
-		symb: NODE_SYMB.COMMENT_TOKEN,
+		type: SYNTAX_TYPE.COMMENT_TOKEN,
+		symb: SYNTAX_SYMB.COMMENT_TOKEN,
 		flag: x.flag,
 		node: x.code.slice(x.open + x.lead, x.shut - x.tail),
 		open: x.code.slice(x.open, x.open + x.lead) as '/*',

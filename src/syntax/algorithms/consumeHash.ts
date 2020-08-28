@@ -1,4 +1,4 @@
-import { TOKEN, NODE_SYMB, NODE_TYPE, FLAG_IDENTIFIER } from '~/constants'
+import { TOKEN, SYNTAX_SYMB, SYNTAX_TYPE, FLAG_IDENTIFIER } from '~/constants'
 import { areValidEscape, isIdentifierCodePoint, areIdentifierNameStart } from '~/syntax/definitions'
 import { consumeIdentifier } from '.'
 import type { TokenizerContext, CSSHash, CSSDelimiter } from '~/shared/types'
@@ -14,8 +14,8 @@ export function consumeHash(x: TokenizerContext): Readonly<CSSHash> | Readonly<C
 		consumeIdentifier(x)
 
 		return {
-			type: NODE_TYPE.HASH_TOKEN,
-			symb: NODE_SYMB.HASH_TOKEN,
+			type: SYNTAX_TYPE.HASH_TOKEN,
+			symb: SYNTAX_SYMB.HASH_TOKEN,
 			flag: x.flag,
 			node: x.code.slice(x.open + x.lead, x.shut),
 			open: '#',
@@ -27,8 +27,8 @@ export function consumeHash(x: TokenizerContext): Readonly<CSSHash> | Readonly<C
 	}
 
 	return {
-		type: NODE_TYPE.DELIMITER_TOKEN,
-		symb: NODE_SYMB.DELIMITER_TOKEN,
+		type: SYNTAX_TYPE.DELIMITER_TOKEN,
+		symb: SYNTAX_SYMB.DELIMITER_TOKEN,
 		flag: x.flag,
 		code: TOKEN.HASH,
 		node: '#',

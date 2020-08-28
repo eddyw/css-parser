@@ -1,4 +1,4 @@
-import { NODE_TYPE } from '~/constants'
+import { SYNTAX_TYPE } from '~/constants'
 import { getTokens } from './functions'
 
 describe('Tokenize Algorithm - EOF', () => {
@@ -7,13 +7,13 @@ describe('Tokenize Algorithm - EOF', () => {
 		const tokens = getTokens(inputs)
 
 		expect(tokens.length).toBe(1)
-		expect(tokens[0].type).toBe(NODE_TYPE.END_OF_FILE)
+		expect(tokens[0].type).toBe(SYNTAX_TYPE.END_OF_FILE)
 	})
 	it('should return EOF as last token when not-empty content', () => {
 		const inputs = 'ident'
 		const tokens = getTokens(inputs)
 
 		expect(tokens.length).toBe(2)
-		expect(tokens[tokens.length - 1].type).toBe(NODE_TYPE.END_OF_FILE)
+		expect(tokens[tokens.length - 1].type).toBe(SYNTAX_TYPE.END_OF_FILE)
 	})
 })

@@ -1,4 +1,4 @@
-import { TOKEN, NODE_SYMB, NODE_TYPE } from '~/constants'
+import { TOKEN, SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
 import { areIdentifierNameStart } from '~/syntax/definitions'
 import { consumeNumber, consumeIdentifier } from '.'
 import type { TokenizerContext, CSSNumber, CSSDimension, CSSPercentage } from '~/shared/types'
@@ -32,8 +32,8 @@ export function consumeNumericToken(
 		x.tail = x.shut - identStart
 
 		return {
-			type: NODE_TYPE.DIMENSION_TOKEN,
-			symb: NODE_SYMB.DIMENSION_TOKEN,
+			type: SYNTAX_TYPE.DIMENSION_TOKEN,
+			symb: SYNTAX_SYMB.DIMENSION_TOKEN,
 			flag: x.flag,
 			node: x.code.slice(x.open, x.shut - x.tail),
 			unit: x.code.slice(x.shut - x.tail, x.shut),
@@ -47,8 +47,8 @@ export function consumeNumericToken(
 		x.tail = 1
 
 		return {
-			type: NODE_TYPE.PERCENTAGE_TOKEN,
-			symb: NODE_SYMB.PERCENTAGE_TOKEN,
+			type: SYNTAX_TYPE.PERCENTAGE_TOKEN,
+			symb: SYNTAX_SYMB.PERCENTAGE_TOKEN,
 			flag: x.flag,
 			node: x.code.slice(x.open, x.shut - x.tail),
 			unit: '%',
@@ -60,8 +60,8 @@ export function consumeNumericToken(
 	}
 
 	return {
-		type: NODE_TYPE.NUMBER_TOKEN,
-		symb: NODE_SYMB.NUMBER_TOKEN,
+		type: SYNTAX_TYPE.NUMBER_TOKEN,
+		symb: SYNTAX_SYMB.NUMBER_TOKEN,
 		flag: x.flag,
 		node: x.code.slice(x.open, x.shut - x.tail),
 		unit: '',

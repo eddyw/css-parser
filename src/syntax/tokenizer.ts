@@ -1,4 +1,4 @@
-import { TOKEN, NODE_SYMB, FLAG_ANY } from '~/constants'
+import { TOKEN, SYNTAX_SYMB, FLAG_ANY } from '~/constants'
 import {
 	areIdentifierNameStart,
 	areNumberStart,
@@ -42,7 +42,7 @@ export function tokenizer(x: TokenizerContext): Tokenizer {
 		if (x.shut > x.size) throw up
 
 		x.setCodeAtCurrent()
-		x.type = NODE_SYMB.END_OF_FILE as NODE_SYMB
+		x.type = SYNTAX_SYMB.END_OF_FILE as SYNTAX_SYMB
 		x.open = x.shut
 		x.lead = 0
 		x.tail = 0

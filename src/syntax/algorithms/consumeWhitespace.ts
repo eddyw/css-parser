@@ -1,4 +1,4 @@
-import { NODE_SYMB, NODE_TYPE } from '~/constants'
+import { SYNTAX_SYMB, SYNTAX_TYPE } from '~/constants'
 import { isWhitespace } from '~/syntax/definitions'
 import type { TokenizerContext, CSSWhitespace } from '~/shared/types'
 
@@ -12,8 +12,8 @@ export function consumeWhitespace(x: TokenizerContext): Readonly<CSSWhitespace> 
 	} while (isWhitespace(x.codeAt0))
 
 	return {
-		type: NODE_TYPE.WHITESPACE_TOKEN,
-		symb: NODE_SYMB.WHITESPACE_TOKEN,
+		type: SYNTAX_TYPE.WHITESPACE_TOKEN,
+		symb: SYNTAX_SYMB.WHITESPACE_TOKEN,
 		flag: 0,
 		node: x.code.slice(x.open, x.shut),
 		spot: {

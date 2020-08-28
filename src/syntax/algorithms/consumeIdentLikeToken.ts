@@ -1,4 +1,4 @@
-import { TOKEN, NODE_SYMB, NODE_TYPE, LOWERCASE, UPPERCASE } from '~/constants'
+import { TOKEN, SYNTAX_SYMB, SYNTAX_TYPE, LOWERCASE, UPPERCASE } from '~/constants'
 import { consumeIdentifier, consumeUrlToken } from '.'
 import { isWhitespace } from '~/syntax/definitions'
 import type { TokenizerContext, CSSIdentifier, CSSFunctionToken, CSSUrl } from '~/shared/types'
@@ -57,8 +57,8 @@ export function consumeIdentLikeToken(
 			x.setCodeAtCurrent()
 
 			return {
-				type: NODE_TYPE.FUNCTION_TOKEN,
-				symb: NODE_SYMB.FUNCTION_TOKEN,
+				type: SYNTAX_TYPE.FUNCTION_TOKEN,
+				symb: SYNTAX_SYMB.FUNCTION_TOKEN,
 				flag: x.flag,
 				node: x.code.slice(x.open, x.shut - x.tail),
 				shut: '(',
@@ -75,7 +75,7 @@ export function consumeIdentLikeToken(
 		consumeUrlToken(x)
 
 		return {
-			type: NODE_TYPE.URL_TOKEN,
+			type: SYNTAX_TYPE.URL_TOKEN,
 			symb: x.type as any,
 			flag: x.flag,
 			node: x.code.slice(x.open + x.lead, x.shut - x.tail),
@@ -91,12 +91,12 @@ export function consumeIdentLikeToken(
 	consumeIdentifier(x)
 
 	if (x.codeAt0 === TOKEN.L_PARENTHESIS) {
-		x.type = NODE_SYMB.FUNCTION_TOKEN
+		x.type = SYNTAX_SYMB.FUNCTION_TOKEN
 		x.tail = 1
 		x.shut += 1
 		return {
-			type: NODE_TYPE.FUNCTION_TOKEN,
-			symb: NODE_SYMB.FUNCTION_TOKEN,
+			type: SYNTAX_TYPE.FUNCTION_TOKEN,
+			symb: SYNTAX_SYMB.FUNCTION_TOKEN,
 			flag: x.flag,
 			node: x.code.slice(x.open, x.shut - x.tail),
 			shut: '(',
@@ -108,8 +108,8 @@ export function consumeIdentLikeToken(
 	}
 
 	return {
-		type: NODE_TYPE.IDENT_TOKEN,
-		symb: NODE_SYMB.IDENT_TOKEN,
+		type: SYNTAX_TYPE.IDENT_TOKEN,
+		symb: SYNTAX_SYMB.IDENT_TOKEN,
 		flag: x.flag,
 		node: x.code.slice(x.open, x.shut - x.tail),
 		spot: {

@@ -1,4 +1,4 @@
-import { TOKEN, NODE_SYMB, FLAG_STRING, NODE_TYPE } from '~/constants'
+import { TOKEN, SYNTAX_SYMB, FLAG_STRING, SYNTAX_TYPE } from '~/constants'
 import { isNewline, areValidEscape } from '~/syntax/definitions'
 import { consumeEscapedCodePoint } from '.'
 import type { TokenizerContext, CSSString } from '~/shared/types'
@@ -68,8 +68,8 @@ export function consumeStringToken(x: TokenizerContext, endingCodePoint: number)
 	} while (true)
 
 	return {
-		type: NODE_TYPE.STRING_TOKEN,
-		symb: NODE_SYMB.STRING_TOKEN,
+		type: SYNTAX_TYPE.STRING_TOKEN,
+		symb: SYNTAX_SYMB.STRING_TOKEN,
 		flag: x.flag,
 		node: x.code.slice(x.open + x.lead, x.shut - x.tail),
 		open: x.code.slice(x.open, x.open + x.lead) as '"',

@@ -1,4 +1,4 @@
-import { TOKEN, NODE_SYMB, FLAG_URL } from '~/constants'
+import { TOKEN, SYNTAX_SYMB, FLAG_URL } from '~/constants'
 import { areValidEscape, isNonPrintable, isWhitespace } from '~/syntax/definitions'
 import { consumeBadUrlRemnants, consumeEscapedCodePoint } from '.'
 import type { TokenizerContext } from '~/shared/types'
@@ -40,7 +40,7 @@ import type { TokenizerContext } from '~/shared/types'
  * 			Append the current input code point to the <url-token>’s value.
  */
 export function consumeUrlToken(x: TokenizerContext): void {
-	x.type = NODE_SYMB.URL_TOKEN
+	x.type = SYNTAX_SYMB.URL_TOKEN
 
 	while (isWhitespace(x.codeAt0)) {
 		x.shut += 1
@@ -54,7 +54,7 @@ export function consumeUrlToken(x: TokenizerContext): void {
 			x.tail = 1
 			break
 		} else if (x.codeAt0 === TOKEN.EOF) {
-			x.type = NODE_SYMB.URL_TOKEN
+			x.type = SYNTAX_SYMB.URL_TOKEN
 			x.flag |= FLAG_URL.PARSE_ERROR | FLAG_URL.END_IS_EOF
 			break
 		} else if (isWhitespace(x.codeAt0)) {
@@ -73,7 +73,7 @@ export function consumeUrlToken(x: TokenizerContext): void {
 			}
 
 			consumeBadUrlRemnants(x)
-			x.type = NODE_SYMB.URL_TOKEN
+			x.type = SYNTAX_SYMB.URL_TOKEN
 			x.flag |= FLAG_URL.BAD_URL
 			break
 		} else if (
@@ -83,7 +83,7 @@ export function consumeUrlToken(x: TokenizerContext): void {
 			isNonPrintable(x.codeAt0)
 		) {
 			consumeBadUrlRemnants(x)
-			x.type = NODE_SYMB.URL_TOKEN
+			x.type = SYNTAX_SYMB.URL_TOKEN
 			x.flag |= FLAG_URL.PARSE_ERROR | FLAG_URL.BAD_URL | FLAG_URL.NON_PRINTABLE
 			break
 		} else if (x.codeAt0 === TOKEN.REVERSE_SOLIDUS) {
@@ -93,7 +93,7 @@ export function consumeUrlToken(x: TokenizerContext): void {
 				consumeEscapedCodePoint(x)
 			} else {
 				consumeBadUrlRemnants(x)
-				x.type = NODE_SYMB.URL_TOKEN
+				x.type = SYNTAX_SYMB.URL_TOKEN
 				x.flag |= FLAG_URL.PARSE_ERROR | FLAG_URL.BAD_URL | FLAG_URL.BAD_ESCAPE
 				break
 			}
