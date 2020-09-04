@@ -1,7 +1,7 @@
-import { tokenizer, createContext } from '~'
+import { tokenizer, createSyntaxContext } from '~'
 
 export function getTokens(css: string) {
-	const stream = tokenizer(createContext(css))
+	const stream = tokenizer(createSyntaxContext(css))
 	const tokens = []
 
 	let i = 0
