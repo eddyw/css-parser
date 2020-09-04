@@ -12,67 +12,62 @@ import {
 	getCombinatorAmpersand,
 	getComma,
 	getGroup,
+	getAtIdentifierOrToken,
 } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
 
 const up = Error('Out of bounds')
 
-export function getNode(x: GrammarTokenizerContext) {
+export function getNode(x: GrammarTokenizerContext, skipGroupShut: boolean) {
 	if (x.shut > x.size) throw up
-
 	if (x.codeAt0 === -1) return null
 
-	if (
-		x.codeAt0 === TOKEN.R_SQUARE_BRACKET ||
-		x.codeAt0 === TOKEN.ASTERISK ||
-		x.codeAt0 === TOKEN.PLUS ||
-		x.codeAt0 === TOKEN.QUESTION ||
-		x.codeAt0 === TOKEN.HASH ||
-		x.codeAt0 === TOKEN.EXCLAMATION ||
-		x.codeAt0 === TOKEN.L_CURLY_BRACKET
-	) {
+	const codeAt0 = x.codeAt0
+
+	if (skipGroupShut && codeAt0 === TOKEN.R_SQUARE_BRACKET) {
 		return null
 	}
 
-	if (areIdentifierNameStart(x.codeAt0, x.codeAt1, x.codeAt2)) {
+	if (areIdentifierNameStart(codeAt0, x.codeAt1, x.codeAt2)) {
 		return getIdentifierOrFunction(x)
 	}
 
-	if (x.codeAt0 === TOKEN.L_SQUARE_BRACKET) {
+	if (codeAt0 === TOKEN.L_SQUARE_BRACKET) {
 		return getMultiplierOrToken(x, getGroup(x, true))
 	}
 
-	if (x.codeAt0 === TOKEN.LESS_THAN) {
+	if (codeAt0 === TOKEN.LESS_THAN) {
 		if (x.codeAt1 === TOKEN.SINGLE_QUOTE) return getTypeReference(x)
 		return getType(x)
 	}
 
-	if (x.codeAt0 === TOKEN.VERTICAL_LINE) {
+	if (codeAt0 === TOKEN.VERTICAL_LINE) {
 		return getCombinatorVertical(x)
 	}
 
-	if (x.codeAt0 === TOKEN.AMPERSAND) {
+	if (codeAt0 === TOKEN.AMPERSAND) {
 		return getCombinatorAmpersand(x)
 	}
 
-	if (x.codeAt0 === TOKEN.COMMA) {
+	if (codeAt0 === TOKEN.COMMA) {
 		return getComma(x)
 	}
 
-	if (x.codeAt0 === TOKEN.SINGLE_QUOTE) {
+	if (codeAt0 === TOKEN.SINGLE_QUOTE) {
 		return getString(x)
 	}
 
-	if (isWhitespace(x.codeAt0)) {
+	if (isWhitespace(codeAt0)) {
 		return getSpaces(x)
 	}
 
-	if (x.codeAt0 === TOKEN.AT) {
-		// return getAtIdentifierOrToken(x)
+	if (codeAt0 === TOKEN.FORWARD_SOLIDUS || codeAt0 === TOKEN.L_PARENTHESIS || codeAt0 === TOKEN.R_PARENTHESIS) {
 		return getToken(x)
-  }
+	}
 
-  return getToken(x)
+	if (codeAt0 === TOKEN.AT) {
+		return getAtIdentifierOrToken(x)
+	}
 
-	// throw Error(`getNode: Unexpected token "${String.fromCharCode(x.codeAt0)}" (${x.codeAt0}):${(x.open, x.shut)}`)
+	throw Error(`getNode: Unexpected token "${String.fromCharCode(x.codeAt0)}" (${x.codeAt0}):${(x.open, x.shut)}`)
 }
