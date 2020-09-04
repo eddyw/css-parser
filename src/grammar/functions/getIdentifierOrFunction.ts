@@ -1,5 +1,5 @@
 import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
-import { getIdentifier, getMultiplierOrToken } from '.'
+import { getIdentifier, getMultiplierOrToken, getGroupFunction } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
 
 export function getIdentifierOrFunction(x: GrammarTokenizerContext) {
@@ -7,16 +7,7 @@ export function getIdentifierOrFunction(x: GrammarTokenizerContext) {
 	const name = getIdentifier(x).node
 
 	if (x.codeAt0 === TOKEN.L_PARENTHESIS) {
-		x.consume(1)
-		return {
-			type: GRAMMAR_TYPE.FUNCTION,
-			symb: GRAMMAR_SYMB.FUNCTION,
-			node: name,
-			spot: {
-				offsetIni: open,
-				offsetEnd: x.shut,
-			},
-		}
+		return getGroupFunction(x, name, open)
 	}
 
 	return getMultiplierOrToken(x, {
