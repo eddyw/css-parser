@@ -29,21 +29,22 @@
 	"dependencies": {},
 	"devDependencies": {
 		"@types/benchmark": "1.0.33",
-		"@types/jest": "26.0.8",
-		"@wessberg/rollup-plugin-ts": "1.2.34",
+		"@types/jest": "26.0.13",
+		"@wessberg/rollup-plugin-ts": "1.3.4",
 		"benchmark": "2.1.4",
-		"bootstrap": "4.5.0",
+		"bootstrap": "4.5.2",
 		"deoptigate": "0.5.0",
-		"jest": "26.2.1",
+		"jest": "26.4.2",
 		"mdn-data": "2.0.11",
 		"postcss": "7.0.32",
-		"prettier": "2.0.5",
-		"rollup": "2.23.0",
+		"prettier": "2.1.1",
+		"rollup": "2.26.10",
 		"rollup-plugin-filesize": "9.0.2",
 		"source-map": "0.7.3",
-		"tailwindcss": "1.6.2",
-		"ts-jest": "26.1.4",
-		"tslib": "2.0.0",
-		"typescript": "3.9.7"
+		"tailwindcss": "1.7.6",
+		"ts-jest": "26.3.0",
+		"ts-node": "9.0.0",
+		"tslib": "2.0.1",
+		"typescript": "4.0.2"
 	}
 }
