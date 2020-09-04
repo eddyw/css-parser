@@ -1,5 +1,5 @@
-import { NODE_SYMB, BLOCK_MIRROR } from '~/constants'
-import type { Tokenizer, CSSToken } from '~/shared/types'
+import { SYNTAX_SYMB, BLOCK_MIRROR } from '~/constants'
+import type { SyntaxTokenizer, CSSToken } from '~/shared/types'
 
 export function parseSomethingAccordingToCSSGrammar() {}
 export function parseCommaSeparatedListAccordingToCSSGrammar() {}
@@ -124,7 +124,7 @@ export function parseListOfComponentValueSeparatedByComma() {}
  *    Reconsume the current input token. Consume a qualified rule.
  *    If anything is returned, append it to the list of rules.
  */
-export function consumeListOfRules(x: Tokenizer, isTopLevel: boolean = false) {
+export function consumeListOfRules(x: SyntaxTokenizer, isTopLevel: boolean = false) {
 	const listOfRules = {
 		type: 'CSSListOfRules',
 		flag: 0,
@@ -136,14 +136,14 @@ export function consumeListOfRules(x: Tokenizer, isTopLevel: boolean = false) {
 	do {
 		token = x.consumeToken()
 
-		if (token.symb === NODE_SYMB.WHITESPACE_TOKEN) continue
-		if (token.symb === NODE_SYMB.END_OF_FILE) return listOfRules
-		if (token.symb === NODE_SYMB.CDO_TOKEN || token.symb === NODE_SYMB.CDC_TOKEN) {
+		if (token.symb === SYNTAX_SYMB.WHITESPACE_TOKEN) continue
+		if (token.symb === SYNTAX_SYMB.END_OF_FILE) return listOfRules
+		if (token.symb === SYNTAX_SYMB.CDO_TOKEN || token.symb === SYNTAX_SYMB.CDC_TOKEN) {
 			if (isTopLevel) continue
 			listOfRules.list.push(consumeQualifiedRule(x, token))
 			continue
 		}
-		if (token.symb === NODE_SYMB.AT_KEYWORD_TOKEN) {
+		if (token.symb === SYNTAX_SYMB.AT_KEYWORD_TOKEN) {
 			listOfRules.list.push(consumeAtRule(x, token))
 			continue
 		}
@@ -174,7 +174,7 @@ export function consumeListOfRules(x: Tokenizer, isTopLevel: boolean = false) {
  *    Reconsume the current input token. Consume a component value.
  *    Append the returned value to the at-rule’s prelude.
  */
-export function consumeAtRule(x: Tokenizer, token?: CSSToken): any {
+export function consumeAtRule(x: SyntaxTokenizer, token?: CSSToken): any {
 	if (!token) token = x.consumeToken()
 
 	const atRule = {
@@ -187,14 +187,17 @@ export function consumeAtRule(x: Tokenizer, token?: CSSToken): any {
 
 	do {
 		token = x.consumeToken()
-		if (token.symb === NODE_SYMB.SEMICOLON_TOKEN) return atRule
-		if (token.symb === NODE_SYMB.END_OF_FILE) {
+		if (token.symb === SYNTAX_SYMB.SEMICOLON_TOKEN) {
+			atRule.node = token
+			return atRule
+		}
+		if (token.symb === SYNTAX_SYMB.END_OF_FILE) {
 			atRule.flag |= 0b1 // Parse error
 			atRule.node = token // EOF
 			return atRule
 		}
-		if (token.symb === NODE_SYMB.OPEN_CURLY_BRACE_TOKEN) {
-			atRule.node = consumeSimpleBlock(x, token, NODE_SYMB.SHUT_CURLY_BRACE_TOKEN)
+		if (token.symb === SYNTAX_SYMB.OPEN_CURLY_BRACE_TOKEN) {
+			atRule.node = consumeSimpleBlock(x, token, SYNTAX_SYMB.SHUT_CURLY_BRACE_TOKEN)
 			return atRule
 		}
 		atRule.lead.push(consumeComponentValue(x, token))
@@ -220,7 +223,7 @@ export function consumeAtRule(x: Tokenizer, token?: CSSToken): any {
  *    Reconsume the current input token. Consume a component value.
  *    Append the returned value to the qualified rule’s prelude.
  */
-export function consumeQualifiedRule(x: Tokenizer, token?: CSSToken): any {
+export function consumeQualifiedRule(x: SyntaxTokenizer, token?: CSSToken): any {
 	if (!token) token = x.consumeToken()
 
 	const qualifiedRule = {
@@ -231,13 +234,13 @@ export function consumeQualifiedRule(x: Tokenizer, token?: CSSToken): any {
 	}
 
 	do {
-		if (token.symb === NODE_SYMB.END_OF_FILE) {
+		if (token.symb === SYNTAX_SYMB.END_OF_FILE) {
 			qualifiedRule.flag |= 0b1 // Parse error
 			qualifiedRule.node = token
 			return qualifiedRule
 		}
-		if (token.symb === NODE_SYMB.OPEN_CURLY_BRACE_TOKEN) {
-			qualifiedRule.node = consumeSimpleBlock(x, token, NODE_SYMB.SHUT_CURLY_BRACE_TOKEN)
+		if (token.symb === SYNTAX_SYMB.OPEN_CURLY_BRACE_TOKEN) {
+			qualifiedRule.node = consumeSimpleBlock(x, token, SYNTAX_SYMB.SHUT_CURLY_BRACE_TOKEN)
 			return qualifiedRule
 		}
 		qualifiedRule.lead.push(consumeComponentValue(x, token))
@@ -272,7 +275,7 @@ export function consumeQualifiedRule(x: Tokenizer, token?: CSSToken): any {
  *    As long as the next input token is anything other than a <semicolon-token> or <EOF-token>,
  *    consume a component value and throw away the returned value.
  */
-export function consumeListOfDeclarations(x: Tokenizer): any {
+export function consumeListOfDeclarations(x: SyntaxTokenizer): any {
 	const listOfDeclarations = {
 		type: 'CSSListOfDeclarations',
 		flag: 0,
@@ -283,19 +286,19 @@ export function consumeListOfDeclarations(x: Tokenizer): any {
 		const token = x.consumeToken()
 
 		if (
-			token.symb === NODE_SYMB.WHITESPACE_TOKEN ||
-			token.symb === NODE_SYMB.COMMENT_TOKEN ||
-			token.symb === NODE_SYMB.SEMICOLON_TOKEN
+			token.symb === SYNTAX_SYMB.WHITESPACE_TOKEN ||
+			token.symb === SYNTAX_SYMB.COMMENT_TOKEN ||
+			token.symb === SYNTAX_SYMB.SEMICOLON_TOKEN
 		) {
 			continue
 		}
 
-		if (token.symb === NODE_SYMB.END_OF_FILE) return listOfDeclarations
-		if (token.symb === NODE_SYMB.AT_KEYWORD_TOKEN) {
+		if (token.symb === SYNTAX_SYMB.END_OF_FILE) return listOfDeclarations
+		if (token.symb === SYNTAX_SYMB.AT_KEYWORD_TOKEN) {
 			listOfDeclarations.list.push(consumeAtRule(x, token))
 			continue
 		}
-		if (token.symb === NODE_SYMB.IDENT_TOKEN) {
+		if (token.symb === SYNTAX_SYMB.IDENT_TOKEN) {
 			/**
 			 * @todo – pass down endToken <semicolon-token> or <EOF-token>
 			 */
@@ -330,7 +333,7 @@ export function consumeListOfDeclarations(x: Tokenizer): any {
  * 6. While the last token in the declaration’s value is a <whitespace-token>, remove that token.
  * 7. Return the declaration.
  */
-export function consumeDeclaration(x: Tokenizer, token?: CSSToken): any {
+export function consumeDeclaration(x: SyntaxTokenizer, token?: CSSToken): any {
 	if (!token) token = x.consumeToken()
 
 	const declaration = {
@@ -347,9 +350,9 @@ export function consumeDeclaration(x: Tokenizer, token?: CSSToken): any {
 	do {
 		token = x.consumeToken()
 		declaration.spot.offsetEnd = token.spot.offsetEnd
-	} while (token.symb === NODE_SYMB.WHITESPACE_TOKEN || token.symb === NODE_SYMB.COMMENT_TOKEN)
+	} while (token.symb === SYNTAX_SYMB.WHITESPACE_TOKEN || token.symb === SYNTAX_SYMB.COMMENT_TOKEN)
 
-	if (token.symb !== NODE_SYMB.COLON_TOKEN) {
+	if (token.symb !== SYNTAX_SYMB.COLON_TOKEN) {
 		declaration.flag |= 1 << 0 // PARSE ERROR
 		return declaration
 	}
@@ -357,9 +360,9 @@ export function consumeDeclaration(x: Tokenizer, token?: CSSToken): any {
 	do {
 		token = x.consumeToken()
 		declaration.spot.offsetEnd = token.spot.offsetEnd
-	} while (token.symb === NODE_SYMB.WHITESPACE_TOKEN || token.symb === NODE_SYMB.COMMENT_TOKEN)
+	} while (token.symb === SYNTAX_SYMB.WHITESPACE_TOKEN || token.symb === SYNTAX_SYMB.COMMENT_TOKEN)
 
-	while (token.symb !== NODE_SYMB.END_OF_FILE) {
+	while (token.symb !== SYNTAX_SYMB.END_OF_FILE) {
 		declaration.list.push(consumeComponentValue(x, token))
 		token = x.consumeToken()
 	}
@@ -385,18 +388,18 @@ export function consumeDeclaration(x: Tokenizer, token?: CSSToken): any {
  *
  * Otherwise, return the current input token.
  */
-export function consumeComponentValue(x: Tokenizer, token?: CSSToken): any {
+export function consumeComponentValue(x: SyntaxTokenizer, token?: CSSToken): any {
 	if (!token) token = x.consumeToken()
 
 	if (
-		token.symb === NODE_SYMB.OPEN_CURLY_BRACE_TOKEN ||
-		token.symb === NODE_SYMB.OPEN_SQUARE_BRACKET_TOKEN ||
-		token.symb === NODE_SYMB.OPEN_PARENTHESIS_TOKEN
+		token.symb === SYNTAX_SYMB.OPEN_CURLY_BRACE_TOKEN ||
+		token.symb === SYNTAX_SYMB.OPEN_SQUARE_BRACKET_TOKEN ||
+		token.symb === SYNTAX_SYMB.OPEN_PARENTHESIS_TOKEN
 	) {
 		return consumeSimpleBlock(x, token, BLOCK_MIRROR[token.symb])
 	}
 
-	if (token.symb === NODE_SYMB.FUNCTION_TOKEN) {
+	if (token.symb === SYNTAX_SYMB.FUNCTION_TOKEN) {
 		return consumeFunction(x, token)
 	}
 	return token
@@ -428,7 +431,7 @@ export function consumeComponentValue(x: Tokenizer, token?: CSSToken): any {
  * or consume a list of rules algorithms. These more specific algorithms are instead invoked
  * when grammars are applied, depending on whether it contains a <declaration-list> or a <rule-list>/<stylesheet>.
  */
-export function consumeSimpleBlock(x: Tokenizer, token?: CSSToken, endBlockSymb?: NODE_SYMB): any {
+export function consumeSimpleBlock(x: SyntaxTokenizer, token?: CSSToken, endBlockSymb?: SYNTAX_SYMB): any {
 	if (!token) token = x.consumeToken()
 
 	const block = {
@@ -445,7 +448,7 @@ export function consumeSimpleBlock(x: Tokenizer, token?: CSSToken, endBlockSymb?
 			block.shut = token
 			return block
 		}
-		if (token.symb === NODE_SYMB.END_OF_FILE) {
+		if (token.symb === SYNTAX_SYMB.END_OF_FILE) {
 			block.flag |= 0b1
 			block.shut = token
 			return block
@@ -473,7 +476,7 @@ export function consumeSimpleBlock(x: Tokenizer, token?: CSSToken, endBlockSymb?
  *    Reconsume the current input token. Consume a component value
  *    and append the returned value to the function’s value.
  */
-export function consumeFunction(x: Tokenizer, token?: CSSToken) {
+export function consumeFunction(x: SyntaxTokenizer, token?: CSSToken) {
 	if (!token) token = x.consumeToken()
 
 	const func = {
@@ -487,11 +490,11 @@ export function consumeFunction(x: Tokenizer, token?: CSSToken) {
 	do {
 		token = x.consumeToken()
 
-		if (token.symb === NODE_SYMB.SHUT_PARENTHESIS_TOKEN) {
+		if (token.symb === SYNTAX_SYMB.SHUT_PARENTHESIS_TOKEN) {
 			func.shut = token
 			return func
 		}
-		if (token.symb === NODE_SYMB.END_OF_FILE) {
+		if (token.symb === SYNTAX_SYMB.END_OF_FILE) {
 			func.flag |= 0b1
 			func.shut = token
 			return func
