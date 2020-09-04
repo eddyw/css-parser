@@ -1,4 +1,5 @@
-export { createContext } from './shared/context'
-export { tokenizer } from './tokenizer'
+export { createSyntaxContext, createGrammarContext } from './shared/context'
+export { tokenizer } from './syntax'
 export * as parser from './parser'
-export type { TokenizerContext } from './shared/types'
+export * as grammar from './grammar/parser'
+export type { SyntaxTokenizerContext as TokenizerContext } from './shared/types'
