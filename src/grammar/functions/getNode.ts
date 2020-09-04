@@ -11,20 +11,20 @@ import {
 	getCombinatorVertical,
 	getCombinatorAmpersand,
 	getComma,
-	getGroup,
+	getGroupBrackets,
 	getAtIdentifierOrToken,
 } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
 
 const up = Error('Out of bounds')
 
-export function getNode(x: GrammarTokenizerContext, skipGroupShut: boolean) {
+export function getNode(x: GrammarTokenizerContext, groupShutChar: number = 0) {
 	if (x.shut > x.size) throw up
 	if (x.codeAt0 === -1) return null
 
 	const codeAt0 = x.codeAt0
 
-	if (skipGroupShut && codeAt0 === TOKEN.R_SQUARE_BRACKET) {
+	if (groupShutChar !== 0 && codeAt0 === groupShutChar) {
 		return null
 	}
 
@@ -33,7 +33,7 @@ export function getNode(x: GrammarTokenizerContext, skipGroupShut: boolean) {
 	}
 
 	if (codeAt0 === TOKEN.L_SQUARE_BRACKET) {
-		return getMultiplierOrToken(x, getGroup(x, true))
+		return getMultiplierOrToken(x, getGroupBrackets(x))
 	}
 
 	if (codeAt0 === TOKEN.LESS_THAN) {
