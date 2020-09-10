@@ -13,6 +13,10 @@ const onwarn = (warning, rollupWarn) => {
 			ignoredCode: 'CIRCULAR_DEPENDENCY',
 			ignoredPath: 'src/syntax/definitions/index.ts',
 		},
+		{
+			ignoredCode: 'CIRCULAR_DEPENDENCY',
+			ignoredPath: 'src/grammar/functions/index.ts',
+		},
 	]
 	if (
 		!ignoredWarnings.some(
@@ -41,5 +45,8 @@ export default {
 			sourcemap: true,
 		},
 	],
-	plugins: [typescript(), filesize({ theme: 'light' })],
+	plugins: [
+		typescript(),
+		filesize({ theme: 'light' })
+	],
 }
