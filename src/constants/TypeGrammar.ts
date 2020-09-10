@@ -1,5 +1,5 @@
 export const enum GRAMMAR_SYMB {
-	IDENTIFIER,
+	IDENTIFIER = 1,
 	FUNCTION,
 	TYPE,
 	TYPE_REF,
@@ -27,4 +27,14 @@ export const enum GRAMMAR_TYPE {
 	COMBINATOR = 'Combinator',
 	COMMA = 'Comma',
 	GROUP = 'Group',
+}
+
+/**
+ * Sorted by priority and intentionally starts with 0
+ */
+export const enum GRAMMAR_COMBINATOR {
+	JUXTAPOSING = 0,
+	AMPERSAND,
+	VERTICAL_DOUBLE,
+	VERTICAL_SINGLE,
 }
