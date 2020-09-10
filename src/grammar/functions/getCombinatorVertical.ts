@@ -1,4 +1,4 @@
-import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
+import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE, GRAMMAR_COMBINATOR } from '~/constants'
 import type { GrammarTokenizerContext } from '~/shared/types'
 
 export function getCombinatorVertical(x: GrammarTokenizerContext) {
@@ -11,6 +11,7 @@ export function getCombinatorVertical(x: GrammarTokenizerContext) {
 		return {
 			type: GRAMMAR_TYPE.COMBINATOR,
 			symb: GRAMMAR_SYMB.COMBINATOR,
+			flag: GRAMMAR_COMBINATOR.VERTICAL_DOUBLE,
 			node: '||',
 			spot: {
 				offsetIni: open,
@@ -22,6 +23,7 @@ export function getCombinatorVertical(x: GrammarTokenizerContext) {
 	return {
 		type: GRAMMAR_TYPE.COMBINATOR,
 		symb: GRAMMAR_SYMB.COMBINATOR,
+		flag: GRAMMAR_COMBINATOR.VERTICAL_SINGLE,
 		node: '|',
 		spot: {
 			offsetIni: open,
