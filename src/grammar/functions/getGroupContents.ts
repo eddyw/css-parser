@@ -1,4 +1,4 @@
-import { GRAMMAR_SYMB, GRAMMAR_COMBINATOR, GRAMMAR_TYPE } from '~/constants'
+import { GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
 import { getGroupContentsNode, getCombinatorJuxtaposeFromSpace } from '.'
 import { getLinkedItem, groupByCombinator } from './shared'
 import type { GrammarTokenizerContext } from '~/shared/types'
@@ -97,7 +97,6 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 
 	if (head == null) {
 		return {
-			type: GRAMMAR_TYPE.GROUP,
 			symb: GRAMMAR_SYMB.GROUP,
 			body: [],
 			comb: GRAMMAR_COMBINATOR.JUXTAPOSE,
@@ -120,7 +119,6 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 	}
 
 	return {
-		type: GRAMMAR_TYPE.GROUP,
 		symb: GRAMMAR_SYMB.GROUP,
 		body: [headNode],
 		comb: GRAMMAR_COMBINATOR.JUXTAPOSE,

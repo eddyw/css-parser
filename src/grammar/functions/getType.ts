@@ -1,4 +1,4 @@
-import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
+import { TOKEN, GRAMMAR_SYMB } from '~/constants'
 import { isWhitespace } from '~/syntax/definitions'
 import { getIdentifierName, getSpaces, getTypeRange, getMultiplierOrToken } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
@@ -21,14 +21,10 @@ export function getType(x: GrammarTokenizerContext): GrammarNodeType | GrammarNo
 	x.consumeCodeAt0(TOKEN.GREATER_THAN)
 
 	return getMultiplierOrToken<GrammarNodeType>(x, {
-		type: GRAMMAR_TYPE.TYPE,
 		symb: GRAMMAR_SYMB.TYPE,
 		node: name.node,
 		vmin: span ? span.vmin : null,
 		vmax: span ? span.vmax : null,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: x.getSpot(open, x.shut),
 	})
 }

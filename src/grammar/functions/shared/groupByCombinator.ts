@@ -1,4 +1,4 @@
-import { GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
+import { GRAMMAR_SYMB } from '~/constants'
 import type {
 	GrammarGroupLinkedList,
 	GrammarCombinators,
@@ -23,7 +23,6 @@ export function groupByCombinator<T extends GrammarCombinators>(
 		const group: GrammarNodes[] = []
 		const parent: GrammarGroupLinkedList<GrammarNodeGroup> = {
 			nodule: {
-				type: GRAMMAR_TYPE.GROUP,
 				symb: GRAMMAR_SYMB.GROUP,
 				body: group,
 				comb: combinator.nodule.flag,

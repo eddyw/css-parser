@@ -1,4 +1,4 @@
-import type { GRAMMAR_SYMB, GRAMMAR_TYPE, GRAMMAR_COMBINATOR } from '~/constants'
+import type { GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
 
 /**
  * Node Position
@@ -14,41 +14,34 @@ export interface GrammarNodePosition {
  * Nodes
  */
 export interface GrammarNodeIdentifier {
-	type: GRAMMAR_TYPE.IDENTIFIER
 	symb: GRAMMAR_SYMB.IDENTIFIER
 	node: string
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeFunction {
 	// @todo
-	type: GRAMMAR_TYPE.FUNCTION
 	symb: GRAMMAR_SYMB.FUNCTION
 }
 export interface GrammarNodeComma {
-	type: GRAMMAR_TYPE.COMMA
 	symb: GRAMMAR_SYMB.COMMA
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeSpace {
-	type: GRAMMAR_TYPE.WHITESPACE
 	symb: GRAMMAR_SYMB.WHITESPACE
 	node: string
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeString {
-	type: GRAMMAR_TYPE.STRING
 	symb: GRAMMAR_SYMB.STRING
 	node: string
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeToken {
-	type: GRAMMAR_TYPE.TOKEN
 	symb: GRAMMAR_SYMB.TOKEN
 	node: string
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeType {
-	type: GRAMMAR_TYPE.TYPE
 	symb: GRAMMAR_SYMB.TYPE
 	node: string
 	vmin: number | null
@@ -56,7 +49,6 @@ export interface GrammarNodeType {
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeTypeReference {
-	type: GRAMMAR_TYPE.TYPE_REF
 	symb: GRAMMAR_SYMB.TYPE_REF
 	node: string
 	spot: GrammarNodePosition | null
@@ -66,7 +58,6 @@ export interface GrammarNodeTypeReference {
  * Group of nodes (omits combinators)
  */
 export interface GrammarNodeGroup {
-	type: GRAMMAR_TYPE.GROUP
 	symb: GRAMMAR_SYMB.GROUP
 	body: GrammarNodes[]
 	comb: GRAMMAR_COMBINATOR
@@ -79,25 +70,21 @@ export interface GrammarNodeGroup {
  * Combinator nodes
  */
 export interface GrammarNodeCombinatorJuxtapose {
-	type: GRAMMAR_TYPE.COMBINATOR
 	symb: GRAMMAR_SYMB.COMBINATOR
 	flag: GRAMMAR_COMBINATOR.JUXTAPOSE
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeCombinatorAmpersand {
-	type: GRAMMAR_TYPE.COMBINATOR
 	symb: GRAMMAR_SYMB.COMBINATOR
 	flag: GRAMMAR_COMBINATOR.AMPERSAND
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeCombinatorVerticalDouble {
-	type: GRAMMAR_TYPE.COMBINATOR
 	symb: GRAMMAR_SYMB.COMBINATOR
 	flag: GRAMMAR_COMBINATOR.VL_DOUBLE
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeCombinatorVerticalSingle {
-	type: GRAMMAR_TYPE.COMBINATOR
 	symb: GRAMMAR_SYMB.COMBINATOR
 	flag: GRAMMAR_COMBINATOR.VL_SINGLE
 	spot: GrammarNodePosition | null
@@ -107,7 +94,6 @@ export interface GrammarNodeCombinatorVerticalSingle {
  * Multiplier node
  */
 export interface GrammarNodeMultiplier<Node = GrammarNodes | null> {
-	type: GRAMMAR_TYPE.MULTIPLIER
 	symb: GRAMMAR_SYMB.MULTIPLIER
 	vmin: number
 	vmax: number
@@ -116,7 +102,6 @@ export interface GrammarNodeMultiplier<Node = GrammarNodes | null> {
 	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeMultiplierRequired<Node = GrammarNodeGroup | null> {
-	type: GRAMMAR_TYPE.REQUIRED
 	symb: GRAMMAR_SYMB.REQUIRED
 	node: Node
 	spot: GrammarNodePosition | null

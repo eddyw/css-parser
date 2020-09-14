@@ -16,6 +16,9 @@ export interface GrammarTokenizerContext {
 	setCodeAtCurrent(): void
 	consumeCodeAt0(char: number): void
 	consume(n: number): void
+	optionSpot: boolean
+	optionType: boolean
+	getSpot(open: number, shut: number): GrammarSpot | null
 }
 
 /**
@@ -27,7 +30,7 @@ export interface GrammarTokenizer {
 	consumeToken(): any
 }
 
-export interface GrammarTokenPosition {
+export interface GrammarSpot {
 	offsetIni?: number
 	offsetEnd?: number
 	offsetLne?: number

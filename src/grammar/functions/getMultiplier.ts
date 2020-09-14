@@ -1,4 +1,4 @@
-import { GRAMMAR_SYMB, GRAMMAR_TYPE, TOKEN } from '~/constants'
+import { GRAMMAR_SYMB, TOKEN } from '~/constants'
 import { getMultiplierRange } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
 import type { GrammarNodeMultiplier, GrammarNodeMultiplierRequired } from '~/grammar/shared'
@@ -60,13 +60,9 @@ export function getMultiplier(
 		case TOKEN.EXCLAMATION: {
 			x.consume(1)
 			return {
-				type: GRAMMAR_TYPE.REQUIRED,
 				symb: GRAMMAR_SYMB.REQUIRED,
 				node: null,
-				spot: {
-					offsetIni: open,
-					offsetEnd: x.shut,
-				},
+				spot: x.getSpot(open, x.shut),
 			}
 		}
 		default: {
@@ -75,15 +71,11 @@ export function getMultiplier(
 	}
 
 	return {
-		type: GRAMMAR_TYPE.MULTIPLIER,
 		symb: GRAMMAR_SYMB.MULTIPLIER,
 		vmin: range.vmin,
 		vmax: range.vmax,
 		hash: range.hash,
 		node: null,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: x.getSpot(open, x.shut),
 	}
 }

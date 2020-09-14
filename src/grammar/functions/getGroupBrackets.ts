@@ -1,4 +1,4 @@
-import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
+import { TOKEN, GRAMMAR_SYMB } from '~/constants'
 import { getGroupContents } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
 import type { GrammarNodeGroup } from '~/grammar/shared'
@@ -14,15 +14,11 @@ export function getGroupBrackets(x: GrammarTokenizerContext, root: boolean = fal
 	const group = getGroupContents(x, tail)
 
 	return {
-		type: GRAMMAR_TYPE.GROUP,
 		symb: GRAMMAR_SYMB.GROUP,
 		body: group.body,
 		comb: group.comb,
 		root: group.root,
 		void: group.void,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: x.getSpot(open, x.shut),
 	}
 }

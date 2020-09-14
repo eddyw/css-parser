@@ -1,4 +1,4 @@
-import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
+import { TOKEN, GRAMMAR_SYMB } from '~/constants'
 import { getIdentifierName, getMultiplierOrToken, getGroupFunction } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
 
@@ -14,12 +14,8 @@ export function getIdentifierOrFunction(x: GrammarTokenizerContext): any {
 	}
 
 	return getMultiplierOrToken(x, {
-		type: GRAMMAR_TYPE.IDENTIFIER,
 		symb: GRAMMAR_SYMB.IDENTIFIER,
 		node: name,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: x.getSpot(open, x.shut),
 	})
 }

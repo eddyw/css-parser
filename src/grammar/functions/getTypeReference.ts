@@ -1,4 +1,4 @@
-import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
+import { TOKEN, GRAMMAR_SYMB } from '~/constants'
 import { getIdentifierName } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
 import type { GrammarNodeTypeReference } from '~/grammar/shared'
@@ -15,12 +15,8 @@ export function getTypeReference(x: GrammarTokenizerContext): GrammarNodeTypeRef
 	x.consumeCodeAt0(TOKEN.GREATER_THAN)
 
 	return {
-		type: GRAMMAR_TYPE.TYPE_REF,
 		symb: GRAMMAR_SYMB.TYPE_REF,
 		node: name.node,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: x.getSpot(open, x.shut),
 	}
 }

@@ -45,6 +45,8 @@ export function createGrammarContext(css: string): GrammarTokenizerContext {
 		lead: 0,
 		tail: 0,
 		flag: 0,
+		optionSpot: false,
+		optionType: false,
 		setCodeAtCurrent() {
 			const posAt0 = this.shut
 			const posAt1 = posAt0 + 1
@@ -66,10 +68,19 @@ export function createGrammarContext(css: string): GrammarTokenizerContext {
 				`Parse error: Expected token ${String.fromCharCode(char)} but instead got ${String.fromCharCode(this.codeAt0)}`,
 			)
 		},
+		getSpot(open, shut) {
+			if (this.optionSpot === true) {
+				return {
+					offsetIni: open,
+					offsetEnd: shut,
+				}
+			}
+			return null
+		},
 		consume(n) {
 			this.shut += n
 			this.setCodeAtCurrent()
-		}
+		},
 	}
 
 	return context
