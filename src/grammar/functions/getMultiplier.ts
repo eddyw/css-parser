@@ -1,14 +1,16 @@
 import { GRAMMAR_SYMB, GRAMMAR_TYPE, TOKEN } from '~/constants'
 import { getMultiplierRange } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
-import type { GrammarNodeMultiplier } from '~/grammar/shared'
+import type { GrammarNodeMultiplier, GrammarNodeMultiplierRequired } from '~/grammar/shared'
 
 const MORE = 65535 // Sane default? (unsigned small int)
 
 /**
  * Multiplier for type, word, or group
  */
-export function getMultiplier(x: GrammarTokenizerContext): GrammarNodeMultiplier | null {
+export function getMultiplier(
+	x: GrammarTokenizerContext,
+): GrammarNodeMultiplier | GrammarNodeMultiplierRequired | null {
 	const open = x.shut
 	const range = {
 		vmin: -1,
@@ -54,6 +56,18 @@ export function getMultiplier(x: GrammarTokenizerContext): GrammarNodeMultiplier
 			range.vmin = node.vmin
 			range.vmax = node.vmax
 			break
+		}
+		case TOKEN.EXCLAMATION: {
+			x.consume(1)
+			return {
+				type: GRAMMAR_TYPE.REQUIRED,
+				symb: GRAMMAR_SYMB.REQUIRED,
+				node: null,
+				spot: {
+					offsetIni: open,
+					offsetEnd: x.shut,
+				},
+			}
 		}
 		default: {
 			return null
