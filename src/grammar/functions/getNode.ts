@@ -15,10 +15,11 @@ import {
 	getAtIdentifierOrToken,
 } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarNodesAndCombinators } from '~/grammar/shared'
 
 const up = Error('Out of bounds')
 
-export function getNode(x: GrammarTokenizerContext, groupShutChar: number = 0) {
+export function getNode(x: GrammarTokenizerContext, groupShutChar: number = 0): GrammarNodesAndCombinators | null {
 	if (x.shut > x.size) throw up
 	if (x.codeAt0 === -1) return null
 
@@ -66,7 +67,7 @@ export function getNode(x: GrammarTokenizerContext, groupShutChar: number = 0) {
 	}
 
 	if (codeAt0 === TOKEN.AT) {
-		return getAtIdentifierOrToken(x)
+		return getAtIdentifierOrToken(x) as any // @todo - come back to fix me!!!
 	}
 
 	throw Error(`getNode: Unexpected token "${String.fromCharCode(x.codeAt0)}" (${x.codeAt0}):${(x.open, x.shut)}`)

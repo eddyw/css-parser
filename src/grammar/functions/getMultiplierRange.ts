@@ -1,8 +1,9 @@
-import type { GrammarTokenizerContext } from '~/shared/types'
 import { getNumber } from '.'
 import { TOKEN } from '~/constants'
+import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarNodeMultiplierRange } from '~/grammar/shared'
 
-export function getMultiplierRange(x: GrammarTokenizerContext) {
+export function getMultiplierRange(x: GrammarTokenizerContext): GrammarNodeMultiplierRange {
 	const open = x.shut
 
 	x.consumeCodeAt0(TOKEN.L_CURLY_BRACKET)
@@ -12,9 +13,9 @@ export function getMultiplierRange(x: GrammarTokenizerContext) {
 
 	if (x.codeAt0 === (TOKEN.COMMA as number)) {
 		x.consume(1)
-    if (x.codeAt0 !== TOKEN.R_CURLY_BRACKET) {
-      vmax = getNumber(x, false)
-    }
+		if (x.codeAt0 !== TOKEN.R_CURLY_BRACKET) {
+			vmax = getNumber(x, false)
+		}
 	} else {
 		vmax = vmin
 	}

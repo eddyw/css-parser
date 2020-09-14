@@ -1,7 +1,8 @@
 import { GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
 import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarNodeToken } from '~/grammar/shared'
 
-export function getToken(x: GrammarTokenizerContext) {
+export function getToken(x: GrammarTokenizerContext): GrammarNodeToken {
 	const open: number = x.shut
 
 	x.consume(1)
