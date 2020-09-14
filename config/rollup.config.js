@@ -24,6 +24,15 @@ const onwarn = (warning, rollupWarn) => {
 				warning.code === ignoredCode && warning.importer.includes(path.normalize(ignoredPath)),
 		)
 	) {
+		/**
+		 * We do this because the default one is so terrible
+		 */
+		if (warning.pluginCode.startsWith('TS')) {
+			const { loc } = warning
+			const location = `${loc.file}:${loc.line}:${loc.column}`
+
+			warning.message = `\n${warning.message}\n\n${location}`
+		}
 		rollupWarn(warning)
 	}
 }
