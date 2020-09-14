@@ -1,14 +1,23 @@
+import { GRAMMAR_SYMB } from '~/constants'
 import { getMultiplier } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
-import type { GrammarNodes } from '~/grammar/shared'
+import type { GrammarNodes, GrammarNodeGroup } from '~/grammar/shared'
 
-export function getMultiplierOrToken<T extends GrammarNodes>(x: GrammarTokenizerContext, token: T) {
+const up = `Multiplier "!" can only be assigned to groups`
+
+export function getMultiplierOrToken<T extends GrammarNodes>(x: GrammarTokenizerContext, node: T): GrammarNodes {
 	const multiplier = getMultiplier(x)
 
 	if (multiplier) {
-		multiplier.node = token
+		if (multiplier.symb === GRAMMAR_SYMB.REQUIRED) {
+			if (node.symb !== GRAMMAR_SYMB.GROUP) throw up
+			;(node as GrammarNodeGroup).void = false
+
+			return node
+		}
+		multiplier.node = node
 		return multiplier
 	}
 
-	return token
+	return node
 }
