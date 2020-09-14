@@ -1,35 +1,38 @@
-import { GRAMMAR_SYMB } from '~/constants'
-import { getNode, getCombinatorJustaposingFromSpace } from '.'
+import { GRAMMAR_SYMB, GRAMMAR_COMBINATOR, GRAMMAR_TYPE } from '~/constants'
+import { getNode, getCombinatorJuxtaposeFromSpace } from '.'
+import { getLinkedItem, groupByCombinator } from './shared'
 import type { GrammarTokenizerContext } from '~/shared/types'
+import type {
+	GrammarGroupLinkedList,
+	GrammarCombinators,
+	GrammarGroupLinkedListHeadPointer,
+	GrammarGroupContentsCombinators,
+	GrammarNodeSpace,
+	GrammarNodes,
+	GrammarNodeGroup,
+} from '~/grammar/shared'
 
 const ERRORS = {
 	FOLLOWED_BY_COMBINATOR: `A combinator cannot be followed by another combinator`,
 	COMBINATOR_STARTS_GROUP: `A group cannot start with a combinator`,
 	PROBABLY_A_BUG: `Something is broken. Open an issue.`,
-	LINKED_LIST_BUG: `Error building LinkedList of combinators. Open an issue.`
+	LINKED_LIST_BUG: `Error building LinkedList of combinators. Open an issue.`,
 }
 
-/**
- * @todo
- * - Typings 🙈
- * - Combinators object is ugly! and completely unnecessary
- * - Tests .. of course
- * - createGroupBrackets method
- */
-export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: number = 0) {
+export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: number = 0): GrammarNodeGroup {
 	const root: boolean = groupShutChar === 0
 
-	let headToken: LinkedHead = { head: null as any }
-	let currToken: any = null
-	let prevToken: any = null
-	let lastSpace: any = null
+	let headToken: GrammarGroupLinkedListHeadPointer = { head: null }
+	let currToken: GrammarGroupLinkedList | null = null
+	let prevToken: GrammarGroupLinkedList | null = null
+	let lastSpace: GrammarNodeSpace | null = null
 	let maybeVoid: boolean = false
 
-	const combinators = {
-		' ': [] as any[],
-		'&&': [] as any[],
-		'||': [] as any[],
-		'|': [] as any[],
+	const combinators: GrammarGroupContentsCombinators = {
+		[GRAMMAR_COMBINATOR.JUXTAPOSE]: [],
+		[GRAMMAR_COMBINATOR.AMPERSAND]: [],
+		[GRAMMAR_COMBINATOR.VL_DOUBLE]: [],
+		[GRAMMAR_COMBINATOR.VL_SINGLE]: [],
 	}
 
 	while (true) {
@@ -37,7 +40,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 		if (!currToken) break
 
 		if (currToken.nodule.symb === GRAMMAR_SYMB.WHITESPACE) {
-			lastSpace = currToken
+			lastSpace = currToken.nodule
 			continue
 		}
 
@@ -48,7 +51,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 			prevToken.cousin = currToken
 			currToken.return = prevToken
 
-			combinators[currToken.nodule.node as keyof typeof combinators].push(currToken)
+			combinators[currToken.nodule.flag].push(currToken as GrammarGroupLinkedList<GrammarCombinators>)
 
 			prevToken = currToken
 			continue
@@ -57,7 +60,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 		if (prevToken && prevToken.nodule.symb !== GRAMMAR_SYMB.COMBINATOR) {
 			if (!lastSpace) throw Error(ERRORS.PROBABLY_A_BUG)
 
-			const juxtapose = getLinkedItem(getCombinatorJustaposingFromSpace(lastSpace))!
+			const juxtapose = getLinkedItem(getCombinatorJuxtaposeFromSpace(lastSpace))
 
 			juxtapose.cousin = currToken
 			juxtapose.return = prevToken
@@ -65,7 +68,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 			prevToken.cousin = juxtapose
 			currToken.return = juxtapose
 
-			combinators[' '].push(juxtapose)
+			combinators[GRAMMAR_COMBINATOR.JUXTAPOSE].push(juxtapose)
 
 			prevToken = currToken
 			continue
@@ -75,7 +78,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 			prevToken.cousin = currToken
 			currToken.return = prevToken
 		} else {
-			headToken = currToken
+			headToken.head = currToken
 		}
 
 		prevToken = currToken
@@ -85,100 +88,33 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 		x.consumeCodeAt0(groupShutChar)
 	}
 
-	groupBy(combinators[' '], headToken)
-	groupBy(combinators['&&'], headToken)
-	groupBy(combinators['||'], headToken)
-	groupBy(combinators['|'], headToken)
+	groupByCombinator(combinators[GRAMMAR_COMBINATOR.JUXTAPOSE], headToken)
+	groupByCombinator(combinators[GRAMMAR_COMBINATOR.AMPERSAND], headToken)
+	groupByCombinator(combinators[GRAMMAR_COMBINATOR.VL_DOUBLE], headToken)
+	groupByCombinator(combinators[GRAMMAR_COMBINATOR.VL_SINGLE], headToken)
 
-	if (!headToken.head) throw Error(ERRORS.PROBABLY_A_BUG) // This should never ever happen
-	if (headToken.head.return) throw Error(ERRORS.LINKED_LIST_BUG) // Why would it have a return ???
-	if (headToken.head.cousin) throw Error(ERRORS.LINKED_LIST_BUG) // How so???
+	const head = headToken.head
+
+	if (head == null) throw Error(ERRORS.PROBABLY_A_BUG) // This should never ever happen
+	if (head.return) throw Error(ERRORS.LINKED_LIST_BUG) // Why would it have a return ???
+	if (head.cousin) throw Error(ERRORS.LINKED_LIST_BUG) // How so???
+
+	const headNode = head.nodule as GrammarNodes
+
+	if (headNode.symb === GRAMMAR_SYMB.GROUP) {
+		headNode.root = root
+		headNode.void = maybeVoid
+
+		return headNode
+	}
 
 	return {
-		body: headToken.head.nodule.node,
-		comb: headToken.head.nodule.combinator,
+		type: GRAMMAR_TYPE.GROUP,
+		symb: GRAMMAR_SYMB.GROUP,
+		body: [headNode],
+		comb: GRAMMAR_COMBINATOR.JUXTAPOSE,
 		root,
 		void: maybeVoid,
-	}
-}
-
-interface LinkedItem<T> {
-	nodule: T
-	return: LinkedItem<any> | null
-	cousin: LinkedItem<any> | null
-	ignore: boolean
-}
-
-interface LinkedHead {
-	head: LinkedItem<any>
-}
-
-function getLinkedItem<T>(node: T): LinkedItem<T> | null {
-	if (node == null) return null
-	return {
-		nodule: node,
-		return: null,
-		cousin: null,
-		ignore: false,
-	}
-}
-
-function groupBy(combinatorList: LinkedItem<any>[], header: LinkedHead) {
-	const length = combinatorList.length
-
-	if (length === 0) return
-
-	for (let i = 0; i < length; i++) {
-		const combinator = combinatorList[i]
-
-		if (combinator.ignore) continue
-
-		const group = [] as any[]
-		const parent: LinkedItem<any> = {
-			nodule: { node: group, combinator: combinator.nodule.node },
-			return: null,
-			cousin: null,
-			ignore: false,
-		}
-
-		const combinatorReturn = combinator.return!
-
-		if (combinatorReturn.return) {
-			parent.return = combinatorReturn.return
-			parent.return.cousin = parent
-		} else {
-			header.head = parent
-		}
-
-		group.push(combinatorReturn.nodule)
-
-		let combinatorCousin = combinator.cousin!
-
-		parent.cousin = combinatorCousin.cousin
-
-		if (parent.cousin) {
-			parent.cousin.return = parent
-		}
-
-		group.push(combinatorCousin.nodule)
-
-		while ((combinatorCousin = combinatorCousin.cousin!)) {
-			if (combinatorCousin.nodule.node === combinator.nodule.node) {
-				combinatorCousin.ignore = true
-				combinatorCousin = combinatorCousin.cousin!
-
-				parent.cousin = combinatorCousin.cousin
-
-				if (parent.cousin) {
-					parent.cousin.return = parent
-				}
-
-				group.push(combinatorCousin.nodule)
-			} else {
-				parent.cousin = combinatorCousin
-				parent.cousin!.return = parent
-				break
-			}
-		}
+		spot: null,
 	}
 }
