@@ -1,5 +1,5 @@
 import * as path from 'path'
-import typescript from '@wessberg/rollup-plugin-ts'
+import typescript from '@rollup/plugin-typescript'
 import filesize from 'rollup-plugin-filesize'
 
 // https://github.com/rollup/rollup/issues/1089
@@ -31,22 +31,24 @@ const onwarn = (warning, rollupWarn) => {
 export default {
 	input: 'src/index.ts',
 	onwarn,
-	output: [
+	output: [ // @todo - re-enable later
+		// {
+		// 	dir: 'dist',
+		// 	format: 'esm',
+		// 	strict: true,
+		// 	sourcemap: true,
+		// },
 		{
-			file: 'dist/index.mjs',
-			format: 'esm',
-			strict: true,
-			sourcemap: true,
-		},
-		{
-			file: 'dist/index.cjs',
+			dir: 'dist',
 			format: 'cjs',
 			strict: true,
 			sourcemap: true,
 		},
 	],
 	plugins: [
-		typescript(),
+		typescript({
+			noEmit: false,
+		}),
 		filesize({ theme: 'light' })
 	],
 }
