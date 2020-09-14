@@ -115,6 +115,12 @@ export interface GrammarNodeMultiplier<Node = GrammarNodes | null> {
 	node: Node
 	spot: GrammarNodePosition | null
 }
+export interface GrammarNodeMultiplierRequired<Node = GrammarNodeGroup | null> {
+	type: GRAMMAR_TYPE.REQUIRED
+	symb: GRAMMAR_SYMB.REQUIRED
+	node: Node
+	spot: GrammarNodePosition | null
+}
 
 /**
  * Sub-nodes (nodes without type)
