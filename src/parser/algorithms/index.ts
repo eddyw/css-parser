@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { SYNTAX_SYMB, BLOCK_MIRROR } from '~/constants'
 import type { SyntaxTokenizer, CSSToken } from '~/shared/types'
 
