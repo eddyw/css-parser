@@ -33,8 +33,8 @@ export const enum GRAMMAR_TYPE {
  * Sorted by priority and intentionally starts with 0
  */
 export const enum GRAMMAR_COMBINATOR {
-	JUXTAPOSING = 0,
+	JUXTAPOSE = 0,
 	AMPERSAND,
-	VERTICAL_DOUBLE,
-	VERTICAL_SINGLE,
+	VL_DOUBLE,
+	VL_SINGLE,
 }
