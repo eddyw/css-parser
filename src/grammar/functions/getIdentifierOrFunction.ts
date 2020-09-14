@@ -1,10 +1,13 @@
 import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
-import { getIdentifier, getMultiplierOrToken, getGroupFunction } from '.'
+import { getIdentifierName, getMultiplierOrToken, getGroupFunction } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
 
-export function getIdentifierOrFunction(x: GrammarTokenizerContext) {
+/**
+ * @todo – Fix typings
+ */
+export function getIdentifierOrFunction(x: GrammarTokenizerContext): any {
 	const open: number = x.shut
-	const name = getIdentifier(x).node
+	const name = getIdentifierName(x).node
 
 	if (x.codeAt0 === TOKEN.L_PARENTHESIS) {
 		return getGroupFunction(x, name, open)

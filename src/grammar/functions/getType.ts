@@ -1,16 +1,17 @@
 import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
 import { isWhitespace } from '~/syntax/definitions'
-import { getIdentifier, getSpaces, getTypeRange, getMultiplierOrToken } from '.'
+import { getIdentifierName, getSpaces, getTypeRange, getMultiplierOrToken } from '.'
 import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarNodeType, GrammarNodeTypeRange, GrammarNodeMultiplier } from '~/grammar/shared'
 
-export function getType(x: GrammarTokenizerContext) {
+export function getType(x: GrammarTokenizerContext): GrammarNodeType | GrammarNodeMultiplier {
 	const open: number = x.shut
 
-	let span: any = null // @todo - fix types
+	let span: GrammarNodeTypeRange | null = null
 
 	x.consumeCodeAt0(TOKEN.LESS_THAN)
 
-	const name = getIdentifier(x)
+	const name = getIdentifierName(x)
 
 	if (isWhitespace(x.codeAt0)) {
 		getSpaces(x)
@@ -19,11 +20,12 @@ export function getType(x: GrammarTokenizerContext) {
 
 	x.consumeCodeAt0(TOKEN.GREATER_THAN)
 
-	return getMultiplierOrToken(x, {
+	return getMultiplierOrToken<GrammarNodeType>(x, {
 		type: GRAMMAR_TYPE.TYPE,
 		symb: GRAMMAR_SYMB.TYPE,
-		node: name,
-		span,
+		node: name.node,
+		vmin: span ? span.vmin : null,
+		vmax: span ? span.vmax : null,
 		spot: {
 			offsetIni: open,
 			offsetEnd: x.shut,

@@ -1,10 +1,11 @@
 import { isDigit } from '~/syntax/definitions'
 import { TOKEN } from '~/constants'
 import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarNodeNumber } from '~/grammar/shared'
 
 const up = Error('Expected a number')
 
-export function getNumber(x: GrammarTokenizerContext, signed: boolean) {
+export function getNumber(x: GrammarTokenizerContext, signed: boolean): GrammarNodeNumber {
 	const open = x.shut
 	let opSign = open
 
