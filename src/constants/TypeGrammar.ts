@@ -12,6 +12,7 @@ export const enum GRAMMAR_SYMB {
 	COMBINATOR,
 	COMMA,
 	GROUP,
+	REQUIRED,
 }
 export const enum GRAMMAR_TYPE {
 	IDENTIFIER = 'Identifier',
@@ -27,6 +28,7 @@ export const enum GRAMMAR_TYPE {
 	COMBINATOR = 'Combinator',
 	COMMA = 'Comma',
 	GROUP = 'Group',
+	REQUIRED = 'REQUIRED',
 }
 
 /**
