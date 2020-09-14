@@ -1,5 +1,5 @@
 import { GRAMMAR_SYMB, GRAMMAR_COMBINATOR, GRAMMAR_TYPE } from '~/constants'
-import { getNode, getCombinatorJuxtaposeFromSpace } from '.'
+import { getGroupContentsNode, getCombinatorJuxtaposeFromSpace } from '.'
 import { getLinkedItem, groupByCombinator } from './shared'
 import type { GrammarTokenizerContext } from '~/shared/types'
 import type {
@@ -26,7 +26,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 	let currToken: GrammarGroupLinkedList | null = null
 	let prevToken: GrammarGroupLinkedList | null = null
 	let lastSpace: GrammarNodeSpace | null = null
-	let maybeVoid: boolean = false
+	let maybeVoid: boolean = true
 
 	const combinators: GrammarGroupContentsCombinators = {
 		[GRAMMAR_COMBINATOR.JUXTAPOSE]: [],
@@ -36,7 +36,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 	}
 
 	while (true) {
-		currToken = getLinkedItem(getNode(x, groupShutChar))
+		currToken = getLinkedItem(getGroupContentsNode(x, groupShutChar))
 		if (!currToken) break
 
 		if (currToken.nodule.symb === GRAMMAR_SYMB.WHITESPACE) {
@@ -95,7 +95,18 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 
 	const head = headToken.head
 
-	if (head == null) throw Error(ERRORS.PROBABLY_A_BUG) // This should never ever happen
+	if (head == null) {
+		return {
+			type: GRAMMAR_TYPE.GROUP,
+			symb: GRAMMAR_SYMB.GROUP,
+			body: [],
+			comb: GRAMMAR_COMBINATOR.JUXTAPOSE,
+			root,
+			void: maybeVoid,
+			spot: null,
+		}
+	}
+
 	if (head.return) throw Error(ERRORS.LINKED_LIST_BUG) // Why would it have a return ???
 	if (head.cousin) throw Error(ERRORS.LINKED_LIST_BUG) // How so???
 
