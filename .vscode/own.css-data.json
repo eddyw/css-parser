@@ -1,0 +1,12 @@
+{
+	"version": 1.1,
+	"properties": [],
+	"atDirectives": [
+		{ "name": "@CSSStyleSheet", "description": "CSSStylesheet", "status": "nonstandard" },
+		{ "name": "@CSSParserEntry", "description": "CSSStylesheet", "status": "nonstandard" },
+		{ "name": "@atDirective", "description": "CSSDirectivType", "status": "nonstandard" },
+		{ "name": "@property", "description": "CSSProperty", "status": "nonstandard" }
+	],
+	"pseudoClasses": [],
+	"pseudoElements": []
+}
