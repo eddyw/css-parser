@@ -19,7 +19,7 @@ import type { GrammarNodesAndCombinators } from '~/grammar/shared'
 
 const up = Error('Out of bounds')
 
-export function getNode(x: GrammarTokenizerContext, groupShutChar: number = 0): GrammarNodesAndCombinators | null {
+export function getGroupContentsNode(x: GrammarTokenizerContext, groupShutChar: number = 0): GrammarNodesAndCombinators | null {
 	if (x.shut > x.size) throw up
 	if (x.codeAt0 === -1) return null
 
