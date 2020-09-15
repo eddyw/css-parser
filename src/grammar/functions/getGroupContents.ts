@@ -139,7 +139,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 			comb: GRAMMAR_COMBINATOR.JUXTAPOSE,
 			root,
 			void: voidable,
-			spot: null,
+			spot: x.getPositionShut(open),
 		}
 	}
 
