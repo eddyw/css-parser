@@ -111,5 +111,24 @@ export function groupByCombinator<T extends GrammarCombinators>(
 				break
 			}
 		}
+
+		if (group.length) {
+			const itemIni = group[0]
+			const itemEnd = group[group.length - 1]
+
+			if (itemIni.spot && itemEnd.spot) {
+				const ini = itemIni.spot
+				const end = itemEnd.spot
+
+				parent.nodule.spot = {
+					colIni: ini.colIni,
+					lneIni: ini.lneIni,
+					offIni: ini.offIni,
+					colEnd: end.colEnd,
+					lneEnd: end.lneEnd,
+					offEnd: end.offEnd,
+				}
+			}
+		}
 	}
 }

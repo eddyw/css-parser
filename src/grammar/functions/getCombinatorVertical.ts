@@ -1,11 +1,11 @@
 import { TOKEN, GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodeCombinatorVerticalSingle, GrammarNodeCombinatorVerticalDouble } from '~/grammar/shared'
 
 export function getCombinatorVertical(
 	x: GrammarTokenizerContext,
 ): GrammarNodeCombinatorVerticalSingle | GrammarNodeCombinatorVerticalDouble {
-	let open = x.shut
+	const spot = x.getPositionOpen()
 
 	x.consumeCodeAt0(TOKEN.VERTICAL_LINE)
 
@@ -14,19 +14,13 @@ export function getCombinatorVertical(
 		return {
 			symb: GRAMMAR_SYMB.COMBINATOR,
 			flag: GRAMMAR_COMBINATOR.VL_DOUBLE,
-			spot: {
-				offsetIni: open,
-				offsetEnd: x.shut,
-			},
+			spot: x.getPositionShut(spot),
 		}
 	}
 
 	return {
 		symb: GRAMMAR_SYMB.COMBINATOR,
 		flag: GRAMMAR_COMBINATOR.VL_SINGLE,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: x.getPositionShut(spot),
 	}
 }

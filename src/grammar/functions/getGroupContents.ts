@@ -1,7 +1,7 @@
 import { GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
 import { getGroupContentsNode, getCombinatorJuxtaposeFromSpace } from '.'
 import { getLinkedItem, groupByCombinator } from './shared'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type {
 	GrammarGroupLinkedList,
 	GrammarCombinators,
@@ -19,14 +19,51 @@ const ERRORS = {
 	LINKED_LIST_BUG: `Error building LinkedList of combinators. Open an issue.`,
 }
 
+/**
+ * Loop through tokens and create a Doubly Linked List structure,
+ * where each node contains a link the the next & previous node:
+ * e.g:
+ *
+ *      A         ||          B
+ *     ↗           ↖           ↖
+ *  cousin:"||"  cousin:"B"  cousin:null
+ *  return:null  return:"A"  return:"||"
+ *    ↓                         ↓
+ *  head                      tail
+ *
+ * Collect combinators by type in `combinators` record
+ * pseudo-code e.g: (from "A || B")
+ *
+ * combinators[VL_DOUBLE] => [
+ *   {
+ *     nodule: Combinator Type<||>
+ *     cousin: "B"
+ *     return: "A"
+ *   }
+ * ]
+ *
+ * Then, regroup based on combinator priority
+ * @see https://drafts.csswg.org/css-values-4/#component-combinators
+ *
+ * pseudo-code e.g: (with above combinators[VL_DOUBLE])
+ *
+ * Group {
+ *   body: [
+ *     "A", <- `cousin` of Combinator Type<||>
+ *     "B", <- `return` of Combinator Type<||>
+ *   ]
+ *   comb: Combinator Type<||>
+ * }
+ */
 export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: number = 0): GrammarNodeGroup {
 	const root: boolean = groupShutChar === 0
+	const open = x.getPositionOpen()
 
-	let headToken: GrammarGroupLinkedListHeadPointer = { head: null }
-	let currToken: GrammarGroupLinkedList | null = null
-	let prevToken: GrammarGroupLinkedList | null = null
-	let lastSpace: GrammarNodeSpace | null = null
-	let maybeVoid: boolean = true
+	let headLink: GrammarGroupLinkedListHeadPointer = { head: null }
+	let currLink: GrammarGroupLinkedList | null = null
+	let prevLink: GrammarGroupLinkedList | null = null
+	let preSpace: GrammarNodeSpace | null = null
+	let voidable: boolean = true
 
 	const combinators: GrammarGroupContentsCombinators = {
 		[GRAMMAR_COMBINATOR.JUXTAPOSE]: [],
@@ -36,64 +73,64 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 	}
 
 	while (true) {
-		currToken = getLinkedItem(getGroupContentsNode(x, groupShutChar))
-		if (!currToken) break
+		currLink = getLinkedItem(getGroupContentsNode(x, groupShutChar))
+		if (!currLink) break
 
-		if (currToken.nodule.symb === GRAMMAR_SYMB.WHITESPACE) {
-			lastSpace = currToken.nodule
+		if (currLink.nodule.symb === GRAMMAR_SYMB.WHITESPACE) {
+			preSpace = currLink.nodule
 			continue
 		}
 
-		if (currToken.nodule.symb === GRAMMAR_SYMB.COMBINATOR) {
-			if (prevToken == null) throw Error(ERRORS.COMBINATOR_STARTS_GROUP)
-			if (prevToken.nodule.symb === GRAMMAR_SYMB.COMBINATOR) throw Error(ERRORS.FOLLOWED_BY_COMBINATOR)
+		if (currLink.nodule.symb === GRAMMAR_SYMB.COMBINATOR) {
+			if (prevLink == null) throw Error(ERRORS.COMBINATOR_STARTS_GROUP)
+			if (prevLink.nodule.symb === GRAMMAR_SYMB.COMBINATOR) throw Error(ERRORS.FOLLOWED_BY_COMBINATOR)
 
-			prevToken.cousin = currToken
-			currToken.return = prevToken
+			prevLink.cousin = currLink
+			currLink.return = prevLink
 
-			combinators[currToken.nodule.flag].push(currToken as GrammarGroupLinkedList<GrammarCombinators>)
+			combinators[currLink.nodule.flag].push(currLink as GrammarGroupLinkedList<GrammarCombinators>)
 
-			prevToken = currToken
+			prevLink = currLink
 			continue
 		}
 
-		if (prevToken && prevToken.nodule.symb !== GRAMMAR_SYMB.COMBINATOR) {
-			if (!lastSpace) throw Error(ERRORS.PROBABLY_A_BUG)
+		if (prevLink && prevLink.nodule.symb !== GRAMMAR_SYMB.COMBINATOR) {
+			if (!preSpace) throw Error(ERRORS.PROBABLY_A_BUG)
 
-			const juxtapose = getLinkedItem(getCombinatorJuxtaposeFromSpace(lastSpace))
+			const juxtapose = getLinkedItem(getCombinatorJuxtaposeFromSpace(preSpace))
 
-			juxtapose.cousin = currToken
-			juxtapose.return = prevToken
+			juxtapose.cousin = currLink
+			juxtapose.return = prevLink
 
-			prevToken.cousin = juxtapose
-			currToken.return = juxtapose
+			prevLink.cousin = juxtapose
+			currLink.return = juxtapose
 
 			combinators[GRAMMAR_COMBINATOR.JUXTAPOSE].push(juxtapose)
 
-			prevToken = currToken
+			prevLink = currLink
 			continue
 		}
 
-		if (prevToken) {
-			prevToken.cousin = currToken
-			currToken.return = prevToken
+		if (prevLink) {
+			prevLink.cousin = currLink
+			currLink.return = prevLink
 		} else {
-			headToken.head = currToken
+			headLink.head = currLink
 		}
 
-		prevToken = currToken
+		prevLink = currLink
 	}
 
 	if (!root) {
 		x.consumeCodeAt0(groupShutChar)
 	}
 
-	groupByCombinator(combinators[GRAMMAR_COMBINATOR.JUXTAPOSE], headToken)
-	groupByCombinator(combinators[GRAMMAR_COMBINATOR.AMPERSAND], headToken)
-	groupByCombinator(combinators[GRAMMAR_COMBINATOR.VL_DOUBLE], headToken)
-	groupByCombinator(combinators[GRAMMAR_COMBINATOR.VL_SINGLE], headToken)
+	groupByCombinator(combinators[GRAMMAR_COMBINATOR.JUXTAPOSE], headLink)
+	groupByCombinator(combinators[GRAMMAR_COMBINATOR.AMPERSAND], headLink)
+	groupByCombinator(combinators[GRAMMAR_COMBINATOR.VL_DOUBLE], headLink)
+	groupByCombinator(combinators[GRAMMAR_COMBINATOR.VL_SINGLE], headLink)
 
-	const head = headToken.head
+	const head = headLink.head
 
 	if (head == null) {
 		return {
@@ -101,7 +138,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 			body: [],
 			comb: GRAMMAR_COMBINATOR.JUXTAPOSE,
 			root,
-			void: maybeVoid,
+			void: voidable,
 			spot: null,
 		}
 	}
@@ -113,7 +150,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 
 	if (headNode.symb === GRAMMAR_SYMB.GROUP) {
 		headNode.root = root
-		headNode.void = maybeVoid
+		headNode.void = voidable
 
 		return headNode
 	}
@@ -123,7 +160,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 		body: [headNode],
 		comb: GRAMMAR_COMBINATOR.JUXTAPOSE,
 		root,
-		void: maybeVoid,
-		spot: null,
+		void: voidable,
+		spot: x.getPositionShut(open),
 	}
 }

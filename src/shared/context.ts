@@ -1,5 +1,6 @@
 import { TOKEN, SYNTAX_SYMB } from '~/constants'
-import type { SyntaxTokenizerContext, GrammarTokenizerContext } from './types'
+import type { GrammarTokenizerContext } from '~/grammar/shared'
+import type { SyntaxTokenizerContext } from './types'
 
 export function createSyntaxContext(css: string): SyntaxTokenizerContext {
 	const context: SyntaxTokenizerContext = {
@@ -45,8 +46,11 @@ export function createGrammarContext(css: string): GrammarTokenizerContext {
 		lead: 0,
 		tail: 0,
 		flag: 0,
-		optionSpot: false,
-		optionType: false,
+		// lastOffsetCol: 0,
+		// lastOffsetLne: 0,
+		offsetCol: 1,
+		offsetLne: 1,
+		optionSpot: true,
 		setCodeAtCurrent() {
 			const posAt0 = this.shut
 			const posAt1 = posAt0 + 1
@@ -61,6 +65,7 @@ export function createGrammarContext(css: string): GrammarTokenizerContext {
 		consumeCodeAt0(char) {
 			if (this.codeAt0 === char) {
 				this.shut += 1
+				this.offsetCol += 1
 				this.setCodeAtCurrent()
 				return
 			}
@@ -68,17 +73,34 @@ export function createGrammarContext(css: string): GrammarTokenizerContext {
 				`Parse error: Expected token ${String.fromCharCode(char)} but instead got ${String.fromCharCode(this.codeAt0)}`,
 			)
 		},
-		getSpot(open, shut) {
-			if (this.optionSpot === true) {
-				return {
-					offsetIni: open,
-					offsetEnd: shut,
-				}
+		consumeLn() {
+			this.shut += 1
+			this.setCodeAtCurrent()
+			// this.lastOffsetCol = this.offsetCol
+			// this.lastOffsetLne = this.offsetLne
+			this.offsetCol = 1
+			this.offsetLne += 1
+		},
+		getPositionOpen() {
+			return {
+				offIni: this.shut,
+				colIni: this.offsetCol,
+				lneIni: this.offsetLne,
 			}
-			return null
+		},
+		getPositionShut(s) {
+			return {
+				offIni: s.offIni,
+				offEnd: this.shut,
+				colIni: s.colIni,
+				colEnd: this.offsetCol,
+				lneIni: s.lneIni,
+				lneEnd: this.offsetLne,
+			}
 		},
 		consume(n) {
 			this.shut += n
+			this.offsetCol += n
 			this.setCodeAtCurrent()
 		},
 	}

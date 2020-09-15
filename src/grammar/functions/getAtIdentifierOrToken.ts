@@ -1,6 +1,6 @@
 import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
 import { getIdentifierName, getMultiplierOrToken } from '.'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 
 /**
  * @todo - This sucks
@@ -9,8 +9,6 @@ import type { GrammarTokenizerContext } from '~/shared/types'
  * - @ident
  */
 export function getAtIdentifierOrToken(x: GrammarTokenizerContext) {
-	const open: number = x.shut
-
 	x.consumeCodeAt0(TOKEN.AT)
 
 	const name = getIdentifierName(x).node
@@ -21,10 +19,7 @@ export function getAtIdentifierOrToken(x: GrammarTokenizerContext) {
 			type: GRAMMAR_TYPE.FUNCTION,
 			symb: GRAMMAR_SYMB.FUNCTION,
 			node: name,
-			spot: {
-				offsetIni: open,
-				offsetEnd: x.shut,
-			},
+			spot: null,
 		}
 	}
 
@@ -32,9 +27,6 @@ export function getAtIdentifierOrToken(x: GrammarTokenizerContext) {
 		type: GRAMMAR_TYPE.IDENTIFIER,
 		symb: GRAMMAR_SYMB.IDENTIFIER,
 		node: name,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: null,
 	})
 }

@@ -1,13 +1,13 @@
 import { TOKEN, GRAMMAR_SYMB } from '~/constants'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodeString } from '~/grammar/shared'
 
 const up = Error('Unclosed string')
 
 export function getString(x: GrammarTokenizerContext): GrammarNodeString {
-	let open = ++x.shut
+	const open = x.getPositionOpen()
 
-	x.setCodeAtCurrent()
+	x.consumeCodeAt0(TOKEN.SINGLE_QUOTE)
 
 	while (x.shut < x.size) {
 		if (x.codeAt0 === TOKEN.SINGLE_QUOTE) {
@@ -15,8 +15,8 @@ export function getString(x: GrammarTokenizerContext): GrammarNodeString {
 
 			return {
 				symb: GRAMMAR_SYMB.STRING,
-				node: x.code.slice(open, x.shut - 1),
-				spot: x.getSpot(open - 1, x.shut),
+				node: x.code.slice(open.offIni + 1, x.shut - 1),
+				spot: x.getPositionShut(open),
 			}
 		}
 		x.consume(1)

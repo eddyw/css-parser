@@ -1,13 +1,55 @@
 import type { GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
 
+export interface GrammarTokenizerContext {
+	code: string
+	size: number
+	codeAt0: number
+	codeAt1: number
+	codeAt2: number
+	codeAt3: number
+	type: GRAMMAR_SYMB
+	open: number
+	shut: number
+	lead: number
+	tail: number
+	flag: number
+	setCodeAtCurrent(): void
+	consumeCodeAt0(char: number): void
+	consume(n: number): void
+	optionSpot: boolean
+	offsetLne: number
+	offsetCol: number
+	// lastOffsetLne: number
+	// lastOffsetCol: number
+	consumeLn(): void
+	getPositionOpen(): GrammarNodePositionIni
+	getPositionShut(spotIni: GrammarNodePositionIni): GrammarNodePosition
+}
+
+/**
+ * Tokenizer interface
+ */
+export interface GrammarTokenizer {
+	context: GrammarTokenizerContext
+	isDone(): boolean
+	consumeToken(): any
+}
+
 /**
  * Node Position
  */
 export interface GrammarNodePosition {
-	offsetIni?: number
-	offsetEnd?: number
-	offsetLne?: number
-	offsetCol?: number
+	offIni?: number
+	offEnd?: number
+	lneIni?: number
+	lneEnd?: number
+	colIni?: number
+	colEnd?: number
+}
+export interface GrammarNodePositionIni {
+	offIni: number
+	colIni: number
+	lneIni: number
 }
 
 /**
@@ -21,6 +63,7 @@ export interface GrammarNodeIdentifier {
 export interface GrammarNodeFunction {
 	// @todo
 	symb: GRAMMAR_SYMB.FUNCTION
+	spot: GrammarNodePosition | null
 }
 export interface GrammarNodeComma {
 	symb: GRAMMAR_SYMB.COMMA

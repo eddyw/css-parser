@@ -1,11 +1,11 @@
 import { TOKEN, GRAMMAR_SYMB } from '~/constants'
 import { isWhitespace } from '~/syntax/definitions'
 import { getIdentifierName, getSpaces, getTypeRange, getMultiplierOrToken } from '.'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodeType, GrammarNodeTypeRange, GrammarNodeMultiplier } from '~/grammar/shared'
 
 export function getType(x: GrammarTokenizerContext): GrammarNodeType | GrammarNodeMultiplier {
-	const open: number = x.shut
+	const spot = x.getPositionOpen()
 
 	let span: GrammarNodeTypeRange | null = null
 
@@ -25,6 +25,6 @@ export function getType(x: GrammarTokenizerContext): GrammarNodeType | GrammarNo
 		node: name.node,
 		vmin: span ? span.vmin : null,
 		vmax: span ? span.vmax : null,
-		spot: x.getSpot(open, x.shut),
+		spot: x.getPositionShut(spot),
 	})
 }

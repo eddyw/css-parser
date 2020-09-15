@@ -1,6 +1,6 @@
 import { GRAMMAR_SYMB, TOKEN } from '~/constants'
 import { getMultiplierRange } from '.'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodeMultiplier, GrammarNodeMultiplierRequired } from '~/grammar/shared'
 
 const MORE = 65535 // Sane default? (unsigned small int)
@@ -11,7 +11,7 @@ const MORE = 65535 // Sane default? (unsigned small int)
 export function getMultiplier(
 	x: GrammarTokenizerContext,
 ): GrammarNodeMultiplier | GrammarNodeMultiplierRequired | null {
-	const open = x.shut
+	const spot = x.getPositionOpen()
 	const range = {
 		vmin: -1,
 		vmax: -1,
@@ -62,7 +62,7 @@ export function getMultiplier(
 			return {
 				symb: GRAMMAR_SYMB.REQUIRED,
 				node: null,
-				spot: x.getSpot(open, x.shut),
+				spot: x.getPositionShut(spot),
 			}
 		}
 		default: {
@@ -76,6 +76,6 @@ export function getMultiplier(
 		vmax: range.vmax,
 		hash: range.hash,
 		node: null,
-		spot: x.getSpot(open, x.shut),
+		spot: x.getPositionShut(spot),
 	}
 }

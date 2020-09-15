@@ -1,11 +1,11 @@
 import { TOKEN } from '~/constants'
 import { isWhitespace } from '~/syntax/definitions'
 import { getSpaces, getNumber } from '.'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodeTypeRange } from '~/grammar/shared'
 
 export function getTypeRange(x: GrammarTokenizerContext): GrammarNodeTypeRange {
-	const open: number = x.shut
+	const spot = x.getPositionOpen()
 
 	let vmin: number | null = null // −∞
 	let vmax: number | null = null // ∞
@@ -39,9 +39,6 @@ export function getTypeRange(x: GrammarTokenizerContext): GrammarNodeTypeRange {
 	return {
 		vmin,
 		vmax,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: x.getPositionShut(spot),
 	}
 }

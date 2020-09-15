@@ -1,9 +1,9 @@
 import { TOKEN, GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodeCombinatorAmpersand } from '~/grammar/shared'
 
 export function getCombinatorAmpersand(x: GrammarTokenizerContext): GrammarNodeCombinatorAmpersand {
-	let open = x.shut
+	const spot = x.getPositionOpen()
 
 	x.consumeCodeAt0(TOKEN.AMPERSAND)
 	x.consumeCodeAt0(TOKEN.AMPERSAND)
@@ -11,6 +11,6 @@ export function getCombinatorAmpersand(x: GrammarTokenizerContext): GrammarNodeC
 	return {
 		symb: GRAMMAR_SYMB.COMBINATOR,
 		flag: GRAMMAR_COMBINATOR.AMPERSAND,
-		spot: x.getSpot(open, x.shut),
+		spot: x.getPositionShut(spot),
 	}
 }

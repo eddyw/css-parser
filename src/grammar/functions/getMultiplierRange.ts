@@ -1,10 +1,10 @@
 import { getNumber } from '.'
 import { TOKEN } from '~/constants'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodeMultiplierRange } from '~/grammar/shared'
 
 export function getMultiplierRange(x: GrammarTokenizerContext): GrammarNodeMultiplierRange {
-	const open = x.shut
+	const spot = x.getPositionOpen()
 
 	x.consumeCodeAt0(TOKEN.L_CURLY_BRACKET)
 
@@ -25,9 +25,6 @@ export function getMultiplierRange(x: GrammarTokenizerContext): GrammarNodeMulti
 	return {
 		vmin: vmin.repr,
 		vmax: vmax == null ? 0 : vmax.repr,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
+		spot: x.getPositionShut(spot),
 	}
 }

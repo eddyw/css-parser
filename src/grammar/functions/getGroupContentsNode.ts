@@ -14,7 +14,7 @@ import {
 	getGroupBrackets,
 	getAtIdentifierOrToken,
 } from '.'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodesAndCombinators } from '~/grammar/shared'
 
 const up = Error('Out of bounds')

@@ -1,6 +1,6 @@
 import { GRAMMAR_SYMB } from '~/constants'
 import { getMultiplier } from '.'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from '../shared'
 import type { GrammarNodes, GrammarNodeGroup, GrammarNodeMultiplier } from '~/grammar/shared'
 
 const up = `Multiplier "!" can only be assigned to groups`

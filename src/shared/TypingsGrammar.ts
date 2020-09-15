@@ -1,5 +1,8 @@
 import type { GRAMMAR_SYMB } from '~/constants'
 
+/**
+ * @todo --- remove me!
+ */
 export interface GrammarTokenizerContext {
 	code: string
 	size: number
@@ -17,8 +20,12 @@ export interface GrammarTokenizerContext {
 	consumeCodeAt0(char: number): void
 	consume(n: number): void
 	optionSpot: boolean
-	optionType: boolean
-	getSpot(open: number, shut: number): GrammarSpot | null
+	getSpot(open: number, shut: number, openLn?: number, shutLn?: number): GrammarSpot | null
+	offsetLne: number
+	offsetCol: number
+	lastOffsetLne: number
+	lastOffsetCol: number
+	consumeLn(): void
 }
 
 /**
@@ -33,25 +40,8 @@ export interface GrammarTokenizer {
 export interface GrammarSpot {
 	offsetIni?: number
 	offsetEnd?: number
-	offsetLne?: number
-	offsetCol?: number
+	startLne?: number
+	startCol?: number
+	endLne?: number
+	endCol?: number
 }
-
-/**
- * Grammar tokens
- */
-// export interface CSSGrammarEndOfFile {
-// 	type: GRAMMAR_TYPE.END_OF_FILE
-// 	symb: GRAMMAR_SYMB.END_OF_FILE
-// 	flag: number
-// 	node: ''
-// 	spot: GrammarTokenPosition
-// }
-// export interface CSSGrammarIdentifier {
-// 	type: GRAMMAR_TYPE.IDENTIFIER
-// 	symb: GRAMMAR_SYMB.IDENTIFIER
-// 	flag: number
-// 	node: string
-// 	spot: GrammarTokenPosition
-// }
-// export interface CSSGrammarFunction {}

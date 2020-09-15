@@ -1,5 +1,5 @@
 import { getGroupBrackets } from './functions'
-import type { GrammarTokenizerContext } from '~/shared/types'
+import type { GrammarTokenizerContext } from './shared'
 
 /**
  * Parser entry point
