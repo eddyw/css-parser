@@ -1,18 +1,22 @@
 import { TOKEN, GRAMMAR_SYMB } from '~/constants'
 import { getIdentifierName, getMultiplierOrToken, getGroupFunction } from '.'
-import type { GrammarTokenizerContext } from '../shared'
+import type { GrammarTokenizerContext, GrammarNodes } from '../shared'
 
-export function getIdentifierOrFunction(x: GrammarTokenizerContext): any {
-	const spot = x.getPositionOpen()
-	const name = getIdentifierName(x).node
+export function getIdentifierOrFunction(x: GrammarTokenizerContext): GrammarNodes {
+	const open = x.getPositionOpen()
+	const name = getIdentifierName(x)
 
 	if (x.codeAt0 === TOKEN.L_PARENTHESIS) {
-		return getGroupFunction(x, name, spot.offIni)
+		return {
+			symb: GRAMMAR_SYMB.FUNCTION,
+			node: getGroupFunction(x),
+			spot: x.getPositionShut(open),
+		}
 	}
 
 	return getMultiplierOrToken(x, {
 		symb: GRAMMAR_SYMB.IDENTIFIER,
-		node: name,
-		spot: x.getPositionShut(spot),
+		node: name.node,
+		spot: x.getPositionShut(open),
 	})
 }

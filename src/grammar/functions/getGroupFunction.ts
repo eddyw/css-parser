@@ -1,20 +1,9 @@
-import { TOKEN, GRAMMAR_SYMB, GRAMMAR_TYPE } from '~/constants'
+import { TOKEN } from '~/constants'
 import { getGroupContents } from '.'
-import type { GrammarTokenizerContext } from '../shared'
+import type { GrammarTokenizerContext, GrammarNodeGroup } from '../shared'
 
-export function getGroupFunction(x: GrammarTokenizerContext, name: string, open: number) {
+export function getGroupFunction(x: GrammarTokenizerContext): GrammarNodeGroup {
 	x.consumeCodeAt0(TOKEN.L_PARENTHESIS)
 
-	const node = getGroupContents(x, TOKEN.R_PARENTHESIS)
-
-	return {
-		type: GRAMMAR_TYPE.FUNCTION,
-		symb: GRAMMAR_SYMB.FUNCTION,
-		name,
-		node,
-		spot: {
-			offsetIni: open,
-			offsetEnd: x.shut,
-		},
-	}
+	return getGroupContents(x, TOKEN.R_PARENTHESIS)
 }
