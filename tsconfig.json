@@ -16,7 +16,7 @@
     "declarationDir": "./dist/",
     "sourceMap": true,                                  /* Generates corresponding '.map' file. */
     "rootDir": "./src/",                                /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */
-    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",   /* Specify file to store incremental compilation information */
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo",   /* Specify file to store incremental compilation information */
     "noEmit": true,                                     /* Do not emit outputs. */
     "downlevelIteration": true,                         /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
 

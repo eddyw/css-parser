@@ -57,6 +57,7 @@ export default {
 	plugins: [
 		typescript({
 			noEmit: false,
+			tsBuildInfoFile: './dist/tsconfig.tsbuildinfo',
 		}),
 		filesize({ theme: 'light' })
 	],
