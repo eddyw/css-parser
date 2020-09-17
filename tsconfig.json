@@ -19,6 +19,7 @@
     "tsBuildInfoFile": "./tsconfig.tsbuildinfo",   /* Specify file to store incremental compilation information */
     "noEmit": true,                                     /* Do not emit outputs. */
     "downlevelIteration": true,                         /* Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'. */
+    "removeComments": true,                             /* Do not emit comments to output. */
 
     /* Strict Type-Checking Options */
     "strict": true,                                     /* Enable all strict type-checking options. */
