@@ -11,7 +11,7 @@ export function getAtKeyword(x: ParserScanner): SyntaxNode.AtKeyword {
 	const word = getKeyword(x)
 
 	return {
-		type: SyntaxKind.AtKeyword,
+		kind: SyntaxKind.AtKeyword,
 		text: word.text,
 		spot: x.getPositionShut(open),
 	}

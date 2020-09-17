@@ -22,8 +22,8 @@ export function getMultiplierOrNode<T extends SyntaxNode.AnyComponentValue>(
 		// 	multiplier.node = node
 		// }
 		// return multiplier
-		if (mult.void === false && node.type !== SyntaxKind.Group) throw up
-		if (node.type === SyntaxKind.Multiplier) throw bug
+		if (mult.void === false && node.kind !== SyntaxKind.Group) throw up
+		if (node.kind === SyntaxKind.Multiplier) throw bug
 
 		const next = (mult as unknown) as SyntaxNode.Multiplier<T>
 		next.node = node

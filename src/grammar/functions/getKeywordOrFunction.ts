@@ -9,14 +9,14 @@ export function getKeywordOrFunction(x: ParserScanner): SyntaxNode.Keyword | Syn
 	if (x.at0 === TOKEN.L_PARENTHESIS) {
 		x.consume(1)
 		return {
-			type: SyntaxKind.Function,
+			kind: SyntaxKind.Function,
 			node: getGroupContents(x, TOKEN.R_PARENTHESIS),
 			spot: x.getPositionShut(open),
 		}
 	}
 
 	return getMultiplierOrNode<SyntaxNode.Keyword>(x, {
-		type: SyntaxKind.Keyword,
+		kind: SyntaxKind.Keyword,
 		text: name.text,
 		spot: x.getPositionShut(open),
 	})

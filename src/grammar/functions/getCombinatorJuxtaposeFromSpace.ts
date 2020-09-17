@@ -2,8 +2,8 @@ import { SyntaxKind, SyntaxNode, SyntaxPartial, SyntaxCombinatorKind } from '../
 
 export function getCombinatorJuxtaposeFromSpace(space: SyntaxPartial.Space): SyntaxNode.CombinatorJuxtapose {
 	return {
-		type: SyntaxKind.Combinator,
-		kind: SyntaxCombinatorKind.Juxtapose,
+		kind: SyntaxKind.Combinator,
+		flag: SyntaxCombinatorKind.Juxtapose,
 		spot: space.spot,
 	}
 }

@@ -11,7 +11,7 @@ export function getSpace(x: ParserScanner): SyntaxNode.Space {
 	}
 
 	return {
-		type: SyntaxKind.Space,
+		kind: SyntaxKind.Space,
 		text: x.text.slice(spot.offIni, x.shut),
 		spot: x.getPositionShut(spot),
 	}

@@ -16,9 +16,9 @@ export function groupByCombinator<T extends SyntaxNode.AnyCombinator>(
 		const group: SyntaxNode.AnyComponentValue[] = []
 		const parent: LinkedListNode<SyntaxNode.Group> = {
 			nodule: {
-				type: SyntaxKind.Group,
+				kind: SyntaxKind.Group,
 				body: group,
-				comb: combinator.nodule.kind,
+				comb: combinator.nodule.flag,
 				root: false,
 				void: false,
 				spot: null as any, // Assigned later 👇
@@ -85,8 +85,8 @@ export function groupByCombinator<T extends SyntaxNode.AnyCombinator>(
 
 		while ((combinatorCousin = combinatorCousin.cousin!)) {
 			if (
-				combinatorCousin.nodule.type === SyntaxKind.Combinator &&
-				combinatorCousin.nodule.kind === combinator.nodule.kind
+				combinatorCousin.nodule.kind === SyntaxKind.Combinator &&
+				combinatorCousin.nodule.flag === combinator.nodule.flag
 			) {
 				combinatorCousin.ignore = true
 				combinatorCousin = combinatorCousin.cousin! // All combinators have a cousin

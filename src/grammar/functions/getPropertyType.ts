@@ -20,7 +20,7 @@ export function getPropertyType(x: ParserScanner): SyntaxNode.PropertyType | Syn
 	x.consumeAt0(TOKEN.GREATER_THAN)
 
 	return getMultiplierOrNode<SyntaxNode.PropertyType>(x, {
-		type: SyntaxKind.Type,
+		kind: SyntaxKind.Type,
 		name: name.text,
 		vmin: span ? span.vmin : null,
 		vmax: span ? span.vmax : null,

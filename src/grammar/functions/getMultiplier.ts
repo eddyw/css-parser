@@ -71,7 +71,7 @@ export function getMultiplier(x: ParserScanner): SyntaxNode.Multiplier<null> | n
 	}
 
 	return {
-		type: SyntaxKind.Multiplier,
+		kind: SyntaxKind.Multiplier,
 		vmin: range.vmin,
 		vmax: range.vmax,
 		hash: range.hash,

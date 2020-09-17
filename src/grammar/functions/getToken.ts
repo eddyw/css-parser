@@ -7,7 +7,7 @@ export function getToken(x: ParserScanner): SyntaxNode.Token {
 	x.consume(1)
 
 	return {
-		type: SyntaxKind.Token,
+		kind: SyntaxKind.Token,
 		node: x.text.slice(spot.offIni, x.shut),
 		spot: x.getPositionShut(spot),
 	}

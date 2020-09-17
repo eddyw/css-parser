@@ -73,25 +73,25 @@ export function getGroupContents(x: ParserScanner, groupShutChar: number = 0): S
 		currLink = getLinkedItem(getGroupContentsNode(x, groupShutChar))
 		if (!currLink) break
 
-		if (currLink.nodule.type === SyntaxKind.Space) {
+		if (currLink.nodule.kind === SyntaxKind.Space) {
 			preSpace = currLink.nodule
 			continue
 		}
 
-		if (currLink.nodule.type === SyntaxKind.Combinator) {
+		if (currLink.nodule.kind === SyntaxKind.Combinator) {
 			if (prevLink == null) throw Error(ERRORS.COMBINATOR_STARTS_GROUP)
-			if (prevLink.nodule.type === SyntaxKind.Combinator) throw Error(ERRORS.FOLLOWED_BY_COMBINATOR)
+			if (prevLink.nodule.kind === SyntaxKind.Combinator) throw Error(ERRORS.FOLLOWED_BY_COMBINATOR)
 
 			prevLink.cousin = currLink
 			currLink.return = prevLink
 
-			combinators[currLink.nodule.kind].push(currLink as LinkedListNode<SyntaxNode.AnyCombinator>)
+			combinators[currLink.nodule.flag].push(currLink as LinkedListNode<SyntaxNode.AnyCombinator>)
 
 			prevLink = currLink
 			continue
 		}
 
-		if (prevLink && prevLink.nodule.type !== SyntaxKind.Combinator) {
+		if (prevLink && prevLink.nodule.kind !== SyntaxKind.Combinator) {
 			if (!preSpace) throw Error(ERRORS.PROBABLY_A_BUG)
 
 			const juxtapose = getLinkedItem(getCombinatorJuxtaposeFromSpace(preSpace))
@@ -131,7 +131,7 @@ export function getGroupContents(x: ParserScanner, groupShutChar: number = 0): S
 
 	if (head == null) {
 		return {
-			type: SyntaxKind.Group,
+			kind: SyntaxKind.Group,
 			body: [],
 			comb: SyntaxCombinatorKind.Juxtapose,
 			root,
@@ -145,7 +145,7 @@ export function getGroupContents(x: ParserScanner, groupShutChar: number = 0): S
 
 	const headNode = head.nodule as SyntaxNode.AnyComponentValue
 
-	if (headNode.type === SyntaxKind.Group) {
+	if (headNode.kind === SyntaxKind.Group) {
 		headNode.root = root
 		headNode.void = voidable
 
@@ -153,7 +153,7 @@ export function getGroupContents(x: ParserScanner, groupShutChar: number = 0): S
 	}
 
 	return {
-		type: SyntaxKind.Group,
+		kind: SyntaxKind.Group,
 		body: [headNode],
 		comb: SyntaxCombinatorKind.Juxtapose,
 		root,

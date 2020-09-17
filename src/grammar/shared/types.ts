@@ -60,21 +60,21 @@ export declare namespace SyntaxNode {
 	export type Any = AnyComponentValue | AnyCombinator | Space
 
 	export interface Keyword {
-		type: SyntaxKind.Keyword
+		kind: SyntaxKind.Keyword
 		text: string
 		spot: TextPosition
 	}
 	export interface AtKeyword {
-		type: SyntaxKind.AtKeyword
+		kind: SyntaxKind.AtKeyword
 		text: string
 		spot: TextPosition
 	}
 	export interface Comma {
-		type: SyntaxKind.Comma
+		kind: SyntaxKind.Comma
 		spot: TextPosition
 	}
 	export interface Space {
-		type: SyntaxKind.Space
+		kind: SyntaxKind.Space
 		text: string
 		spot: TextPosition
 	}
@@ -83,7 +83,7 @@ export declare namespace SyntaxNode {
 		 * This was String
 		 * - Add `kind` or `flag`, or `type`
 		 */
-		type: SyntaxKind.Delimiter
+		kind: SyntaxKind.Delimiter
 		node: string
 		spot: TextPosition
 	}
@@ -91,24 +91,24 @@ export declare namespace SyntaxNode {
 		/**
 		 * This should be unquoted delimiter
 		 */
-		type: SyntaxKind.Token
+		kind: SyntaxKind.Token
 		node: string
 		spot: TextPosition
 	}
 	export interface PropertyType {
-		type: SyntaxKind.Type
+		kind: SyntaxKind.Type
 		name: string
 		vmin: number | null
 		vmax: number | null
 		spot: TextPosition
 	}
 	export interface PropertyTypeRef {
-		type: SyntaxKind.TypeReference
+		kind: SyntaxKind.TypeReference
 		name: string
 		spot: TextPosition
 	}
 	export interface Multiplier<T extends AnyComponentValue | null = SyntaxNode.AnyComponentValue> {
-		type: SyntaxKind.Multiplier
+		kind: SyntaxKind.Multiplier
 		vmin: number
 		vmax: number
 		hash: boolean
@@ -120,13 +120,13 @@ export declare namespace SyntaxNode {
 		/**
 		 * This should be a Delimiter or Token
 		 */
-		type: SyntaxKind.Required
+		kind: SyntaxKind.Required
 		node: Node
 		spot: TextPosition
 	}
 
 	export interface Group {
-		type: SyntaxKind.Group
+		kind: SyntaxKind.Group
 		body: AnyComponentValue[]
 		comb: SyntaxCombinatorKind
 		root: boolean
@@ -134,29 +134,29 @@ export declare namespace SyntaxNode {
 		spot: TextPosition
 	}
 	export interface Function {
-		type: SyntaxKind.Function
+		kind: SyntaxKind.Function
 		node: Group
 		spot: TextPosition
 	}
 
 	export interface CombinatorJuxtapose {
-		type: SyntaxKind.Combinator
-		kind: SyntaxCombinatorKind.Juxtapose
+		kind: SyntaxKind.Combinator
+		flag: SyntaxCombinatorKind.Juxtapose
 		spot: TextPosition
 	}
 	export interface CombinatorAmpersand {
-		type: SyntaxKind.Combinator
-		kind: SyntaxCombinatorKind.Ampersand
+		kind: SyntaxKind.Combinator
+		flag: SyntaxCombinatorKind.Ampersand
 		spot: TextPosition
 	}
 	export interface CombinatorBarDouble {
-		type: SyntaxKind.Combinator
-		kind: SyntaxCombinatorKind.BarDouble
+		kind: SyntaxKind.Combinator
+		flag: SyntaxCombinatorKind.BarDouble
 		spot: TextPosition
 	}
 	export interface CombinatorBarSingle {
-		type: SyntaxKind.Combinator
-		kind: SyntaxCombinatorKind.BarSingle
+		kind: SyntaxKind.Combinator
+		flag: SyntaxCombinatorKind.BarSingle
 		spot: TextPosition
 	}
 }

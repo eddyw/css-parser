@@ -13,7 +13,7 @@ export function getDelimiterQuoted(x: ParserScanner): SyntaxNode.Delimiter {
 			x.consume(1)
 
 			return {
-				type: SyntaxKind.Delimiter,
+				kind: SyntaxKind.Delimiter,
 				node: x.text.slice(open.offIni + 1, x.shut - 1),
 				spot: x.getPositionShut(open),
 			}

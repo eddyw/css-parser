@@ -16,7 +16,7 @@ export function getPropertyTypeRef(
 	x.consumeAt0(TOKEN.GREATER_THAN)
 
 	return getMultiplierOrNode<SyntaxNode.PropertyTypeRef>(x, {
-		type: SyntaxKind.TypeReference,
+		kind: SyntaxKind.TypeReference,
 		name: name.text,
 		spot: x.getPositionShut(spot),
 	})

@@ -8,8 +8,8 @@ export function getCombinatorAmpersand(x: ParserScanner): SyntaxNode.CombinatorA
 	x.consumeAt0(TOKEN.AMPERSAND)
 
 	return {
-		type: SyntaxKind.Combinator,
-		kind: SyntaxCombinatorKind.Ampersand,
+		kind: SyntaxKind.Combinator,
+		flag: SyntaxCombinatorKind.Ampersand,
 		spot: x.getPositionShut(spot),
 	}
 }

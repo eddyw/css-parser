@@ -9,15 +9,15 @@ export function getCombinatorBar(x: ParserScanner): SyntaxNode.CombinatorBarSing
 	if (x.at0 === TOKEN.VERTICAL_LINE) {
 		x.consume(1)
 		return {
-			type: SyntaxKind.Combinator,
-			kind: SyntaxCombinatorKind.BarDouble,
+			kind: SyntaxKind.Combinator,
+			flag: SyntaxCombinatorKind.BarDouble,
 			spot: x.getPositionShut(spot),
 		}
 	}
 
 	return {
-		type: SyntaxKind.Combinator,
-		kind: SyntaxCombinatorKind.BarSingle,
+		kind: SyntaxKind.Combinator,
+		flag: SyntaxCombinatorKind.BarSingle,
 		spot: x.getPositionShut(spot),
 	}
 }
