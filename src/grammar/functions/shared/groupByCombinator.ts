@@ -1,15 +1,8 @@
-import { GRAMMAR_SYMB } from '~/constants'
-import type {
-	GrammarGroupLinkedList,
-	GrammarCombinators,
-	GrammarGroupLinkedListHeadPointer,
-	GrammarNodeGroup,
-	GrammarNodes,
-} from '~/grammar/shared'
+import { SyntaxKind, SyntaxNode, LinkedListNode, LinkedListHead } from '../../shared'
 
-export function groupByCombinator<T extends GrammarCombinators>(
-	combinatorList: GrammarGroupLinkedList<T>[],
-	pointer: GrammarGroupLinkedListHeadPointer,
+export function groupByCombinator<T extends SyntaxNode.AnyCombinator>(
+	combinatorList: LinkedListNode<T>[],
+	pointer: LinkedListHead,
 ) {
 	const length = combinatorList.length
 
@@ -20,15 +13,15 @@ export function groupByCombinator<T extends GrammarCombinators>(
 
 		if (combinator.ignore) continue
 
-		const group: GrammarNodes[] = []
-		const parent: GrammarGroupLinkedList<GrammarNodeGroup> = {
+		const group: SyntaxNode.AnyComponentValue[] = []
+		const parent: LinkedListNode<SyntaxNode.Group> = {
 			nodule: {
-				symb: GRAMMAR_SYMB.GROUP,
+				type: SyntaxKind.Group,
 				body: group,
-				comb: combinator.nodule.flag,
+				comb: combinator.nodule.kind,
 				root: false,
 				void: false,
-				spot: null,
+				spot: null as any, // Assigned later 👇
 			},
 			return: null,
 			cousin: null,
@@ -57,7 +50,7 @@ export function groupByCombinator<T extends GrammarCombinators>(
 			pointer.head = parent
 		}
 
-		group.push(combinatorReturn.nodule as GrammarNodes)
+		group.push(combinatorReturn.nodule as SyntaxNode.AnyComponentValue)
 
 		let combinatorCousin = combinator.cousin!
 
@@ -70,7 +63,7 @@ export function groupByCombinator<T extends GrammarCombinators>(
 			parent.cousin.return = parent
 		}
 
-		group.push(combinatorCousin.nodule as GrammarNodes)
+		group.push(combinatorCousin.nodule as SyntaxNode.AnyComponentValue)
 
 		/**
 		 * Repeatedly go through the next « Cousin of Cousin of combinator »,
@@ -92,8 +85,8 @@ export function groupByCombinator<T extends GrammarCombinators>(
 
 		while ((combinatorCousin = combinatorCousin.cousin!)) {
 			if (
-				combinatorCousin.nodule.symb === GRAMMAR_SYMB.COMBINATOR &&
-				combinatorCousin.nodule.flag === combinator.nodule.flag
+				combinatorCousin.nodule.type === SyntaxKind.Combinator &&
+				combinatorCousin.nodule.kind === combinator.nodule.kind
 			) {
 				combinatorCousin.ignore = true
 				combinatorCousin = combinatorCousin.cousin! // All combinators have a cousin
@@ -104,7 +97,7 @@ export function groupByCombinator<T extends GrammarCombinators>(
 					parent.cousin.return = parent
 				}
 
-				group.push(combinatorCousin.nodule as GrammarNodes)
+				group.push(combinatorCousin.nodule as SyntaxNode.AnyComponentValue)
 			} else {
 				parent.cousin = combinatorCousin
 				parent.cousin!.return = parent

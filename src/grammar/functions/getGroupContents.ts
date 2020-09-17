@@ -1,22 +1,19 @@
-import { GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
 import { getGroupContentsNode, getCombinatorJuxtaposeFromSpace } from '.'
 import { getLinkedItem, groupByCombinator } from './shared'
-import type { GrammarTokenizerContext } from '../shared'
-import type {
-	GrammarGroupLinkedList,
-	GrammarCombinators,
-	GrammarGroupLinkedListHeadPointer,
-	GrammarGroupContentsCombinators,
-	GrammarNodeSpace,
-	GrammarNodes,
-	GrammarNodeGroup,
-} from '~/grammar/shared'
+import { ParserScanner, SyntaxKind, SyntaxNode, SyntaxCombinatorKind, LinkedListHead, LinkedListNode } from '../shared'
 
 const ERRORS = {
 	FOLLOWED_BY_COMBINATOR: `A combinator cannot be followed by another combinator`,
 	COMBINATOR_STARTS_GROUP: `A group cannot start with a combinator`,
 	PROBABLY_A_BUG: `Something is broken. Open an issue.`,
 	LINKED_LIST_BUG: `Error building LinkedList of combinators. Open an issue.`,
+}
+
+export interface CombinatorRecord {
+	[SyntaxCombinatorKind.Juxtapose]: LinkedListNode<SyntaxNode.AnyCombinator>[]
+	[SyntaxCombinatorKind.Ampersand]: LinkedListNode<SyntaxNode.AnyCombinator>[]
+	[SyntaxCombinatorKind.BarDouble]: LinkedListNode<SyntaxNode.AnyCombinator>[]
+	[SyntaxCombinatorKind.BarSingle]: LinkedListNode<SyntaxNode.AnyCombinator>[]
 }
 
 /**
@@ -55,46 +52,46 @@ const ERRORS = {
  *   comb: Combinator Type<||>
  * }
  */
-export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: number = 0): GrammarNodeGroup {
+export function getGroupContents(x: ParserScanner, groupShutChar: number = 0): SyntaxNode.Group {
 	const root: boolean = groupShutChar === 0
 	const open = x.getPositionOpen()
 
-	let headLink: GrammarGroupLinkedListHeadPointer = { head: null }
-	let currLink: GrammarGroupLinkedList | null = null
-	let prevLink: GrammarGroupLinkedList | null = null
-	let preSpace: GrammarNodeSpace | null = null
+	let headLink: LinkedListHead = { head: null }
+	let currLink: LinkedListNode | null = null
+	let prevLink: LinkedListNode | null = null
+	let preSpace: SyntaxNode.Space | null = null
 	let voidable: boolean = true
 
-	const combinators: GrammarGroupContentsCombinators = {
-		[GRAMMAR_COMBINATOR.JUXTAPOSE]: [],
-		[GRAMMAR_COMBINATOR.AMPERSAND]: [],
-		[GRAMMAR_COMBINATOR.VL_DOUBLE]: [],
-		[GRAMMAR_COMBINATOR.VL_SINGLE]: [],
+	const combinators: CombinatorRecord = {
+		[SyntaxCombinatorKind.Juxtapose]: [],
+		[SyntaxCombinatorKind.Ampersand]: [],
+		[SyntaxCombinatorKind.BarDouble]: [],
+		[SyntaxCombinatorKind.BarSingle]: [],
 	}
 
 	while (true) {
 		currLink = getLinkedItem(getGroupContentsNode(x, groupShutChar))
 		if (!currLink) break
 
-		if (currLink.nodule.symb === GRAMMAR_SYMB.WHITESPACE) {
+		if (currLink.nodule.type === SyntaxKind.Space) {
 			preSpace = currLink.nodule
 			continue
 		}
 
-		if (currLink.nodule.symb === GRAMMAR_SYMB.COMBINATOR) {
+		if (currLink.nodule.type === SyntaxKind.Combinator) {
 			if (prevLink == null) throw Error(ERRORS.COMBINATOR_STARTS_GROUP)
-			if (prevLink.nodule.symb === GRAMMAR_SYMB.COMBINATOR) throw Error(ERRORS.FOLLOWED_BY_COMBINATOR)
+			if (prevLink.nodule.type === SyntaxKind.Combinator) throw Error(ERRORS.FOLLOWED_BY_COMBINATOR)
 
 			prevLink.cousin = currLink
 			currLink.return = prevLink
 
-			combinators[currLink.nodule.flag].push(currLink as GrammarGroupLinkedList<GrammarCombinators>)
+			combinators[currLink.nodule.kind].push(currLink as LinkedListNode<SyntaxNode.AnyCombinator>)
 
 			prevLink = currLink
 			continue
 		}
 
-		if (prevLink && prevLink.nodule.symb !== GRAMMAR_SYMB.COMBINATOR) {
+		if (prevLink && prevLink.nodule.type !== SyntaxKind.Combinator) {
 			if (!preSpace) throw Error(ERRORS.PROBABLY_A_BUG)
 
 			const juxtapose = getLinkedItem(getCombinatorJuxtaposeFromSpace(preSpace))
@@ -105,7 +102,7 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 			prevLink.cousin = juxtapose
 			currLink.return = juxtapose
 
-			combinators[GRAMMAR_COMBINATOR.JUXTAPOSE].push(juxtapose)
+			combinators[SyntaxCombinatorKind.Juxtapose].push(juxtapose)
 
 			prevLink = currLink
 			continue
@@ -122,21 +119,21 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 	}
 
 	if (!root) {
-		x.consumeCodeAt0(groupShutChar)
+		x.consumeAt0(groupShutChar)
 	}
 
-	groupByCombinator(combinators[GRAMMAR_COMBINATOR.JUXTAPOSE], headLink)
-	groupByCombinator(combinators[GRAMMAR_COMBINATOR.AMPERSAND], headLink)
-	groupByCombinator(combinators[GRAMMAR_COMBINATOR.VL_DOUBLE], headLink)
-	groupByCombinator(combinators[GRAMMAR_COMBINATOR.VL_SINGLE], headLink)
+	groupByCombinator(combinators[SyntaxCombinatorKind.Juxtapose], headLink)
+	groupByCombinator(combinators[SyntaxCombinatorKind.Ampersand], headLink)
+	groupByCombinator(combinators[SyntaxCombinatorKind.BarDouble], headLink)
+	groupByCombinator(combinators[SyntaxCombinatorKind.BarSingle], headLink)
 
 	const head = headLink.head
 
 	if (head == null) {
 		return {
-			symb: GRAMMAR_SYMB.GROUP,
+			type: SyntaxKind.Group,
 			body: [],
-			comb: GRAMMAR_COMBINATOR.JUXTAPOSE,
+			comb: SyntaxCombinatorKind.Juxtapose,
 			root,
 			void: voidable,
 			spot: x.getPositionShut(open),
@@ -146,9 +143,9 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 	if (head.return) throw Error(ERRORS.LINKED_LIST_BUG) // Why would it have a return ???
 	if (head.cousin) throw Error(ERRORS.LINKED_LIST_BUG) // How so???
 
-	const headNode = head.nodule as GrammarNodes
+	const headNode = head.nodule as SyntaxNode.AnyComponentValue
 
-	if (headNode.symb === GRAMMAR_SYMB.GROUP) {
+	if (headNode.type === SyntaxKind.Group) {
 		headNode.root = root
 		headNode.void = voidable
 
@@ -156,9 +153,9 @@ export function getGroupContents(x: GrammarTokenizerContext, groupShutChar: numb
 	}
 
 	return {
-		symb: GRAMMAR_SYMB.GROUP,
+		type: SyntaxKind.Group,
 		body: [headNode],
-		comb: GRAMMAR_COMBINATOR.JUXTAPOSE,
+		comb: SyntaxCombinatorKind.Juxtapose,
 		root,
 		void: voidable,
 		spot: x.getPositionShut(open),

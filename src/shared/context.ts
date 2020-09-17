@@ -1,5 +1,5 @@
 import { TOKEN, SYNTAX_SYMB } from '~/constants'
-import type { GrammarTokenizerContext } from '~/grammar/shared'
+import type { ParserScanner } from '~/grammar/shared'
 import type { SyntaxTokenizerContext } from './types'
 
 export function createSyntaxContext(css: string): SyntaxTokenizerContext {
@@ -32,52 +32,40 @@ export function createSyntaxContext(css: string): SyntaxTokenizerContext {
 	return context
 }
 
-export function createGrammarContext(css: string): GrammarTokenizerContext {
-	const context: GrammarTokenizerContext = {
-		code: css,
+export function createGrammarContext(css: string): ParserScanner {
+	const context: ParserScanner = {
+		text: css,
 		size: css.length,
-		codeAt0: TOKEN.EOF,
-		codeAt1: TOKEN.EOF,
-		codeAt2: TOKEN.EOF,
-		codeAt3: TOKEN.EOF,
-		type: 0,
+		at0: TOKEN.EOF,
+		at1: TOKEN.EOF,
+		at2: TOKEN.EOF,
 		open: 0,
 		shut: 0,
-		lead: 0,
-		tail: 0,
-		flag: 0,
-		// lastOffsetCol: 0,
-		// lastOffsetLne: 0,
 		offsetCol: 1,
 		offsetLne: 1,
-		optionSpot: true,
-		setCodeAtCurrent() {
+		scan() {
 			const posAt0 = this.shut
 			const posAt1 = posAt0 + 1
 			const posAt2 = posAt0 + 2
-			const posAt3 = posAt0 + 3
 
-			this.codeAt0 = posAt0 >= this.size ? TOKEN.EOF : this.code.charCodeAt(posAt0)!
-			this.codeAt1 = posAt1 >= this.size ? TOKEN.EOF : this.code.charCodeAt(posAt1)!
-			this.codeAt2 = posAt2 >= this.size ? TOKEN.EOF : this.code.charCodeAt(posAt2)!
-			this.codeAt3 = posAt3 >= this.size ? TOKEN.EOF : this.code.charCodeAt(posAt3)!
+			this.at0 = posAt0 >= this.size ? TOKEN.EOF : this.text.charCodeAt(posAt0)!
+			this.at1 = posAt1 >= this.size ? TOKEN.EOF : this.text.charCodeAt(posAt1)!
+			this.at2 = posAt2 >= this.size ? TOKEN.EOF : this.text.charCodeAt(posAt2)!
 		},
-		consumeCodeAt0(char) {
-			if (this.codeAt0 === char) {
+		consumeAt0(char) {
+			if (this.at0 === char) {
 				this.shut += 1
 				this.offsetCol += 1
-				this.setCodeAtCurrent()
+				this.scan()
 				return
 			}
 			throw Error(
-				`Parse error: Expected token ${String.fromCharCode(char)} but instead got ${String.fromCharCode(this.codeAt0)}`,
+				`Parse error: Expected token ${String.fromCharCode(char)} but instead got ${String.fromCharCode(this.at0)}`,
 			)
 		},
-		consumeLn() {
+		consumeLne() {
 			this.shut += 1
-			this.setCodeAtCurrent()
-			// this.lastOffsetCol = this.offsetCol
-			// this.lastOffsetLne = this.offsetLne
+			this.scan()
 			this.offsetCol = 1
 			this.offsetLne += 1
 		},
@@ -101,7 +89,7 @@ export function createGrammarContext(css: string): GrammarTokenizerContext {
 		consume(n) {
 			this.shut += n
 			this.offsetCol += n
-			this.setCodeAtCurrent()
+			this.scan()
 		},
 	}
 

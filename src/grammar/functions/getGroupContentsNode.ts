@@ -1,49 +1,45 @@
 import { TOKEN } from '~/constants'
 import { isWhitespace, areIdentifierNameStart } from '~/syntax/definitions'
 import {
-	getMultiplierOrToken,
-	getIdentifierOrFunction,
-	getSpaces,
-	getString,
+	getMultiplierOrNode,
+	getKeywordOrFunction,
+	getSpace,
+	getDelimiterQuoted,
 	getToken,
-	getType,
-	getTypeReference,
-	getCombinatorVertical,
+	getPropertyType,
+	getPropertyTypeRef,
+	getCombinatorBar,
 	getCombinatorAmpersand,
 	getComma,
 	getGroupBrackets,
-	getAtIdentifierOrToken,
+	getAtKeyword,
 } from '.'
-import type { GrammarTokenizerContext } from '../shared'
-import type { GrammarNodesAndCombinators } from '~/grammar/shared'
+import { ParserScanner, SyntaxNode } from '../shared'
 
-const up = Error('Out of bounds')
+export function getGroupContentsNode(x: ParserScanner, groupShutChar: number = 0): SyntaxNode.Any | null {
+	if (x.at0 === -1) return null
 
-export function getGroupContentsNode(x: GrammarTokenizerContext, groupShutChar: number = 0): GrammarNodesAndCombinators | null {
-	if (x.shut > x.size) throw up
-	if (x.codeAt0 === -1) return null
-
-	const codeAt0 = x.codeAt0
+	const codeAt0 = x.at0
 
 	if (groupShutChar !== 0 && codeAt0 === groupShutChar) {
 		return null
 	}
 
-	if (areIdentifierNameStart(codeAt0, x.codeAt1, x.codeAt2)) {
-		return getIdentifierOrFunction(x)
+	if (areIdentifierNameStart(codeAt0, x.at1, x.at2)) {
+		return getKeywordOrFunction(x)
 	}
 
 	if (codeAt0 === TOKEN.L_SQUARE_BRACKET) {
-		return getMultiplierOrToken(x, getGroupBrackets(x))
+		return getMultiplierOrNode(x, getGroupBrackets(x))
 	}
 
 	if (codeAt0 === TOKEN.LESS_THAN) {
-		if (x.codeAt1 === TOKEN.SINGLE_QUOTE) return getTypeReference(x)
-		return getType(x)
+		if (x.at1 === TOKEN.SINGLE_QUOTE) return getPropertyTypeRef(x)
+		return getPropertyType(x)
 	}
 
 	if (codeAt0 === TOKEN.VERTICAL_LINE) {
-		return getCombinatorVertical(x)
+		return getCombinatorBar(x)
 	}
 
 	if (codeAt0 === TOKEN.AMPERSAND) {
@@ -55,11 +51,11 @@ export function getGroupContentsNode(x: GrammarTokenizerContext, groupShutChar: 
 	}
 
 	if (codeAt0 === TOKEN.SINGLE_QUOTE) {
-		return getString(x)
+		return getDelimiterQuoted(x)
 	}
 
 	if (isWhitespace(codeAt0)) {
-		return getSpaces(x)
+		return getSpace(x)
 	}
 
 	if (codeAt0 === TOKEN.FORWARD_SOLIDUS || codeAt0 === TOKEN.L_PARENTHESIS || codeAt0 === TOKEN.R_PARENTHESIS) {
@@ -67,8 +63,9 @@ export function getGroupContentsNode(x: GrammarTokenizerContext, groupShutChar: 
 	}
 
 	if (codeAt0 === TOKEN.AT) {
-		return getAtIdentifierOrToken(x) as any // @todo - come back to fix me!!!
+		return getAtKeyword(x) as any // @todo - come back to fix me!!!
 	}
 
-	throw Error(`getNode: Unexpected token "${String.fromCharCode(x.codeAt0)}" (${x.codeAt0}):${(x.open, x.shut)}`)
+	// throw Error(`getNode: Unexpected token "${String.fromCharCode(x.at_0)}" (${x.at_0}):${(x.open, x.shut)}`)
+	throw Error('Unexpected token') // @todo
 }

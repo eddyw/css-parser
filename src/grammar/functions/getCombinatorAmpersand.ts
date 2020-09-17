@@ -1,16 +1,15 @@
-import { TOKEN, GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
-import type { GrammarTokenizerContext } from '../shared'
-import type { GrammarNodeCombinatorAmpersand } from '~/grammar/shared'
+import { TOKEN } from '~/constants'
+import { ParserScanner, SyntaxNode, SyntaxKind, SyntaxCombinatorKind } from '../shared'
 
-export function getCombinatorAmpersand(x: GrammarTokenizerContext): GrammarNodeCombinatorAmpersand {
+export function getCombinatorAmpersand(x: ParserScanner): SyntaxNode.CombinatorAmpersand {
 	const spot = x.getPositionOpen()
 
-	x.consumeCodeAt0(TOKEN.AMPERSAND)
-	x.consumeCodeAt0(TOKEN.AMPERSAND)
+	x.consumeAt0(TOKEN.AMPERSAND)
+	x.consumeAt0(TOKEN.AMPERSAND)
 
 	return {
-		symb: GRAMMAR_SYMB.COMBINATOR,
-		flag: GRAMMAR_COMBINATOR.AMPERSAND,
+		type: SyntaxKind.Combinator,
+		kind: SyntaxCombinatorKind.Ampersand,
 		spot: x.getPositionShut(spot),
 	}
 }

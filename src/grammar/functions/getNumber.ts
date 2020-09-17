@@ -1,28 +1,27 @@
 import { isDigit } from '~/syntax/definitions'
 import { TOKEN } from '~/constants'
-import type { GrammarTokenizerContext } from '../shared'
-import type { GrammarNodeNumber } from '~/grammar/shared'
+import { ParserScanner, SyntaxPartial } from '../shared'
 
 const up = Error('Expected a number')
 
-export function getNumber(x: GrammarTokenizerContext, signed: boolean): GrammarNodeNumber {
+export function getNumber(x: ParserScanner, signed: boolean): SyntaxPartial.Numeric {
 	const spot = x.getPositionOpen()
 	let opSign = spot.offIni
 
-	if (signed && (x.codeAt0 === TOKEN.MINUS || x.codeAt0 === TOKEN.PLUS)) {
+	if (signed && (x.at0 === TOKEN.MINUS || x.at0 === TOKEN.PLUS)) {
 		x.consume(1)
 		opSign += 1
 	}
 
-	while (isDigit(x.codeAt0)) x.consume(1)
+	while (isDigit(x.at0)) x.consume(1)
 
 	if (opSign === x.shut) throw up
 
-	const node = x.code.slice(spot.offIni, x.shut)
+	const text = x.text.slice(spot.offIni, x.shut)
 
 	return {
-		node: node,
-		repr: Number(node),
+		text: text,
+		repr: Number(text),
 		spot: x.getPositionShut(spot),
 	}
 }

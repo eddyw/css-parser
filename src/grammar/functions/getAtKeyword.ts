@@ -1,14 +1,18 @@
 import { TOKEN } from '~/constants'
+import { getKeyword } from '.'
 import { SyntaxKind } from '../shared'
 import type { ParserScanner, SyntaxNode } from '../shared'
 
-export function getComma(x: ParserScanner): SyntaxNode.Comma {
+export function getAtKeyword(x: ParserScanner): SyntaxNode.AtKeyword {
 	const open = x.getPositionOpen()
 
-	x.consumeAt0(TOKEN.COMMA)
+	x.consumeAt0(TOKEN.AT)
+
+	const word = getKeyword(x)
 
 	return {
-		type: SyntaxKind.Comma,
+		type: SyntaxKind.AtKeyword,
+		text: word.text,
 		spot: x.getPositionShut(open),
 	}
 }

@@ -1,10 +1,10 @@
-import type { GrammarGroupLinkedList, GrammarNodesAndCombinators } from '~/grammar/shared'
+import { SyntaxNode, LinkedListNode } from '../../shared'
 
-type NullOrLinkedList<T extends (GrammarNodesAndCombinators | null)> = T extends GrammarNodesAndCombinators
-	? GrammarGroupLinkedList<T>
+type NullOrLinkedList<T extends (SyntaxNode.Any | null)> = T extends SyntaxNode.Any
+	? LinkedListNode<T>
 	: null
 
-export function getLinkedItem<T extends GrammarNodesAndCombinators | null>(
+export function getLinkedItem<T extends SyntaxNode.Any | null>(
 	node: T,
 ): NullOrLinkedList<T> {
 	if (node == null) return null as any

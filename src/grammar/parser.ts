@@ -1,11 +1,11 @@
 import { getGroupBrackets } from './functions'
-import type { GrammarTokenizerContext } from './shared'
+import type { ParserScanner } from './shared'
 
 /**
  * Parser entry point
  */
-export function parser(x: GrammarTokenizerContext) {
-	x.setCodeAtCurrent()
+export function parser(x: ParserScanner) {
+	x.scan()
 
 	const group = getGroupBrackets(x, true)
 

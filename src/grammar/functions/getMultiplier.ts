@@ -1,24 +1,22 @@
-import { GRAMMAR_SYMB, TOKEN } from '~/constants'
+import { TOKEN } from '~/constants'
 import { getMultiplierRange } from '.'
-import type { GrammarTokenizerContext } from '../shared'
-import type { GrammarNodeMultiplier, GrammarNodeMultiplierRequired } from '~/grammar/shared'
+import { ParserScanner, SyntaxNode, SyntaxKind } from '../shared'
 
 const MORE = 65535 // Sane default? (unsigned small int)
 
 /**
  * Multiplier for type, word, or group
  */
-export function getMultiplier(
-	x: GrammarTokenizerContext,
-): GrammarNodeMultiplier | GrammarNodeMultiplierRequired | null {
+export function getMultiplier(x: ParserScanner): SyntaxNode.Multiplier<null> | null {
 	const spot = x.getPositionOpen()
 	const range = {
 		vmin: -1,
 		vmax: -1,
 		hash: false,
+		void: true,
 	}
 
-	switch (x.codeAt0) {
+	switch (x.at0) {
 		case TOKEN.ASTERISK: {
 			x.consume(1)
 			range.vmax = 0 // 0 or
@@ -41,7 +39,7 @@ export function getMultiplier(
 			x.consume(1)
 			range.hash = true // Separated by comma
 
-			if (x.codeAt0 === (TOKEN.L_CURLY_BRACKET as number)) {
+			if (x.at0 === (TOKEN.L_CURLY_BRACKET as number)) {
 				const node = getMultiplierRange(x)
 				range.vmin = node.vmin
 				range.vmax = node.vmax
@@ -59,11 +57,13 @@ export function getMultiplier(
 		}
 		case TOKEN.EXCLAMATION: {
 			x.consume(1)
-			return {
-				symb: GRAMMAR_SYMB.REQUIRED,
-				node: null,
-				spot: x.getPositionShut(spot),
-			}
+			// return {
+			// 	type: SyntaxKind.Required,
+			// 	node: null,
+			// 	spot: x.getPositionShut(spot),
+			// }
+			range.void = false
+			break
 		}
 		default: {
 			return null
@@ -71,10 +71,11 @@ export function getMultiplier(
 	}
 
 	return {
-		symb: GRAMMAR_SYMB.MULTIPLIER,
+		type: SyntaxKind.Multiplier,
 		vmin: range.vmin,
 		vmax: range.vmax,
 		hash: range.hash,
+		void: range.void,
 		node: null,
 		spot: x.getPositionShut(spot),
 	}

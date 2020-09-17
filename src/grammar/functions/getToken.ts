@@ -1,15 +1,14 @@
-import { GRAMMAR_SYMB } from '~/constants'
-import type { GrammarTokenizerContext } from '../shared'
-import type { GrammarNodeToken } from '~/grammar/shared'
+import { SyntaxKind } from '../shared'
+import { ParserScanner,SyntaxNode } from '../shared'
 
-export function getToken(x: GrammarTokenizerContext): GrammarNodeToken {
+export function getToken(x: ParserScanner): SyntaxNode.Token {
 	const spot = x.getPositionOpen()
 
 	x.consume(1)
 
 	return {
-		symb: GRAMMAR_SYMB.TOKEN,
-		node: x.code.slice(spot.offIni, x.shut),
+		type: SyntaxKind.Token,
+		node: x.text.slice(spot.offIni, x.shut),
 		spot: x.getPositionShut(spot),
 	}
 }

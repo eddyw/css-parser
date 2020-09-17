@@ -1,44 +1,33 @@
-import type { GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
+import type { SyntaxKind, SyntaxCombinatorKind } from '.'
 
-export interface GrammarTokenizerContext {
-	code: string
-	size: number
-	codeAt0: number
-	codeAt1: number
-	codeAt2: number
-	codeAt3: number
-	type: GRAMMAR_SYMB
-	open: number
-	shut: number
-	lead: number
-	tail: number
-	flag: number
-	setCodeAtCurrent(): void
-	consumeCodeAt0(char: number): void
-	consume(n: number): void
-	optionSpot: boolean
-	offsetLne: number
-	offsetCol: number
-	// lastOffsetLne: number
-	// lastOffsetCol: number
-	consumeLn(): void
-	getPositionOpen(): GrammarNodePositionIni
-	getPositionShut(spotIni: GrammarNodePositionIni): GrammarNodePosition
+export interface ParserOptions {
+	text?: string
+	offsetCol?: number
+	offsetLne?: number
 }
 
-/**
- * Tokenizer interface
- */
-export interface GrammarTokenizer {
-	context: GrammarTokenizerContext
-	isDone(): boolean
-	consumeToken(): any
+export interface ParserScanner {
+	text: string
+	size: number
+	at0: number
+	at1: number
+	at2: number
+	open: number
+	shut: number
+	offsetLne: number
+	offsetCol: number
+	scan(): void
+	consumeAt0(code: number): void
+	consume(nth: number): void
+	consumeLne(): void
+	getPositionOpen(): TextPositionStart
+	getPositionShut(spotIni: TextPositionStart): TextPosition
 }
 
 /**
  * Node Position
  */
-export interface GrammarNodePosition {
+export interface TextPosition {
 	offIni?: number
 	offEnd?: number
 	lneIni?: number
@@ -46,7 +35,7 @@ export interface GrammarNodePosition {
 	colIni?: number
 	colEnd?: number
 }
-export interface GrammarNodePositionIni {
+export interface TextPositionStart {
 	offIni: number
 	colIni: number
 	lneIni: number
@@ -55,159 +44,168 @@ export interface GrammarNodePositionIni {
 /**
  * Nodes
  */
-export interface GrammarNodeIdentifier {
-	symb: GRAMMAR_SYMB.IDENTIFIER
-	node: string
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeFunction {
-	// @todo
-	symb: GRAMMAR_SYMB.FUNCTION
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeComma {
-	symb: GRAMMAR_SYMB.COMMA
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeSpace {
-	symb: GRAMMAR_SYMB.WHITESPACE
-	node: string
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeString {
-	symb: GRAMMAR_SYMB.STRING
-	node: string
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeToken {
-	symb: GRAMMAR_SYMB.TOKEN
-	node: string
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeType {
-	symb: GRAMMAR_SYMB.TYPE
-	node: string
-	vmin: number | null
-	vmax: number | null
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeTypeReference {
-	symb: GRAMMAR_SYMB.TYPE_REF
-	node: string
-	spot: GrammarNodePosition | null
+export declare namespace SyntaxNode {
+	export type AnyComponentValue =
+		| Keyword
+		| AtKeyword
+		| Comma
+		| Delimiter
+		| Token
+		| PropertyType
+		| PropertyTypeRef
+		| Group
+		| Function
+		| Multiplier
+	export type AnyCombinator = CombinatorJuxtapose | CombinatorAmpersand | CombinatorBarDouble | CombinatorBarSingle
+	export type Any = AnyComponentValue | AnyCombinator | Space
+
+	export interface Keyword {
+		type: SyntaxKind.Keyword
+		text: string
+		spot: TextPosition
+	}
+	export interface AtKeyword {
+		type: SyntaxKind.AtKeyword
+		text: string
+		spot: TextPosition
+	}
+	export interface Comma {
+		type: SyntaxKind.Comma
+		spot: TextPosition
+	}
+	export interface Space {
+		type: SyntaxKind.Space
+		text: string
+		spot: TextPosition
+	}
+	export interface Delimiter {
+		/**
+		 * This was String
+		 * - Add `kind` or `flag`, or `type`
+		 */
+		type: SyntaxKind.Delimiter
+		node: string
+		spot: TextPosition
+	}
+	export interface Token {
+		/**
+		 * This should be unquoted delimiter
+		 */
+		type: SyntaxKind.Token
+		node: string
+		spot: TextPosition
+	}
+	export interface PropertyType {
+		type: SyntaxKind.Type
+		name: string
+		vmin: number | null
+		vmax: number | null
+		spot: TextPosition
+	}
+	export interface PropertyTypeRef {
+		type: SyntaxKind.TypeReference
+		name: string
+		spot: TextPosition
+	}
+	export interface Multiplier<T extends AnyComponentValue | null = SyntaxNode.AnyComponentValue> {
+		type: SyntaxKind.Multiplier
+		vmin: number
+		vmax: number
+		hash: boolean
+		void: boolean
+		node: T
+		spot: TextPosition
+	}
+	export interface MultiplierRequired<Node = any> {
+		/**
+		 * This should be a Delimiter or Token
+		 */
+		type: SyntaxKind.Required
+		node: Node
+		spot: TextPosition
+	}
+
+	export interface Group {
+		type: SyntaxKind.Group
+		body: AnyComponentValue[]
+		comb: SyntaxCombinatorKind
+		root: boolean
+		void: boolean
+		spot: TextPosition
+	}
+	export interface Function {
+		type: SyntaxKind.Function
+		node: Group
+		spot: TextPosition
+	}
+
+	export interface CombinatorJuxtapose {
+		type: SyntaxKind.Combinator
+		kind: SyntaxCombinatorKind.Juxtapose
+		spot: TextPosition
+	}
+	export interface CombinatorAmpersand {
+		type: SyntaxKind.Combinator
+		kind: SyntaxCombinatorKind.Ampersand
+		spot: TextPosition
+	}
+	export interface CombinatorBarDouble {
+		type: SyntaxKind.Combinator
+		kind: SyntaxCombinatorKind.BarDouble
+		spot: TextPosition
+	}
+	export interface CombinatorBarSingle {
+		type: SyntaxKind.Combinator
+		kind: SyntaxCombinatorKind.BarSingle
+		spot: TextPosition
+	}
 }
 
-/**
- * Group of nodes (omits combinators)
- */
-export interface GrammarNodeGroup {
-	symb: GRAMMAR_SYMB.GROUP
-	body: GrammarNodes[]
-	comb: GRAMMAR_COMBINATOR
-	root: boolean
-	void: boolean
-	spot: GrammarNodePosition | null
+export declare namespace SyntaxPartial {
+	export interface Keyword {
+		text: string
+		spot: TextPosition
+	}
+	/**
+	 * Remove me! ⤵
+	 */
+	export interface Space {
+		text: string
+		spot: TextPosition
+	}
+	export interface MultiplierRange {
+		vmin: number
+		vmax: number
+		spot: TextPosition
+	}
+	export interface Numeric {
+		text: string
+		repr: number
+		spot: TextPosition
+	}
+	export interface PropertyTypeRange {
+		vmin: number | null
+		vmax: number | null
+		spot: TextPosition
+	}
+	export interface Multiplier {
+		vmin: number
+		vmax: number
+		hash: boolean
+		void: boolean
+		spot: TextPosition
+	}
 }
 
-/**
- * Combinator nodes
- */
-export interface GrammarNodeCombinatorJuxtapose {
-	symb: GRAMMAR_SYMB.COMBINATOR
-	flag: GRAMMAR_COMBINATOR.JUXTAPOSE
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeCombinatorAmpersand {
-	symb: GRAMMAR_SYMB.COMBINATOR
-	flag: GRAMMAR_COMBINATOR.AMPERSAND
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeCombinatorVerticalDouble {
-	symb: GRAMMAR_SYMB.COMBINATOR
-	flag: GRAMMAR_COMBINATOR.VL_DOUBLE
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeCombinatorVerticalSingle {
-	symb: GRAMMAR_SYMB.COMBINATOR
-	flag: GRAMMAR_COMBINATOR.VL_SINGLE
-	spot: GrammarNodePosition | null
-}
-
-/**
- * Multiplier node
- */
-export interface GrammarNodeMultiplier<Node = GrammarNodes | null> {
-	symb: GRAMMAR_SYMB.MULTIPLIER
-	vmin: number
-	vmax: number
-	hash: boolean
-	node: Node
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeMultiplierRequired<Node = GrammarNodeGroup | null> {
-	symb: GRAMMAR_SYMB.REQUIRED
-	node: Node
-	spot: GrammarNodePosition | null
-}
-
-/**
- * Sub-nodes (nodes without type)
- */
-export interface GrammarNodeMultiplierRange {
-	vmin: number
-	vmax: number
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeNumber {
-	node: string
-	repr: number
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeTypeRange {
-	vmin: number | null
-	vmax: number | null
-	spot: GrammarNodePosition | null
-}
-export interface GrammarNodeIdentifierName {
-	node: string
-	spot: GrammarNodePosition | null
-}
-
-export type GrammarCombinators =
-	| GrammarNodeCombinatorJuxtapose
-	| GrammarNodeCombinatorAmpersand
-	| GrammarNodeCombinatorVerticalDouble
-	| GrammarNodeCombinatorVerticalSingle
-
-export type GrammarNodes =
-	| GrammarNodeIdentifier
-	| GrammarNodeFunction
-	| GrammarNodeComma
-	| GrammarNodeSpace
-	| GrammarNodeString
-	| GrammarNodeToken
-	| GrammarNodeType
-	| GrammarNodeTypeReference
-	| GrammarNodeMultiplier
-	| GrammarNodeGroup
-
-export type GrammarNodesAndCombinators = GrammarCombinators | GrammarNodes
-
-/**
- * Group LinkedList
- */
-export interface GrammarGroupLinkedList<T extends GrammarNodesAndCombinators = GrammarNodesAndCombinators> {
+// /**
+//  * Group LinkedList
+//  */
+export interface LinkedListNode<T extends SyntaxNode.Any = SyntaxNode.Any> {
 	nodule: T
-	return: GrammarGroupLinkedList | null
-	cousin: GrammarGroupLinkedList | null
+	return: LinkedListNode | null
+	cousin: LinkedListNode | null
 	ignore: boolean
 }
-export interface GrammarGroupLinkedListHeadPointer {
-	head: GrammarGroupLinkedList | null
-}
-export interface GrammarGroupContentsCombinators {
-	[GRAMMAR_COMBINATOR.JUXTAPOSE]: GrammarGroupLinkedList<GrammarCombinators>[]
-	[GRAMMAR_COMBINATOR.AMPERSAND]: GrammarGroupLinkedList<GrammarCombinators>[]
-	[GRAMMAR_COMBINATOR.VL_DOUBLE]: GrammarGroupLinkedList<GrammarCombinators>[]
-	[GRAMMAR_COMBINATOR.VL_SINGLE]: GrammarGroupLinkedList<GrammarCombinators>[]
+export interface LinkedListHead {
+	head: LinkedListNode | null
 }

@@ -1,10 +1,9 @@
-import { GRAMMAR_SYMB, GRAMMAR_COMBINATOR } from '~/constants'
-import type { GrammarNodeCombinatorJuxtapose, GrammarNodeSpace } from '~/grammar/shared'
+import { SyntaxKind, SyntaxNode, SyntaxPartial, SyntaxCombinatorKind } from '../shared'
 
-export function getCombinatorJuxtaposeFromSpace(spaceNode: GrammarNodeSpace): GrammarNodeCombinatorJuxtapose {
+export function getCombinatorJuxtaposeFromSpace(space: SyntaxPartial.Space): SyntaxNode.CombinatorJuxtapose {
 	return {
-		symb: GRAMMAR_SYMB.COMBINATOR,
-		flag: GRAMMAR_COMBINATOR.JUXTAPOSE,
-		spot: spaceNode.spot,
+		type: SyntaxKind.Combinator,
+		kind: SyntaxCombinatorKind.Juxtapose,
+		spot: space.spot,
 	}
 }
