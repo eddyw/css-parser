@@ -1,4 +1,5 @@
 import * as path from 'path'
+import { terser } from 'rollup-plugin-terser'
 import typescript from '@rollup/plugin-typescript'
 import filesize from 'rollup-plugin-filesize'
 
@@ -27,20 +28,26 @@ const onwarn = (warning, rollupWarn) => {
 		/**
 		 * We do this because the default one is so terrible
 		 */
-		if (warning.pluginCode.startsWith('TS')) {
+		if (warning.pluginCode && warning.pluginCode.startsWith('TS')) {
 			const { loc } = warning
-			const location = `${loc.file}:${loc.line}:${loc.column}`
 
-			warning.message = `\n${warning.message}\n\n${location}`
+			if (loc) {
+				const location = `${loc.file}:${loc.line}:${loc.column}`
+				warning.message = `\n${warning.message}\n\n${location}`
+			}
 		}
 		rollupWarn(warning)
 	}
 }
 
-export default {
+/**
+ * @type {import('rollup').NormalizedInputOptions}
+ */
+const config = {
 	input: 'src/index.ts',
 	onwarn,
-	output: [ // @todo - re-enable later
+	output: [
+		// @todo - re-enable later
 		// {
 		// 	dir: 'dist',
 		// 	format: 'esm',
@@ -59,6 +66,8 @@ export default {
 			noEmit: false,
 			tsBuildInfoFile: './dist/tsconfig.tsbuildinfo',
 		}),
-		filesize({ theme: 'light' })
+		// terser({ ecma: 2020, module: true }),
+		filesize({ theme: 'light' }),
 	],
 }
+export default config

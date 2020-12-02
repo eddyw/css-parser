@@ -1,4 +1,4 @@
-const { DefinitionSyntax, buildMatchGraph } = require('../dist/index.js')
+const { DefinitionSyntax } = require('../dist/index.js')
 const { codeFrameColumns } = require('@babel/code-frame')
 
 // const syntax = `
@@ -17,8 +17,9 @@ const { codeFrameColumns } = require('@babel/code-frame')
 // [a b | c || d && e f]
 // `
 const syntax = `
-A  B  C
+<length> = 123;
 `
+
 
 console.log('===== Input =====')
 console.log(syntax)
@@ -65,52 +66,10 @@ function compact(node) {
 	delete node.spot
 	if (Array.isArray(node.body)) {
 		node.body.map(compact)
-	} else if (node.node) compact(node.node)
+	} else if(node.node) (
+		compact(node.node)
+	)
 }
 compact(tok)
 
-const graph = buildMatchGraph(tok)
-
-function getName(n) {
-	return n.name || n.kind
-}
-function logIf(g, pad = 0) {
-	const w = '  '.repeat(pad)
-	let str = [`if (match('${getName(g.match)}')) ` + logOne(g.then, pad), `else ` + logOne(g.else, pad)]
-	return str.map(v => `${w}${v}`).join('\n')
-}
-function logOne(n, p) {
-	if (n.kind === 'If') {
-		return '\n' + logIf(n, p + 1)
-	} else {
-		const name = getName(n)
-		if (name === 'Mismatch') return `throw Error('Mismatch')`
-		return `return 1`
-	}
-}
-
 console.dir(tok, { depth: 100 })
-console.dir(graph, { depth: 100 })
-const code = '\n\n' + logIf(graph) + '\n\n'
-const frame = codeFrameColumns(code, { start: 0, end: code.length }, { highlightCode: true })
-
-console.log(frame)
-
-// A double ampersand (&&) separates two or more components, all of which must occur, in any order.
-const items = [ 'B', 'D']
-
-function ampersand(items) {
-	const ENUM = { A: 0, B: 0, C: 0, D: 0 }
-	const keys = Object.keys(ENUM)
-
-	const early = items.find(i => {
-		if (i in ENUM) {
-			ENUM[i]++
-		} else return true
-	})
-
-	if (early) return `Unknown value "${early}"`
-
-	return keys.every(k => ENUM[k] === 1) ? 'Match' : 'Expected ' + keys.filter(k => ENUM[k] !== 1).join(' && ')
-}
-console.log(ampersand(items))
