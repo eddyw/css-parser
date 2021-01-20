@@ -1,4 +1,4 @@
-# CSS tokenizer & parser
+# CSS tokenizer & parser test
 
 ```bash
 yarn install
