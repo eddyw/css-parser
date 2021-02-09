@@ -1,5 +1,8 @@
 const TokenizerPostCSS = require('postcss/lib/tokenize')
-const { tokenizer, createContext } = require('../../dist/index.cjs')
+const csstoolsTokenizer = require('@csstools/tokenizer')
+const tabTokenizer = require('../../playground/concepts/parse-css').tokenize
+const CSSTokenizer = require('../../dist/index').CSSTokenizer
+// const { tokenizer, createSyntaxContext } = require('../../dist/index.js')
 
 const counter = { value: 0 }
 
@@ -15,19 +18,37 @@ function createCasePostCSS(css) {
 		counter.value = count
 	}
 }
-function createCaseTypedCSS(css) {
-	return function caseTypedCSS() {
-		let count = 0
-		const stream = tokenizer(createContext(css))
-
-		do {
-			stream.consumeToken()
-			count++
-		} while (!stream.isDone())
-
-		counter.value = count
+function createCSSTools(css) {
+	return function casePostCSS() {
+		const tokens = Array.from(csstoolsTokenizer(css))
+		counter.value = tokens.length
 	}
 }
+function createTabTokenizer(css) {
+	return function casePostCSS() {
+		const tokens = tabTokenizer(css)
+		counter.value = tokens.length
+	}
+}
+function createCSSTokenizer(css) {
+	return function caseCSSTok() {
+		const tokens = new CSSTokenizer({ css }).getTokens()
+		counter.value = tokens.length
+	}
+}
+// function createCaseTypedCSS(css) {
+// 	return function caseTypedCSS() {
+// 		let count = 0
+// 		const stream = tokenizer(createSyntaxContext(css))
+
+// 		do {
+// 			stream.consumeToken()
+// 			count++
+// 		} while (!stream.isDone())
+
+// 		counter.value = count
+// 	}
+// }
 
 /**
  * @param {import('benchmark').Suite} suite
@@ -36,8 +57,11 @@ function createCaseTypedCSS(css) {
 function initializeBenchmark(suite, css) {
   counter.value = 0
 
-  suite.add('PostCSS', createCasePostCSS(css))
-  suite.add('TypedCSS', createCaseTypedCSS(css))
+  // suite.add('PostCSS 8', createCasePostCSS(css))
+  // suite.add('CSSTools', createCSSTools(css))
+  // suite.add('parse-css', createTabTokenizer(css))
+  suite.add('CSSTokenizer', createCSSTokenizer(css))
+  // suite.add('TypedCSS', createCaseTypedCSS(css))
   suite.on('cycle', evt => evt.target.tokensCount = counter.value)
   suite.on('complete', function() {
     const result = {}
